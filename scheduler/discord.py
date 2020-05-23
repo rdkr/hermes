@@ -62,16 +62,32 @@ class Scheduler(commands.Cog):
 
         result = filter_times(find_times(self.players, people), duration)
 
-        sorted_result = {}
-        for k in sorted(result, key=len, reverse=True):
-            sorted_result[k] = result[k]
+        print(result)
+        print(sorted(result, key=len, reverse=True))
 
-        msg = [f"possible times for ⩾**{people}** players for ⩾**{duration}**h:\n"]
+        import collections
+        sorted_result = collections.defaultdict(list)
+        for players in sorted(result, key=len, reverse=True):
+            for times in result[players]:
+                skip = False
+                for already_people, already_times in sorted_result.items():
+                    for already_time in already_times:
+                        if times in already_time and players.issubset(already_people):
+                            skip = True
+                if not skip:
+                    sorted_result[players].append(times)
+
+            # if  in sorted_result:
+                # print('hello')
+
+
+        msg = [f"possible times for ⩾**{people}** players for ⩾**{duration}**h:\n\n"]
         for players, times in sorted_result.items():
-            msg.append(f"_{', '.join(players)}_ at:")
+            msg.append(f"_{', '.join(players)}_ at:\n")
             msg.extend(format_ranges(times))
+            msg.append("\n")
 
-        return await ctx.send("\n".join(msg))
+        return await ctx.send("".join(msg))
 
     @commands.command()
     async def list(self, ctx, who=None):
@@ -86,12 +102,13 @@ class Scheduler(commands.Cog):
         else:
             who = [who]
 
-        msg = [f"possible times:\n"]
+        msg = [f"possible times:\n\n"]
         for player in who:
-            msg.append(f"_{player}_ at:")
+            msg.append(f"_{player}_ at:\n")
             msg.extend(format_ranges(self.players[player]))
+            msg.append("\n")
 
-        await ctx.send("\n".join(msg))
+        await ctx.send("".join(msg))
 
     @commands.command()
     async def delete(self, ctx, which, who=None):
@@ -135,6 +152,6 @@ def format_ranges(ranges):
         time_end = timerange.get_end_time_str()
 
         msg.append(
-            f" • `{i+1:02}`  {day} {date}{date_suffix} @ {time_start} - {time_end}"
+            f" • `{i+1:02}`  {day} {date}{date_suffix} @ {time_start} - {time_end}\n"
         )
     return msg

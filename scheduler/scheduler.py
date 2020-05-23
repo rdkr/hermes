@@ -23,9 +23,8 @@ def merge_schedules(players, required, start):
                     candidate_players.append(player)
 
         for combination_length in range(required, len(candidate_players) + 1):
-            potentials[candidate_times].extend(
-                itertools.combinations(candidate_players, combination_length)
-            )
+            combos = itertools.combinations(candidate_players, combination_length)
+            potentials[candidate_times].extend(combos)
 
     return potentials
 
@@ -39,6 +38,8 @@ def find_times(players, required, start=None):
         for player_set in player_sets:
 
             current_players = frozenset(player_set)
+            if len(current_players) < required:
+                continue
 
             if not potentials[current_players]:
                 potentials[current_players].append(DateTimeRange(viable_time))
@@ -62,6 +63,8 @@ def find_times(players, required, start=None):
                 time_range.end_datetime + timedelta(minutes=MINUTES)
             )
 
+    for k,v in potentials.items():
+        print(k,v)
     return potentials
 
 
