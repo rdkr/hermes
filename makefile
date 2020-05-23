@@ -4,6 +4,8 @@ build:
 run: build
 	docker run -it --rm \
 		-e DISCORD_TOKEN="${DISCORD_TOKEN}" \
+		-e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+		-e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
 		-v ${CURDIR}/shelf:/usr/src/app/shelf \
 		rdkr/hermes-scheduler python main.py
 

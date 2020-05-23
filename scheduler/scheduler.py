@@ -63,8 +63,6 @@ def find_times(players, required, start=None):
                 time_range.end_datetime + timedelta(minutes=MINUTES)
             )
 
-    for k,v in potentials.items():
-        print(k,v)
     return potentials
 
 

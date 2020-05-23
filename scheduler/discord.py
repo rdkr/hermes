@@ -1,5 +1,5 @@
+import collections
 from datetime import datetime, timedelta
-import shelve
 import sys
 import traceback
 
@@ -9,16 +9,19 @@ from datetimerange import DateTimeRange
 from timefhuman import timefhuman
 
 from scheduler.scheduler import find_times, filter_times
+from scheduler.dynamodb import PlayerDB
 
 
 SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc394r1-480-208_hq.gif"
+
 
 class Scheduler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.channel = None
         self.errors = 0
-        self.players = shelve.open("shelf", writeback=True)
+        # self.players = shelve.open("shelf", writeback=True)
+        self.db = PlayerDB()
 
     @commands.command()
     async def free(self, ctx, *, when):
@@ -30,7 +33,11 @@ class Scheduler(commands.Cog):
             result = timefhuman(when)
             if not result:
                 raise Exception(f"no times found ({when})")
-            if not isinstance(result, tuple) or len(result) != 2 or result[0] >= result[1]:
+            if (
+                not isinstance(result, tuple)
+                or len(result) != 2
+                or result[0] >= result[1]
+            ):
                 raise Exception(f"can't make range ({result})")
             timerange = DateTimeRange(*result)
             week = DateTimeRange(datetime.now(), datetime.now() + timedelta(days=7))
@@ -41,11 +48,7 @@ class Scheduler(commands.Cog):
             traceback.print_exc(file=sys.stdout)
             return await ctx.send(f"error: {exc}")
 
-        if self.players.get(ctx.message.author.name, None):
-            self.players[ctx.message.author.name].append(timerange)
-        else:
-            self.players[ctx.message.author.name] = [timerange]
-
+        self.db.add_time(ctx.message.author.name, timerange)
         return await ctx.send(f"added: {timerange}")
 
     @commands.command()
@@ -60,12 +63,11 @@ class Scheduler(commands.Cog):
         if people == 66:
             return await ctx.send(SIXTY_SIX)
 
-        result = filter_times(find_times(self.players, people), duration)
+        result = filter_times(find_times(self.db.get_players(), people), duration)
 
-        print(result)
-        print(sorted(result, key=len, reverse=True))
 
-        import collections
+
+
         sorted_result = collections.defaultdict(list)
         for players in sorted(result, key=len, reverse=True):
             for times in result[players]:
@@ -76,10 +78,6 @@ class Scheduler(commands.Cog):
                             skip = True
                 if not skip:
                     sorted_result[players].append(times)
-
-            # if  in sorted_result:
-                # print('hello')
-
 
         msg = [f"possible times for ⩾**{people}** players for ⩾**{duration}**h:\n\n"]
         for players, times in sorted_result.items():
@@ -95,17 +93,19 @@ class Scheduler(commands.Cog):
 
         e.g. "$list" "$list Jon", or "$list all"
         """
+        players = self.db.get_players()
+
         if not who:
             who = [ctx.message.author.name]
         elif who == "all":
-            who = self.players.keys()
+            who = players.keys()
         else:
             who = [who]
 
         msg = [f"possible times:\n\n"]
         for player in who:
             msg.append(f"_{player}_ at:\n")
-            msg.extend(format_ranges(self.players[player]))
+            msg.extend(format_ranges(players[player]))
             msg.append("\n")
 
         await ctx.send("".join(msg))
@@ -119,18 +119,18 @@ class Scheduler(commands.Cog):
         if not who:
             who = ctx.message.author.name
         if which == "all":
-            self.players[who].clear()
+            self.db.delete_times(who)
             await ctx.send(f"removed: all")
         else:
-            timerange = self.players[who].pop(int(which) - 1)
-            await ctx.send(f"removed: {timerange}")
+            self.db.delete_time(who, int(which) - 1)
+            await ctx.send(f"removed: {which}")
 
 
 def format_ranges(ranges):
     msg = list()
 
     if not ranges:
-        msg.append("• none")
+        msg.append("• none\n")
         return msg
 
     for i, timerange in enumerate(ranges):
