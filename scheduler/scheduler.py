@@ -3,6 +3,7 @@ import itertools
 from datetime import datetime, timedelta
 
 from datetimerange import DateTimeRange
+import pytz
 
 MINUTES = 30
 
@@ -10,7 +11,7 @@ MINUTES = 30
 def merge_schedules(players, required, start):
 
     if not start:
-        start = datetime.now().replace(minute=0, second=0, microsecond=0)
+        start = datetime.now(pytz.timezone('Europe/London')).replace(minute=0, second=0, microsecond=0)
     candidates = DateTimeRange(start, start + timedelta(days=7))
 
     potentials = collections.defaultdict(list)

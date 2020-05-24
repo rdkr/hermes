@@ -1,10 +1,12 @@
+import asyncio
 import collections
 from datetime import datetime, timedelta
 import sys
 import traceback
 
+import pytz
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from datetimerange import DateTimeRange
 from timefhuman import timefhuman
 
@@ -20,8 +22,9 @@ class Scheduler(commands.Cog):
         self.bot = bot
         self.channel = None
         self.errors = 0
-        # self.players = shelve.open("shelf", writeback=True)
         self.db = PlayerDB()
+
+        self.clean.start()
 
     @commands.command()
     async def free(self, ctx, *, when):
@@ -39,17 +42,23 @@ class Scheduler(commands.Cog):
                 or result[0] >= result[1]
             ):
                 raise Exception(f"can't make range ({result})")
-            timerange = DateTimeRange(*result)
-            week = DateTimeRange(datetime.now(), datetime.now() + timedelta(days=7))
+            tz = pytz.timezone(self.db.get_tz(ctx.message.author.name))
+            start, end = tz.localize(result[0]), tz.localize(result[1])
+            timerange = DateTimeRange(start, end)
+            week = DateTimeRange(datetime.now(tz), datetime.now(tz) + timedelta(days=7))
             if timerange not in week:
                 raise Exception(f"range outside of next 7 days ({timerange})")
+        except KeyError:
+            return await ctx.send(f"`error: set a tz first using `$tz`. see `$help tz` for more information")
+        except AssertionError:
+            return await ctx.send(f"`error: could not parse (try US style dates and : in 24h times)`")
         except Exception as exc:
             print(f"error: {exc} ({when}):")
             traceback.print_exc(file=sys.stdout)
-            return await ctx.send(f"error: {exc}")
+            return await ctx.send(f"error: `{exc}`")
 
         self.db.add_time(ctx.message.author.name, timerange)
-        return await ctx.send(f"added: {timerange}")
+        return await ctx.send(f"added: {format_range(timerange)}")
 
     @commands.command()
     async def when(self, ctx, people=4, duration=1.5):
@@ -64,9 +73,6 @@ class Scheduler(commands.Cog):
             return await ctx.send(SIXTY_SIX)
 
         result = filter_times(find_times(self.db.get_players(), people), duration)
-
-
-
 
         sorted_result = collections.defaultdict(list)
         for players in sorted(result, key=len, reverse=True):
@@ -125,6 +131,30 @@ class Scheduler(commands.Cog):
             self.db.delete_time(who, int(which) - 1)
             await ctx.send(f"removed: {which}")
 
+    @commands.command()
+    async def tz(self, ctx, timezone):
+        """set your timezone
+
+        e.g. "$tz Europe/London"
+        """
+        self.db.set_tz(ctx.message.author.name, pytz.timezone(timezone).zone)
+        await ctx.send(f"set: {timezone}")
+
+
+    @tasks.loop(minutes=1)
+    async def clean(self):
+        now = datetime.now(pytz.timezone('Europe/London'))
+        for player, timeranges in self.db.get_players().items():
+            for i, timerange in enumerate(timeranges):
+                if timerange.end_datetime < now:
+                    print(f"removing: {player}, {timerange}, {i}")
+                    self.db.delete_time(player, i)
+                    break  # we can only clear one per run as the index will change
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, exception):
+        await ctx.send(f"error: `{exception}`")
+
 
 def format_ranges(ranges):
     msg = list()
@@ -134,24 +164,26 @@ def format_ranges(ranges):
         return msg
 
     for i, timerange in enumerate(ranges):
+        msg.append(f" • `{i+1:02}` {format_range(timerange)} \n")
 
-        timerange.start_time_format = "%a"
-        day = timerange.get_start_time_str()
-
-        timerange.start_time_format = "%d"
-        date = timerange.get_start_time_str()
-        date_suffix = (
-            "th"
-            if 11 <= int(date) <= 13
-            else {1: "st", 2: "nd", 3: "rd"}.get(int(date) % 10, "th")
-        )
-
-        timerange.start_time_format = "%H:%M"
-        timerange.end_time_format = "%H:%M"
-        time_start = timerange.get_start_time_str()
-        time_end = timerange.get_end_time_str()
-
-        msg.append(
-            f" • `{i+1:02}`  {day} {date}{date_suffix} @ {time_start} - {time_end}\n"
-        )
     return msg
+
+def format_range(timerange):
+
+    timerange.start_time_format = "%a"
+    day = timerange.get_start_time_str()
+
+    timerange.start_time_format = "%d"
+    date = timerange.get_start_time_str()
+    date_suffix = (
+        "th"
+        if 11 <= int(date) <= 13
+        else {1: "st", 2: "nd", 3: "rd"}.get(int(date) % 10, "th")
+    )
+
+    timerange.start_time_format = "%H:%M"
+    timerange.end_time_format = "%H:%M (%Z)"
+    time_start = timerange.get_start_time_str()
+    time_end = timerange.get_end_time_str()
+
+    return f"{day} {date}{date_suffix} @ {time_start} - {time_end}"

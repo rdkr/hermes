@@ -2,95 +2,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hermes
+  name: hermes-scheduler
   namespace: hermes
 spec:
   selector:
     matchLabels:
-      app: hermes
+      app: hermes-scheduler
   replicas: 1
   template:
     metadata:
       labels:
-        app: hermes
+        app: hermes-scheduler
     spec:
       containers:
-      - name: hermes
-        image: rdkr/hermes:latest
+      - name: hermes-scheduler
+        image: rdkr/hermes-scheduler:latest
         imagePullPolicy: Always
         command:
           - python
         args:
-          - hermes.py
-        ports:
-        - name: http
-          containerPort: 8080
+          - main.py
         env:
-          - name: DO_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: DO_TOKEN
           - name: DISCORD_TOKEN
             valueFrom:
               secretKeyRef:
                 name: hermes
                 key: CSGO_DISCORD_TOKEN
-          - name: CSGO_GSLT_TOKEN_DM
+          - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
                 name: hermes
-                key: CSGO_GSLT_TOKEN_DM
-          - name: CSGO_GSLT_TOKEN_PUG
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: hermes
-                key: CSGO_GSLT_TOKEN_PUG
-          - name: CSGO_WEB_TOKEN_DM
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: CSGO_WEB_TOKEN_DM
-          - name: CSGO_RCON_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: CSGO_RCON_PASSWORD
-          - name: CSGO_SV_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: CSGO_SV_PASSWORD
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hermes
-  namespace: hermes
-  labels:
-    app: hermes
-spec:
-  ports:
-  - name: http
-    port: 8080
-    targetPort: http
-  selector:
-    app: hermes
-
----
-apiVersion:  monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: hermes
-  labels:
-    app: hermes
-spec:
-  selector:
-    matchLabels:
-      app: hermes
-  endpoints:
-  - targetPort: http
-    interval: 10s
-  namespaceSelector:
-    any: true
+                key: AWS_SECRET_ACCESS_KEY

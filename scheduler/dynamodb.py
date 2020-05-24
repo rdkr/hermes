@@ -2,6 +2,8 @@ from datetime import datetime
 from decimal import Decimal
 import time
 
+import pytz
+
 import boto3
 from datetimerange import DateTimeRange
 
@@ -14,7 +16,7 @@ class PlayerDB:
     def get_players(self):
         result = {}
         for record in self.table.scan()["Items"]:
-            result[record["name"]] = get_datetimeranges(record["times"])
+            result[record["name"]] = get_datetimeranges(record["times"], record.get('player_timezone', 'UTC'))
         return result
 
     def add_time(self, name, timerange):
@@ -29,7 +31,7 @@ class PlayerDB:
 
     def delete_time(self, name, index):
         player = self.table.get_item(Key={"name": name})
-        times = get_datetimeranges(player["Item"]["times"])
+        times = get_datetimeranges(player["Item"]["times"], player["Item"].get('player_timezone', 'UTC'))
         del times[index]
         self.table.update_item(
             Key={"name": name},
@@ -44,14 +46,24 @@ class PlayerDB:
             ExpressionAttributeValues={":a": []},
         )
 
+    def get_tz(self, name):
+        return self.table.get_item(Key={"name": name})['Item'].get('player_timezone', 'UTC')
 
-def get_datetimeranges(record):
+    def set_tz(self, name, tz):
+        self.table.update_item(
+            Key={"name": name},
+            UpdateExpression="set player_timezone = :a",
+            ExpressionAttributeValues={":a": tz},
+        )
+
+
+def get_datetimeranges(record, timezone):
     timeranges = []
     for timerange in record:
         timeranges.append(
             DateTimeRange(
-                datetime.fromtimestamp(timerange[0]),
-                datetime.fromtimestamp(timerange[1]),
+                datetime.fromtimestamp(timerange[0], pytz.timezone(timezone)),
+                datetime.fromtimestamp(timerange[1], pytz.timezone(timezone)),
             )
         )
     return sorted(timeranges, key=lambda dt: dt.start_datetime)
@@ -62,8 +74,8 @@ def get_unixtimestamps(record):
     for timerange in record:
         user_times.append(
             [
-                Decimal(time.mktime(timerange.start_datetime.timetuple())),
-                Decimal(time.mktime(timerange.end_datetime.timetuple())),
+                Decimal(timerange.start_datetime.timestamp()),
+                Decimal(timerange.end_datetime.timestamp()),
             ]
         )
     return user_times

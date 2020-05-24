@@ -1,6 +1,7 @@
 datetime
 datetimerange
 timefhuman
+pytz
 black
 pylint
 pydocstyle
