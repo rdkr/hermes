@@ -1,10 +1,9 @@
 from datetime import datetime
 
 from datetimerange import DateTimeRange
-import pytest
+from pytest import mark
 
-from scheduler import find_times, filter_times
-
+from scheduler.scheduler import filter_times, find_times
 
 SCENARIO_0 = (
     {
@@ -73,13 +72,13 @@ SCENARIO_1 = (
 )
 
 
-@pytest.mark.parametrize("times,expected", [SCENARIO_0, SCENARIO_1])
+@mark.parametrize("times,expected", [SCENARIO_0, SCENARIO_1])
 def test_find_times(times, expected):
     actual = dict(find_times(times, 2, datetime(2020, 5, 21)))
     assert actual == expected
 
 
-@pytest.mark.parametrize(
+@mark.parametrize(
     "times,duration,expected",
     [
         (

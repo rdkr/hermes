@@ -3,7 +3,7 @@ import os
 
 from discord.ext import commands
 
-from scheduler import Scheduler
+from scheduler.discord import Scheduler
 
 
 def main():

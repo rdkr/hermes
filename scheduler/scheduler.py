@@ -1,9 +1,9 @@
-import collections
-import itertools
+from collections import defaultdict
 from datetime import datetime, timedelta
+from itertools import combinations
 
 from datetimerange import DateTimeRange
-import pytz
+from pytz import timezone
 
 MINUTES = 30
 
@@ -11,10 +11,12 @@ MINUTES = 30
 def merge_schedules(players, required, start):
 
     if not start:
-        start = datetime.now(pytz.timezone('Europe/London')).replace(minute=0, second=0, microsecond=0)
+        start = datetime.now(timezone("Europe/London")).replace(
+            minute=0, second=0, microsecond=0
+        )
     candidates = DateTimeRange(start, start + timedelta(days=7))
 
-    potentials = collections.defaultdict(list)
+    potentials = defaultdict(list)
 
     for candidate_times in candidates.range(timedelta(minutes=MINUTES)):
         candidate_players = []
@@ -24,7 +26,7 @@ def merge_schedules(players, required, start):
                     candidate_players.append(player)
 
         for combination_length in range(required, len(candidate_players) + 1):
-            combos = itertools.combinations(candidate_players, combination_length)
+            combos = combinations(candidate_players, combination_length)
             potentials[candidate_times].extend(combos)
 
     return potentials
@@ -33,7 +35,7 @@ def merge_schedules(players, required, start):
 def find_times(players, required, start=None):
 
     schedules = merge_schedules(players, required, start)
-    potentials = collections.defaultdict(list)
+    potentials = defaultdict(list)
 
     for viable_time, player_sets in schedules.items():
         for player_set in player_sets:
@@ -69,7 +71,7 @@ def find_times(players, required, start=None):
 
 def filter_times(potentials, duration):
 
-    filtered = collections.defaultdict(list)
+    filtered = defaultdict(list)
 
     for players, time_ranges in potentials.items():
         for time_range in time_ranges:

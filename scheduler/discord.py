@@ -1,18 +1,14 @@
-import asyncio
-import collections
+from collections import defaultdict
 from datetime import datetime, timedelta
-import sys
-import traceback
+from traceback import print_exc
 
-import pytz
-
-from discord.ext import commands, tasks
 from datetimerange import DateTimeRange
+from discord.ext import commands, tasks
+from pytz import timezone
 from timefhuman import timefhuman
 
-from scheduler.scheduler import find_times, filter_times
 from scheduler.dynamodb import PlayerDB
-
+from scheduler.scheduler import filter_times, find_times
 
 SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc394r1-480-208_hq.gif"
 
@@ -42,19 +38,23 @@ class Scheduler(commands.Cog):
                 or result[0] >= result[1]
             ):
                 raise Exception(f"can't make range ({result})")
-            tz = pytz.timezone(self.db.get_tz(ctx.message.author.name))
+            tz = timezone(self.db.get_tz(ctx.message.author.name))
             start, end = tz.localize(result[0]), tz.localize(result[1])
             timerange = DateTimeRange(start, end)
             week = DateTimeRange(datetime.now(tz), datetime.now(tz) + timedelta(days=7))
             if timerange not in week:
                 raise Exception(f"range outside of next 7 days ({timerange})")
         except KeyError:
-            return await ctx.send(f"`error: set a tz first using `$tz`. see `$help tz` for more information")
+            return await ctx.send(
+                f"`error: set a tz first using `$tz`. see `$help tz` for more information"
+            )
         except AssertionError:
-            return await ctx.send(f"`error: could not parse (try US style dates and : in 24h times)`")
+            return await ctx.send(
+                f"`error: could not parse (try US style dates and : in 24h times)`"
+            )
         except Exception as exc:
             print(f"error: {exc} ({when}):")
-            traceback.print_exc(file=sys.stdout)
+            print_exc()
             return await ctx.send(f"error: `{exc}`")
 
         self.db.add_time(ctx.message.author.name, timerange)
@@ -74,7 +74,7 @@ class Scheduler(commands.Cog):
 
         result = filter_times(find_times(self.db.get_players(), people), duration)
 
-        sorted_result = collections.defaultdict(list)
+        sorted_result = defaultdict(list)
         for players in sorted(result, key=len, reverse=True):
             for times in result[players]:
                 skip = False
@@ -137,13 +137,12 @@ class Scheduler(commands.Cog):
 
         e.g. "$tz Europe/London"
         """
-        self.db.set_tz(ctx.message.author.name, pytz.timezone(timezone).zone)
+        self.db.set_tz(ctx.message.author.name, timezone(timezone).zone)
         await ctx.send(f"set: {timezone}")
-
 
     @tasks.loop(minutes=1)
     async def clean(self):
-        now = datetime.now(pytz.timezone('Europe/London'))
+        now = datetime.now(timezone("Europe/London"))
         for player, timeranges in self.db.get_players().items():
             for i, timerange in enumerate(timeranges):
                 if timerange.end_datetime < now:
@@ -167,6 +166,7 @@ def format_ranges(ranges):
         msg.append(f" • `{i+1:02}` {format_range(timerange)} \n")
 
     return msg
+
 
 def format_range(timerange):
 

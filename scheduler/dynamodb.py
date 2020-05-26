@@ -1,22 +1,22 @@
 from datetime import datetime
 from decimal import Decimal
-import time
 
-import pytz
-
-import boto3
+from boto3 import resource
 from datetimerange import DateTimeRange
+from pytz import timezone
 
 
 class PlayerDB:
     def __init__(self):
-        dynamodb = boto3.resource("dynamodb", region_name="eu-west-1")
+        dynamodb = resource("dynamodb", region_name="eu-west-1")
         self.table = dynamodb.Table("hermes-scheduler")
 
     def get_players(self):
         result = {}
         for record in self.table.scan()["Items"]:
-            result[record["name"]] = get_datetimeranges(record["times"], record.get('player_timezone', 'UTC'))
+            result[record["name"]] = get_datetimeranges(
+                record["times"], record.get("player_timezone", "UTC")
+            )
         return result
 
     def add_time(self, name, timerange):
@@ -31,7 +31,9 @@ class PlayerDB:
 
     def delete_time(self, name, index):
         player = self.table.get_item(Key={"name": name})
-        times = get_datetimeranges(player["Item"]["times"], player["Item"].get('player_timezone', 'UTC'))
+        times = get_datetimeranges(
+            player["Item"]["times"], player["Item"].get("player_timezone", "UTC")
+        )
         del times[index]
         self.table.update_item(
             Key={"name": name},
@@ -47,7 +49,9 @@ class PlayerDB:
         )
 
     def get_tz(self, name):
-        return self.table.get_item(Key={"name": name})['Item'].get('player_timezone', 'UTC')
+        return self.table.get_item(Key={"name": name})["Item"].get(
+            "player_timezone", "UTC"
+        )
 
     def set_tz(self, name, tz):
         self.table.update_item(
@@ -57,13 +61,13 @@ class PlayerDB:
         )
 
 
-def get_datetimeranges(record, timezone):
+def get_datetimeranges(record, tz):
     timeranges = []
     for timerange in record:
         timeranges.append(
             DateTimeRange(
-                datetime.fromtimestamp(timerange[0], pytz.timezone(timezone)),
-                datetime.fromtimestamp(timerange[1], pytz.timezone(timezone)),
+                datetime.fromtimestamp(timerange[0], timezone(tz)),
+                datetime.fromtimestamp(timerange[1], timezone(tz)),
             )
         )
     return sorted(timeranges, key=lambda dt: dt.start_datetime)
