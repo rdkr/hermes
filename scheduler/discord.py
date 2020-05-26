@@ -14,6 +14,8 @@ SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc39
 
 
 class Scheduler(commands.Cog):
+    """A discord.py Cog to collect and interpret times that users are free to help schedule an event"""
+
     def __init__(self, bot):
         self.bot = bot
         self.channel = None
@@ -61,7 +63,7 @@ class Scheduler(commands.Cog):
         return await ctx.send(f"added: {format_range(timerange)}")
 
     @commands.command()
-    async def when(self, ctx, people=4, duration=1.5):
+    async def when(self, ctx, people=5, duration=1.5):
         """find times that work for multiple people
 
         this will timeranges of at least <duration> length in which at

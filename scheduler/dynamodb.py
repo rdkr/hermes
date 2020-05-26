@@ -34,7 +34,7 @@ class PlayerDB:
         times = get_datetimeranges(
             player["Item"]["times"], player["Item"].get("player_timezone", "UTC")
         )
-        del times[index]
+        del times[index]  # noqa
         self.table.update_item(
             Key={"name": name},
             UpdateExpression="SET times = :a",

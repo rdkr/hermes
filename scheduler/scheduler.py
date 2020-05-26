@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 from itertools import combinations
+from typing import Dict, FrozenSet, List, Set
 
 from datetimerange import DateTimeRange
 from pytz import timezone
@@ -8,8 +9,18 @@ from pytz import timezone
 MINUTES = 30
 
 
-def merge_schedules(players, required, start):
+def merge_schedules(
+    players: Dict[str, List[DateTimeRange]], required: int, start: datetime
+) -> Dict[datetime, List[Set[str]]]:
+    """Merge individual schedules to time slots where people are free.
 
+    Takes a mapping of people's availability and returns a mapping of
+    blocks of time (by the start time) to players free in that block.
+
+    E.g. if Jon is free at 12-2pm and Neel is free from 1-2pm and blocks
+    are 30 minutes, then return a dictionary of 4 times, with the first
+    2 time blocks mapping to (Jon) and the second two to (Jon, Neel).
+    """
     if not start:
         start = datetime.now(timezone("Europe/London")).replace(
             minute=0, second=0, microsecond=0
@@ -32,7 +43,9 @@ def merge_schedules(players, required, start):
     return potentials
 
 
-def find_times(players, required, start=None):
+def find_times(
+    players: Dict[str, List[DateTimeRange]], required: int, start=None
+) -> Dict[FrozenSet[str], List[DateTimeRange]]:
 
     schedules = merge_schedules(players, required, start)
     potentials = defaultdict(list)

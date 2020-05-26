@@ -33,9 +33,9 @@ auto-format:
 	black *.py
 
 test:
-	coverage run --include 'scheduler/*.py' -m pytest tests
+	coverage run --source scheduler -m pytest -s tests
 	coverage html
 
-cov:
+cov: test
 	open htmlcov/index.html
 
