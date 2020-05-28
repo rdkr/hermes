@@ -20,9 +20,8 @@ uninstall:
 	kubectl delete -f k8s.yaml
 
 redeploy:
-	kubectl delete deployments -n hermes-scheduler hermes-scheduler
+	kubectl delete deployments -n hermes hermes-scheduler
 	kubectl apply -f k8s.yaml
-
 
 .PHONY: lint auto-format test cov
 

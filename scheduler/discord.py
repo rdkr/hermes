@@ -25,7 +25,7 @@ class Scheduler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_error(self, event):
-        print("YO", event)
+        print(event)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, exception):
@@ -83,12 +83,12 @@ class Scheduler(commands.Cog):
             return await ctx.send(SIXTY_SIX)
 
         # todo fix this mess
-        g = defaultdict(list)
-        for k, v in self.db.get_players().items():
-            for i in v:
-                g[k].append(i.datetimerange())
+        result = defaultdict(list)
+        for player, timeranges in self.db.get_players().items():
+            for timerange in timeranges:
+                result[player].append(timerange.datetimerange())
 
-        result = find_times(g, people)
+        result = find_times(result, people)
         result = filter_times(result, duration)
         result = deduplicate_times(result)
 

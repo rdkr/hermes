@@ -46,9 +46,10 @@ class Timerange(Base):
 
 class PlayerDB:
     def __init__(self):
-        self.session = sessionmaker(bind=create_engine(
+        self.engine = create_engine(
             f"postgresql://root:{environ['DB_PW']}@{environ['DB_HOST']}:5432/hermes"
-        ))()
+        )
+        self.session = sessionmaker(bind=self.engine)()
 
     def get_players(self):
         players = defaultdict(list)
