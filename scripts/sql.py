@@ -1,3 +1,4 @@
+import os
 import sys
 
 from sqlalchemy import create_engine
@@ -5,8 +6,8 @@ from sqlalchemy import create_engine
 sys.path.append(".")
 from scheduler import sql, dynamodb
 
-engine = create_engine("sqlite:///sqlalchemy_example.db")
-sql.Base.metadata.create_all(engine)
+
+sql.Base.metadata.create_all(create_engine(os.environ["DB"]))
 
 db = sql.PlayerDB()
 dynamo = dynamodb.PlayerDB()

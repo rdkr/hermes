@@ -92,3 +92,20 @@ def filter_times(potentials, duration):
                 filtered[players].append(time_range)
 
     return filtered
+
+
+def deduplicate_times(potentials):
+
+    sorted_result = defaultdict(list)
+
+    for players in sorted(potentials, key=len, reverse=True):
+        for times in potentials[players]:
+            skip = False
+            for already_people, already_times in sorted_result.items():
+                for already_time in already_times:
+                    if times in already_time and players.issubset(already_people):
+                        skip = True
+            if not skip:
+                sorted_result[players].append(times)
+
+    return sorted_result
