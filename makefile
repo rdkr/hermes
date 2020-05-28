@@ -6,7 +6,7 @@ run: build
 		-e DISCORD_TOKEN="${DISCORD_TOKEN}" \
 		-e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-		-v ${CURDIR}/shelf:/usr/src/app/shelf \
+		-v ${CURDIR}/sqlalchemy_example.db:/usr/src/app/sqlalchemy_example.db \
 		rdkr/hermes-scheduler python main.py
 
 push: build

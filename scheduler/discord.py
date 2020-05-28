@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 from pytz import timezone
 from timefhuman import timefhuman
 
-from scheduler.dynamodb import PlayerDB
+from scheduler.sql import PlayerDB
 from scheduler.scheduler import filter_times, find_times
 
 SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc394r1-480-208_hq.gif"
@@ -48,16 +48,12 @@ class Scheduler(commands.Cog):
                 raise Exception(f"range outside of next 7 days ({timerange})")
         except KeyError:
             return await ctx.send(
-                f"`error: set a tz first using `$tz`. see `$help tz` for more information"
+                f"error: set a tz first using `$tz`. see `$help tz` for more information"
             )
         except AssertionError:
             return await ctx.send(
-                f"`error: could not parse (try US style dates and : in 24h times)`"
+                f"error: could not parse (try US style dates and : in 24h times)"
             )
-        except Exception as exc:
-            print(f"error: {exc} ({when}):")
-            print_exc()
-            return await ctx.send(f"error: `{exc}`")
 
         self.db.add_time(ctx.message.author.name, timerange)
         return await ctx.send(f"added: {format_range(timerange)}")
@@ -130,17 +126,17 @@ class Scheduler(commands.Cog):
             self.db.delete_times(who)
             await ctx.send(f"removed: all")
         else:
-            self.db.delete_time(who, int(which) - 1)
+            self.db.delete_time(who, int(which))
             await ctx.send(f"removed: {which}")
 
     @commands.command()
-    async def tz(self, ctx, timezone):
+    async def tz(self, ctx, tz):
         """set your timezone
 
         e.g. "$tz Europe/London"
         """
-        self.db.set_tz(ctx.message.author.name, timezone(timezone).zone)
-        await ctx.send(f"set: {timezone}")
+        self.db.set_tz(ctx.message.author.name, timezone(tz).zone)
+        await ctx.send(f"set: {tz}")
 
     @tasks.loop(minutes=1)
     async def clean(self):
@@ -154,7 +150,8 @@ class Scheduler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, exception):
-        await ctx.send(f"error: `{exception}`")
+        print_exc()
+        await ctx.send(f"error!")
 
 
 def format_ranges(ranges):
@@ -164,8 +161,10 @@ def format_ranges(ranges):
         msg.append("• none\n")
         return msg
 
-    for i, timerange in enumerate(ranges):
-        msg.append(f" • `{i+1:02}` {format_range(timerange)} \n")
+    for timerange in ranges:
+        msg.append(
+            f" • `{timerange.id:03}` {format_range(timerange.datetimerange())} \n"
+        )
 
     return msg
 
