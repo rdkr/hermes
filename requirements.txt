@@ -2,8 +2,11 @@ datetime
 datetimerange
 timefhuman
 pytz
+sqlalchemy
+psycopg2-binary
 black
 pylint
 pydocstyle
+wemake-python-styleguide
 pytest
 coverage

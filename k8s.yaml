@@ -38,3 +38,13 @@ spec:
               secretKeyRef:
                 name: hermes
                 key: AWS_SECRET_ACCESS_KEY
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: hermes
+                key: DB_HOST
+          - name: DB_PW
+            valueFrom:
+              secretKeyRef:
+                name: hermes
+                key: DB_PW
