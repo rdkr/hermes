@@ -5,7 +5,7 @@ from os import environ
 from datetimerange import DateTimeRange
 from pytz import timezone
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -22,7 +22,6 @@ class Player(Base):
     def __repr__(self):
         return f"Player({self.id}, {self.tz})"
 
-
 class Timerange(Base):
     __tablename__ = "timerange"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -31,6 +30,7 @@ class Timerange(Base):
     start = Column(Integer, nullable=False)
     end = Column(Integer, nullable=False)
     tz = Column(String(250), nullable=False)
+    event_id = Column(BigInteger, nullable=False)
 
     player = relationship(Player)
 
@@ -51,21 +51,22 @@ class PlayerDB:
         )
         self.session = sessionmaker(bind=self.engine)()
 
-    def get_players(self):
+    def get_players(self, event_id):
         players = defaultdict(list)
         for player_id, timerange in (
-            self.session.query(Player.id, Timerange).join(Timerange).all()
+            self.session.query(Player.id, Timerange).join(Timerange).filter(Timerange.event_id == event_id).all()
         ):
             players[player_id].append(timerange)
         return players
 
-    def add_time(self, player_id, timerange):
+    def add_time(self, player_id, timerange, event_id):
         self.session.add(
             Timerange(
                 player_id=player_id,
                 start=timerange.start_datetime.timestamp(),
                 end=timerange.end_datetime.timestamp(),
                 tz=self.get_tz(player_id),
+                event_id=event_id
             )
         )
         self.session.commit()

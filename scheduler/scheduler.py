@@ -6,7 +6,7 @@ from typing import Dict, FrozenSet, List, Set
 from datetimerange import DateTimeRange
 from pytz import timezone
 
-MINUTES = 30
+MINUTES = 15
 
 
 def merge_schedules(

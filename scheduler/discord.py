@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from traceback import print_exception
 
 from datetimerange import DateTimeRange
+from discord import TextChannel
 from discord.ext import commands, tasks
 from pytz import timezone
 from timefhuman import timefhuman
@@ -38,53 +39,106 @@ class Scheduler(commands.Cog):
 
     @commands.command()
     async def free(self, ctx, *, when):
-        """specify a time range when you are free
+        """Add a time range for which you are free.
 
-        e.g. "$free tomorrow 10am-12pm" or "$free friday 5:30-7pm"
+        This command must be performed in the event channel you are
+        marking yourself free for.
+
+        You must have set a default timezone before using this command.
+        See "$help tz" for more information about how to do this.
+
+        Parameters
+        ----------
+        when
+            Text describing a range within the next fortnight in which
+            you are free, generally of the form:
+
+            "<day or date> <time range>"
+
+            <day or date> can be relative, e.g. "tuesday" or "next
+            wednesday", or absolute in the US format (month first)
+
+            <time range> should specify two times separated by "-" and
+            can use 24h clock (requires colons), AM/PM, or words like
+            "morning", "evening". Note that midnight is at the start of
+            the day, so "morning-midnight" is not valid for example.
+
+        Examples
+        --------
+          - $free tomorrow 10am-12pm
+          - $free next wednesday 1-2pm
+          - $free friday 13:00-17:00
+          - $free 12/19 13:00-17:00
         """
         try:
-            result = timefhuman(when)
-            if not result:
-                raise Exception(f"no times found ({when})")
-            if (
-                not isinstance(result, tuple)
-                or len(result) != 2
-                or result[0] >= result[1]
-            ):
-                raise Exception(f"can't make range ({result})")
             tz = timezone(self.db.get_tz(ctx.message.author.name))
-            start, end = tz.localize(result[0]), tz.localize(result[1])
-            timerange = DateTimeRange(start, end)
-            week = DateTimeRange(datetime.now(tz), datetime.now(tz) + timedelta(days=7))
-            if timerange not in week:
-                raise Exception(f"range outside of next 7 days ({timerange})")
+            timerange = await self.method_name(tz, when)
         except KeyError:
             return await ctx.send(
                 f"error: set a tz first using `$tz`. see `$help tz` for more information"
             )
         except AssertionError:
             return await ctx.send(
-                f"error: could not parse (try US style dates and : in 24h times)"
+                f"error: could not parse (see `$help free` for tips)"
             )
 
-        self.db.add_time(ctx.message.author.name, timerange)
+        event_id = await self.get_event_id(ctx, None)
+        self.db.add_time(ctx.message.author.name, timerange, event_id)
         return await ctx.send(f"added: {format_range(timerange)}")
 
+    async def method_name(self, tz, when):
+        result = timefhuman(when)
+        if not result:
+            raise Exception(f"no times found ({when})")
+        if (
+                not isinstance(result, tuple)
+                or len(result) != 2
+                or result[0] >= result[1]
+        ):
+            raise Exception(f"can't make range ({result})")
+
+        start, end = tz.localize(result[0]), tz.localize(result[1])
+        timerange = DateTimeRange(start, end)
+        week = DateTimeRange(datetime.now(tz), datetime.now(tz) + timedelta(days=7))
+        if timerange not in week:
+            raise Exception(f"range outside of next 7 days ({timerange})")
+        return timerange
+
     @commands.command()
-    async def when(self, ctx, people=5, duration=1.5):
-        """find times that work for multiple people
+    async def when(self, ctx, people=5, duration=1.5, event=None):
+        """Find times for an event.
 
-        this will timeranges of at least <duration> length in which at
-        least <people> number of players are free
+        This will return timeranges in which at least <people> number of
+        players are free for at least <duration> length for the given
+        event channel.
 
-        e.g. "$when" "$when 3", or "$when 2 4"
+        Parameters
+        ----------
+        people
+            Optional: the number of people who need to be available
+            Default: 5
+        duration
+            Optional: the minimum duration in hours for the event
+            Default: 1.5
+        event
+            Optional: the name of the event channel to calculate for
+            Default: current channel
+
+        Examples
+        --------
+          - $when
+          - $when 3
+          - $when 3 2
+          - $when 3 2 dnd
         """
+        event_id = await self.get_event_id(ctx, event)
+
         if people == 66:
-            return await ctx.send(SIXTY_SIX)
+            await ctx.send(SIXTY_SIX)
 
         # todo fix this mess
         result = defaultdict(list)
-        for player, timeranges in self.db.get_players().items():
+        for player, timeranges in self.db.get_players(event_id).items():
             for timerange in timeranges:
                 result[player].append(timerange.datetimerange())
 
@@ -101,12 +155,28 @@ class Scheduler(commands.Cog):
         return await ctx.send("".join(msg))
 
     @commands.command()
-    async def list(self, ctx, who=None):
-        """list when you or others are marked as free
+    async def list(self, ctx, who=None, event=None):
+        """List when you or others are marked as free.
 
-        e.g. "$list" "$list Jon", or "$list all"
+        Parameters
+        ----------
+        who
+            Optional: the Discord name of the user to list, or "all"
+            Default: you
+        event
+            Optional: the name of the event channel to list for
+            Default: current channel
+
+        Examples
+        --------
+          - $list
+          - $list Jon
+          - $list all
+          - $list Jon dnd
+          - $list all dnd
         """
-        players = self.db.get_players()
+        event_id = await self.get_event_id(ctx, event)
+        players = self.db.get_players(event_id)
 
         if not who:
             who = [ctx.message.author.name]
@@ -124,25 +194,53 @@ class Scheduler(commands.Cog):
         await ctx.send("".join(msg))
 
     @commands.command()
-    async def delete(self, ctx, which, who=None):
-        """delete when you or others are marked as free
+    async def delete(self, ctx, which):
+        """Delete timeranges for which you are marked as free.
 
-        e.g. "$delete 1", "$delete all", "$delete 1 Jon"
+        Use "$list" first to find the id numbers for timeranges.
+
+        Parameters
+        ----------
+        which
+            The timerange id to delete, or "all"
+
+        Examples
+        --------
+          - $delete 66
+          - $delete all
         """
-        if not who:
-            who = ctx.message.author.name
         if which == "all":
-            self.db.delete_times(who)
+            self.db.delete_times(ctx.message.author.name)
             await ctx.send(f"$deleting: all")
         else:
-            self.db.delete_time(who, int(which))
+            self.db.delete_time(ctx.message.author.name, int(which))
             await ctx.send(f"$deleting: {int(which)}")
 
     @commands.command()
     async def tz(self, ctx, tz):
-        """set your timezone
+        """Set your default timezone.
 
-        e.g. "$tz Europe/London"
+        This must be set in order to add times you are free.
+
+        Parameters
+        ----------
+        tz
+            Your timezone in tz format.
+
+        Examples
+        --------
+            - $tz Europe/London
         """
         self.db.set_tz(ctx.message.author.name, timezone(tz).zone)
         await ctx.send(f"set: {tz}")
+
+
+    async def get_event_id(self, ctx, event):
+        if not event:
+            return ctx.message.channel.id
+        else:
+            for channel in self.bot.get_all_channels():
+                if isinstance(channel, TextChannel) and channel.name == event and ctx.message.author in channel.members:
+                    await ctx.send(f"assuming channel: {channel.guild.name}/{channel.name} ({channel.id})")
+                    return channel.id
+        raise KeyError
