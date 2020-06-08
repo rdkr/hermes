@@ -54,7 +54,11 @@ class PlayerDB:
     def get_players(self, event_id):
         players = defaultdict(list)
         for player_id, timerange in (
-            self.session.query(Player.id, Timerange).join(Timerange).filter(Timerange.event_id == event_id).all()
+            self.session.query(Player.id, Timerange)
+                .join(Timerange)
+                .filter(Timerange.event_id == event_id)
+                .order_by(Timerange.start.asc())
+                .all()
         ):
             players[player_id].append(timerange)
         return players
