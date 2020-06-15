@@ -38,13 +38,12 @@ spec:
               secretKeyRef:
                 name: hermes
                 key: AWS_SECRET_ACCESS_KEY
+          - name: DB_USER
+            value: postgres
           - name: DB_HOST
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: DB_HOST
+            value: postgres-postgresql.hermes.svc.cluster.local
           - name: DB_PW
             valueFrom:
               secretKeyRef:
-                name: hermes
-                key: DB_PW
+                name: postgres-postgresql
+                key: postgresql-password

@@ -47,7 +47,7 @@ class Timerange(Base):
 class PlayerDB:
     def __init__(self):
         self.engine = create_engine(
-            f"postgresql://root:{environ['DB_PW']}@{environ['DB_HOST']}:5432/hermes"
+            f"postgresql://{environ['DB_USER']}:{environ['DB_PW']}@{environ['DB_HOST']}:5432/postgres"
         )
         self.session = sessionmaker(bind=self.engine)()
 

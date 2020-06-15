@@ -14,6 +14,10 @@ push: build
 	docker push rdkr/hermes-scheduler
 
 install:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm upgrade --namespace hermes --install --atomic \
+ 		-f postgres.yaml \
+		postgres bitnami/postgresql
 	kubectl apply -f k8s.yaml
 
 uninstall:
