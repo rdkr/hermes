@@ -10,3 +10,4 @@ pydocstyle
 wemake-python-styleguide
 pytest
 coverage
+alembic

@@ -1,21 +1,21 @@
-../gateway/proto/echo.pb.go: echo.proto
+all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/*
+
+../gateway/proto/hermes.pb.go: hermes.proto
 	docker build -t grpc-go -f go.dockerfile .
 	docker run \
 		-v '${PWD}:/build' \
 		-v '${PWD}/../gateway/proto:/out' \
 		grpc-go \
 			protoc \
-				--proto_path /build echo.proto \
+				--proto_path /build hermes.proto \
 				--go_opt=paths=source_relative \
 				--go_out=plugins=grpc:/out
-
-proto: echo.proto
-	protoc echo.proto \
+../frontend/src/proto/*:
+	protoc hermes.proto \
 		--js_out=import_style=commonjs:../frontend/src/proto \
 		--grpc-web_out=import_style=commonjs,mode=grpcwebtext:../frontend/src/proto
+	ls ../frontend/src/proto -1 \
+		| xargs -I % sed -i '1i/* eslint-disable */'  ../frontend/src/proto/%
 
-
-
-inst:
-	go get github.com/golang/protobuf/protoc-gen-go
+install:
 	npm i grpc-web

@@ -1,0 +1,32 @@
+syntax = "proto3";
+option go_package = ".;proto";
+
+message Login {
+  string token = 1;
+}
+
+message Player {
+  string name = 1;
+  string tz = 2;
+}
+
+message Timerange {
+  string name = 1;
+  int32 id = 2;
+  int32 start = 3;
+  int32 end = 4;
+  string tz = 5;
+  int64 eventID = 6;
+}
+
+message Timeranges {
+  repeated Timerange timeranges = 1;
+}
+
+message Empty {}
+
+service Gateway {
+  rpc GetPlayer(Login) returns (Player);
+  rpc GetIntervals(Login) returns (Timeranges);
+  rpc SetIntervals(Timeranges) returns (Empty);
+}

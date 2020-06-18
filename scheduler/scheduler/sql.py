@@ -7,7 +7,7 @@ from string import ascii_letters, digits
 from datetimerange import DateTimeRange
 from pytz import timezone
 
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -26,14 +26,27 @@ class Player(Base):
     def __repr__(self):
         return f"Player({self.id}, {self.tz})"
 
+
+class Event(Base):
+    __tablename__ = "events"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    name = Column(String)
+    players = Column(Integer, nullable=False)
+    time = Column(Float, nullable=False)
+
+    def __repr__(self):
+        return f"Player({self.id}, {self.tz})"
+
+
 class Timerange(Base):
     __tablename__ = "timerange"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    player_id = Column(String(250), ForeignKey("player.id"), nullable=False)
+    player_id = Column(String, ForeignKey("player.id"), nullable=False)
     start = Column(Integer, nullable=False)
     end = Column(Integer, nullable=False)
-    tz = Column(String(250), nullable=False)
+    tz = Column(String, nullable=False)
     event_id = Column(BigInteger, nullable=False)
 
     player = relationship(Player)

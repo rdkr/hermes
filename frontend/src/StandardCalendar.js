@@ -2,6 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import WeekCalendar from 'react-week-calendar';
 
+const { Login } = require("./proto/hermes_pb.js");
+const { GatewayPromiseClient } = require("./proto/hermes_grpc_web_pb.js");
+
 export default class StandardCalendar extends React.Component {
 
   constructor(props) {
@@ -11,6 +14,42 @@ export default class StandardCalendar extends React.Component {
       selectedIntervals: []
     }
   }
+
+  async componentDidMount() {
+    let search = window.location.search;
+    let params = new URLSearchParams(search);
+    let token = params.get("token");
+
+    await this.setState({
+      gateway: new GatewayPromiseClient("http://localhost:8080")
+    })
+
+    var login = new Login();
+    login.setToken(token);
+
+    this.state.gateway
+      .getPlayer(login, {})
+      .then((response) => {
+        let name = response.getName();
+        let tz = response.getTz();
+        this.setState({
+          msg: `welcome, ${name}! (${tz})`,
+        });
+      })
+      .catch((err) => {
+        console.log(`error: ${err.code}, "${err.message}"`);
+        this.setState({
+          msg: `invalid token :(`,
+        });
+      });
+  }
+
+  // id = Column(Integer, primary_key=True, autoincrement=True)
+  // player_id = Column(String(250), ForeignKey("player.id"), nullable=False)
+  // start = Column(Integer, nullable=False)
+  // end = Column(Integer, nullable=False)
+  // tz = Column(String(250), nullable=False)
+  // event_id = Column(BigInteger, nullable=False)
 
   handleEventRemove = (event) => {
     const {selectedIntervals} = this.state;
@@ -42,23 +81,6 @@ export default class StandardCalendar extends React.Component {
     });
 
     console.log(intervals)
-
-    const {EchoRequest, EchoRequestList, EchoResponse} = require('./proto/echo_pb.js');
-    const {EchoServiceClient} = require('./proto/echo_grpc_web_pb.js');
-
-    var echoService = new EchoServiceClient('http://localhost:8080');
-
-    var request = new EchoRequest();
-    var requestList = new EchoRequestList();
-
-
-    request.setMessage('Hello World!');
-    requestList.setIntervalsList([request, request])
-    console.log(requestList)
-
-    echoService.echo(requestList, {}, function(err, response) {
-      console.log("sending")
-    });
 
     this.setState({
       selectedIntervals: selectedIntervals.concat(intervals),
