@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes-gateway
+  namespace: hermes
+spec:
+  selector:
+    matchLabels:
+      app: hermes-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hermes-gateway
+    spec:
+      containers:
+      - name: server
+        image: rdkr/hermes-gateway-server:latest
+        imagePullPolicy: Always
+        env:
+          - name: DB_HOST
+            value: postgres-postgresql.hermes.svc.cluster.local
+          - name: DB_PW
+            valueFrom:
+              secretKeyRef:
+                name: postgres-postgresql
+                key: postgresql-password
+      - name: proxy
+        image: rdkr/hermes-gateway-proxy:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes-gateway
+  namespace: hermes
+spec:
+  selector:
+    app: hermes-gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hermes
+  namespace: hermes
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    external-dns.alpha.kubernetes.io/hostname: hermes-gateway.rdkr.uk
+spec:
+  rules:
+  - host: hermes-gateway.rdkr.uk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hermes-gateway
+          servicePort: 8080

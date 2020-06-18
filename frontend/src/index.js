@@ -20,7 +20,7 @@ class App extends React.Component {
     let token = params.get("token");
     console.log("hi")
     await this.setState({
-      gateway: new GatewayPromiseClient("http://localhost:8080")
+      gateway: new GatewayPromiseClient("https://hermes-gateway.rdkr.uk")
     })
 
     var login = new Login();

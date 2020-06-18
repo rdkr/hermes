@@ -45,16 +45,21 @@ func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error
 	return &pb.Player{Name: id, Tz: tz}, nil
 }
 
-func (s *server) SetIntervals(ctx context.Context, in *pb.EchoRequestList) (*pb.EchoResponse, error) {
+func (s *server) GetIntervals(ctx context.Context, in *pb.Login) (*pb.Timeranges, error) {
 	log.Printf("Received: %v", in)
-	return &pb.EchoResponse{}, nil
+	return &pb.Timeranges{}, nil
+}
+
+func (s *server) SetIntervals(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
+	log.Printf("Received: %v", in)
+	return &pb.Empty{}, nil
 }
 
 func main() {
 
 	dbString := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		"localhost", 5432, "postgres", os.Getenv("DB_PW"), "postgres")
+		os.Getenv("DB_HOST"), 5432, "postgres", os.Getenv("DB_PW"), "postgres")
 
 	db, err := sql.Open("postgres", dbString)
 	if err != nil {

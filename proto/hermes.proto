@@ -3,6 +3,7 @@ option go_package = ".;proto";
 
 message Login {
   string token = 1;
+  string eventName = 2;
 }
 
 message Player {
