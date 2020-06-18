@@ -234,6 +234,14 @@ class Scheduler(commands.Cog):
         self.db.set_tz(ctx.message.author.name, timezone(tz).zone)
         await ctx.send(f"set: {tz}")
 
+    @commands.command()
+    async def link(self, ctx):
+        """Get a link to the web interface via DM.
+        """
+        warning = "⚠️ this link contains a secret token which links to your account, **don't share it**!"
+        link = f"https://neel.rdkr.uk/hermes?token={self.db.get_token(ctx.message.author.name)}"
+        await ctx.message.author.send(f"{warning}\n\n{link}")
+
 
     async def get_event_id(self, ctx, event):
         if not event:

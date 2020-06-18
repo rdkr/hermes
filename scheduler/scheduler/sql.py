@@ -1,6 +1,8 @@
 from collections import defaultdict
 from datetime import datetime
 from os import environ
+from random import choice
+from string import ascii_letters, digits
 
 from datetimerange import DateTimeRange
 from pytz import timezone
@@ -16,16 +18,18 @@ Base = declarative_base()
 
 class Player(Base):
     __tablename__ = "player"
-    id = Column(String(250), primary_key=True)
-    tz = Column(String(250), nullable=False)
+
+    id = Column(String(), primary_key=True)
+    tz = Column(String(), nullable=False)
+    token = Column(String(), unique=True)
 
     def __repr__(self):
         return f"Player({self.id}, {self.tz})"
 
 class Timerange(Base):
     __tablename__ = "timerange"
-    id = Column(Integer, primary_key=True, autoincrement=True)
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     player_id = Column(String(250), ForeignKey("player.id"), nullable=False)
     start = Column(Integer, nullable=False)
     end = Column(Integer, nullable=False)
@@ -97,3 +101,10 @@ class PlayerDB:
     def set_tz(self, player_id, tz):
         self.session.merge(Player(id=player_id, tz=tz))
         self.session.commit()
+
+    def get_token(self, player_id):
+        chars = ascii_letters + digits
+        token = ''.join(choice(chars) for _ in range(64))
+        self.session.merge(Player(id=player_id, token=token))
+        self.session.commit()
+        return token
