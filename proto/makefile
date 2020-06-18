@@ -1,4 +1,4 @@
-../gateway/proto/echo.pb.go:
+../gateway/proto/echo.pb.go: echo.proto
 	docker build -t grpc-go -f go.dockerfile .
 	docker run \
 		-v '${PWD}:/build' \
@@ -9,7 +9,7 @@
 				--go_opt=paths=source_relative \
 				--go_out=plugins=grpc:/out
 
-proto:
+proto: echo.proto
 	protoc echo.proto \
 		--js_out=import_style=commonjs:../frontend/src/proto \
 		--grpc-web_out=import_style=commonjs,mode=grpcwebtext:../frontend/src/proto

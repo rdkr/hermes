@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for 
+ * @fileoverview gRPC-Web generated client stub for
  * @enhanceable
  * @public
  */
@@ -72,16 +72,16 @@ proto.EchoServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.EchoRequest,
+ *   !proto.EchoRequestList,
  *   !proto.EchoResponse>}
  */
 const methodDescriptor_EchoService_Echo = new grpc.web.MethodDescriptor(
   '/EchoService/Echo',
   grpc.web.MethodType.UNARY,
-  proto.EchoRequest,
+  proto.EchoRequestList,
   proto.EchoResponse,
   /**
-   * @param {!proto.EchoRequest} request
+   * @param {!proto.EchoRequestList} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -94,13 +94,13 @@ const methodDescriptor_EchoService_Echo = new grpc.web.MethodDescriptor(
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.EchoRequest,
+ *   !proto.EchoRequestList,
  *   !proto.EchoResponse>}
  */
 const methodInfo_EchoService_Echo = new grpc.web.AbstractClientBase.MethodInfo(
   proto.EchoResponse,
   /**
-   * @param {!proto.EchoRequest} request
+   * @param {!proto.EchoRequestList} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -111,7 +111,7 @@ const methodInfo_EchoService_Echo = new grpc.web.AbstractClientBase.MethodInfo(
 
 
 /**
- * @param {!proto.EchoRequest} request The
+ * @param {!proto.EchoRequestList} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -132,7 +132,7 @@ proto.EchoServiceClient.prototype.echo =
 
 
 /**
- * @param {!proto.EchoRequest} request The
+ * @param {!proto.EchoRequestList} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -150,4 +150,3 @@ proto.EchoServicePromiseClient.prototype.echo =
 
 
 module.exports = proto;
-

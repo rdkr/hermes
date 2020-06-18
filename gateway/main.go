@@ -19,7 +19,7 @@ type server struct {
 	pb.UnimplementedEchoServiceServer
 }
 
-func (s *server) Echo(ctx context.Context, in *pb.EchoRequest) (*pb.EchoResponse, error) {
+func (s *server) Echo(ctx context.Context, in *pb.EchoRequestList) (*pb.EchoResponse, error) {
 	log.Printf("Received: %v", in)
 	return &pb.EchoResponse{}, nil
 }
