@@ -239,7 +239,7 @@ class Scheduler(commands.Cog):
         """Get a link to the web interface via DM.
         """
         warning = "⚠️ this link contains a secret token which links to your account, **don't share it**!"
-        link = f"https://neel.rdkr.uk/hermes?token={self.db.get_token(ctx.message.author.name)}"
+        link = f"https://neel.rdkr.uk/hermes/index.html?token={self.db.get_token(ctx.message.author.name)}"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
 
