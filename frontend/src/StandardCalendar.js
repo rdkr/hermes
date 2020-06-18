@@ -41,6 +41,18 @@ export default class StandardCalendar extends React.Component {
       }
     });
 
+    const {EchoRequest, EchoResponse} = require('./proto/echo_pb.js');
+    const {EchoServiceClient} = require('./proto/echo_grpc_web_pb.js');
+
+    var echoService = new EchoServiceClient('http://localhost:8080');
+
+    var request = new EchoRequest();
+    request.setMessage('Hello World!');
+
+    echoService.echo(request, {}, function(err, response) {
+      console.log("o nooo")
+    });
+
     this.setState({
       selectedIntervals: selectedIntervals.concat(intervals),
       lastUid: lastUid + newIntervals.length

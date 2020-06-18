@@ -7,7 +7,7 @@
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
-
+/* eslint-disable */
 goog.provide('proto.EchoResponse');
 
 goog.require('jspb.BinaryReader');
@@ -163,5 +163,3 @@ proto.EchoResponse.prototype.getMessage = function() {
 proto.EchoResponse.prototype.setMessage = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
-
-
