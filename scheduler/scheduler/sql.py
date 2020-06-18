@@ -47,9 +47,10 @@ class Timerange(Base):
     start = Column(Integer, nullable=False)
     end = Column(Integer, nullable=False)
     tz = Column(String, nullable=False)
-    event_id = Column(BigInteger, nullable=False)
+    event_id = Column(BigInteger, ForeignKey("events.id"), nullable=False)
 
     player = relationship(Player)
+    event = relationship(Event)
 
     def __repr__(self):
         return f"Timerange({self.id}, {self.player_id}, {self.start}, {self.end}, {self.tz})"
