@@ -42,12 +42,28 @@ func (s *server) resolveToken(token string) (string, string, error) {
 	return id, tz, nil
 }
 
+func (s *server) resolveEvent(event string) error {
+	var id int
+	err := s.db.QueryRow("select id from events where name = $1", event).Scan(&id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New("invalid event")
+		}
+		log.Fatal(err)
+	}
+	return nil
+}
+
 func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error) {
 	id, tz, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("GetPlayer: %s", id)
+	err = s.resolveEvent(in.EventName)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("GetPlayer: %s, %s", id, in.EventName)
 	return &pb.Player{Name: id, Tz: tz}, nil
 }
 

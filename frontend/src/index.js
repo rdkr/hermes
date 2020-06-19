@@ -8,10 +8,51 @@ import StandardCalendar from "./StandardCalendar";
 const { Login } = require("./proto/hermes_pb.js");
 const { GatewayPromiseClient } = require("./proto/hermes_grpc_web_pb.js");
 
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+
+    let search = window.location.search;
+    let params = new URLSearchParams(search);
+
+    this.state = { value: params.get("event") };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+  handleSubmit(event) {
+    let currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.set("event", this.state.value);
+    window.location.href = window.location.pathname + "?" + unescape(currentUrlParams.toString())
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          event:
+          &nbsp;
+          <input
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange}
+          />
+        </label>
+        &nbsp;
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { msg: "", msg2: "", hidden: true };
+    this.state = { msg: "loading...", msg2: "", hidden: true };
   }
 
   async componentDidMount() {
@@ -21,12 +62,12 @@ class App extends React.Component {
     let event = params.get("event");
 
     await this.setState({
-      gateway: new GatewayPromiseClient("https://hermes-gateway.rdkr.uk")
-      // gateway: new GatewayPromiseClient("http://localhost:8080")
+      gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND)
     })
 
     var login = new Login();
     login.setToken(token);
+    login.setEventname(event)
 
     this.state.gateway
       .getPlayer(login, {})
@@ -35,16 +76,16 @@ class App extends React.Component {
         let tz = response.getTz();
         this.setState({
           msg: `welcome, ${name}!`,
-          msg2: `tz: ${tz}, event: ${event}`,
-          hidden: false
+          msg2: `tz: ${tz}`,
+          hidden: false,
         });
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
         if (err.code === 2) {
-          this.setState({msg: `invalid token :(`});
+          this.setState({ msg: `${err.message} :(` });
         } else {
-          this.setState({msg: `server error :(`,});
+          this.setState({ msg: `server error :(` });
         }
       });
   }
@@ -53,13 +94,16 @@ class App extends React.Component {
     return (
       <div>
         <h1>{this.state.msg}</h1>
-        <h2>{this.state.msg2}</h2>
-        <div style={this.state.hidden ? { visibility : "hidden" } : {}}><StandardCalendar/></div>
+        <div className={"row"}>
+          <div className={"column"}><NameForm /></div><div className={"column"}>{this.state.msg2}</div>
+        </div>
+        <div style={this.state.hidden ? { visibility: "hidden" } : {}}>
+          <StandardCalendar />
+        </div>
       </div>
     );
   }
 }
-
 
 ReactDOM.render(
   <React.StrictMode>
