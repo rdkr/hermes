@@ -12,12 +12,10 @@ message Player {
 }
 
 message Timerange {
-  string name = 1;
-  int32 id = 2;
-  int32 start = 3;
-  int32 end = 4;
-  string tz = 5;
-  int64 eventID = 6;
+  int32 id = 1;
+  int32 start = 2;
+  int32 end = 3;
+  string tz = 4;
 }
 
 message Timeranges {
@@ -28,6 +26,6 @@ message Empty {}
 
 service Gateway {
   rpc GetPlayer(Login) returns (Player);
-  rpc GetIntervals(Login) returns (Timeranges);
-  rpc SetIntervals(Timeranges) returns (Empty);
+  rpc GetTimeranges(Login) returns (Timeranges);
+  rpc SetTimerange(Timerange) returns (Empty);
 }

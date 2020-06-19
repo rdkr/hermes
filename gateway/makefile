@@ -1,13 +1,12 @@
 proxy:
 	docker run -it -p 8080:8080 -v "$$(pwd)/envoy.yaml:/etc/envoy/envoy.yaml" \
-		grpcweb/envoy -c /etc/envoy/envoy.yaml -l trace
+		envoyproxy/envoy:v1.14-latest -c /etc/envoy/envoy.yaml -l debug
+
+serve:
+	DB_HOST=localhost go run main.go
 
 build:
-	docker build -t rdkr/hermes-gateway-proxy -f gateway-proxy.dockerfile .
-	docker build -t rdkr/hermes-gateway-server -f gateway-server.dockerfile .
-
-run-proxy: build
-	docker run -it --rm rdkr/hermes-gateway-proxy
+	docker build -t rdkr/hermes-gateway-server .
 
 run: build
 	docker run -it --rm \
@@ -17,7 +16,6 @@ run: build
 
 push: build
 	docker push rdkr/hermes-gateway-server
-	docker push rdkr/hermes-gateway-proxy
 
 install:
 	kubectl apply -f k8s.yaml
@@ -25,6 +23,6 @@ install:
 uninstall:
 	kubectl delete -f k8s.yaml
 
-redeploy:
-	kubectl delete deployments -n hermes hermes-gateway
+redeploy: push
+	-kubectl delete deployments -n hermes hermes-gateway
 	kubectl apply -f k8s.yaml

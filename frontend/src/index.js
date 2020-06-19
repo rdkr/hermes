@@ -11,16 +11,18 @@ const { GatewayPromiseClient } = require("./proto/hermes_grpc_web_pb.js");
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { msg: "" };
+    this.state = { msg: "", msg2: "", hidden: true };
   }
 
   async componentDidMount() {
     let search = window.location.search;
     let params = new URLSearchParams(search);
     let token = params.get("token");
-    console.log("hi")
+    let event = params.get("event");
+
     await this.setState({
       gateway: new GatewayPromiseClient("https://hermes-gateway.rdkr.uk")
+      // gateway: new GatewayPromiseClient("http://localhost:8080")
     })
 
     var login = new Login();
@@ -32,14 +34,18 @@ class App extends React.Component {
         let name = response.getName();
         let tz = response.getTz();
         this.setState({
-          msg: `welcome, ${name}! (${tz})`,
+          msg: `welcome, ${name}!`,
+          msg2: `tz: ${tz}, event: ${event}`,
+          hidden: false
         });
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
-        this.setState({
-          msg: `invalid token :(`,
-        });
+        if (err.code === 2) {
+          this.setState({msg: `invalid token :(`});
+        } else {
+          this.setState({msg: `server error :(`,});
+        }
       });
   }
 
@@ -47,7 +53,8 @@ class App extends React.Component {
     return (
       <div>
         <h1>{this.state.msg}</h1>
-        <StandardCalendar/>
+        <h2>{this.state.msg2}</h2>
+        <div style={this.state.hidden ? { visibility : "hidden" } : {}}><StandardCalendar/></div>
       </div>
     );
   }

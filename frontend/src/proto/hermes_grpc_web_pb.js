@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @fileoverview gRPC-Web generated client stub for 
+ * @fileoverview gRPC-Web generated client stub for
  * @enhanceable
  * @public
  */
@@ -156,8 +156,8 @@ proto.GatewayPromiseClient.prototype.getPlayer =
  *   !proto.Login,
  *   !proto.Timeranges>}
  */
-const methodDescriptor_Gateway_GetIntervals = new grpc.web.MethodDescriptor(
-  '/Gateway/GetIntervals',
+const methodDescriptor_Gateway_GetTimeranges = new grpc.web.MethodDescriptor(
+  '/Gateway/GetTimeranges',
   grpc.web.MethodType.UNARY,
   proto.Login,
   proto.Timeranges,
@@ -178,7 +178,7 @@ const methodDescriptor_Gateway_GetIntervals = new grpc.web.MethodDescriptor(
  *   !proto.Login,
  *   !proto.Timeranges>}
  */
-const methodInfo_Gateway_GetIntervals = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_Gateway_GetTimeranges = new grpc.web.AbstractClientBase.MethodInfo(
   proto.Timeranges,
   /**
    * @param {!proto.Login} request
@@ -201,13 +201,13 @@ const methodInfo_Gateway_GetIntervals = new grpc.web.AbstractClientBase.MethodIn
  * @return {!grpc.web.ClientReadableStream<!proto.Timeranges>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.GatewayClient.prototype.getIntervals =
+proto.GatewayClient.prototype.getTimeranges =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/Gateway/GetIntervals',
+      '/Gateway/GetTimeranges',
       request,
       metadata || {},
-      methodDescriptor_Gateway_GetIntervals,
+      methodDescriptor_Gateway_GetTimeranges,
       callback);
 };
 
@@ -220,29 +220,29 @@ proto.GatewayClient.prototype.getIntervals =
  * @return {!Promise<!proto.Timeranges>}
  *     A native promise that resolves to the response
  */
-proto.GatewayPromiseClient.prototype.getIntervals =
+proto.GatewayPromiseClient.prototype.getTimeranges =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/Gateway/GetIntervals',
+      '/Gateway/GetTimeranges',
       request,
       metadata || {},
-      methodDescriptor_Gateway_GetIntervals);
+      methodDescriptor_Gateway_GetTimeranges);
 };
 
 
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.Timeranges,
+ *   !proto.Timerange,
  *   !proto.Empty>}
  */
-const methodDescriptor_Gateway_SetIntervals = new grpc.web.MethodDescriptor(
-  '/Gateway/SetIntervals',
+const methodDescriptor_Gateway_SetTimerange = new grpc.web.MethodDescriptor(
+  '/Gateway/SetTimerange',
   grpc.web.MethodType.UNARY,
-  proto.Timeranges,
+  proto.Timerange,
   proto.Empty,
   /**
-   * @param {!proto.Timeranges} request
+   * @param {!proto.Timerange} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -255,13 +255,13 @@ const methodDescriptor_Gateway_SetIntervals = new grpc.web.MethodDescriptor(
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.Timeranges,
+ *   !proto.Timerange,
  *   !proto.Empty>}
  */
-const methodInfo_Gateway_SetIntervals = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_Gateway_SetTimerange = new grpc.web.AbstractClientBase.MethodInfo(
   proto.Empty,
   /**
-   * @param {!proto.Timeranges} request
+   * @param {!proto.Timerange} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -272,7 +272,7 @@ const methodInfo_Gateway_SetIntervals = new grpc.web.AbstractClientBase.MethodIn
 
 
 /**
- * @param {!proto.Timeranges} request The
+ * @param {!proto.Timerange} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -281,34 +281,33 @@ const methodInfo_Gateway_SetIntervals = new grpc.web.AbstractClientBase.MethodIn
  * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.GatewayClient.prototype.setIntervals =
+proto.GatewayClient.prototype.setTimerange =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/Gateway/SetIntervals',
+      '/Gateway/SetTimerange',
       request,
       metadata || {},
-      methodDescriptor_Gateway_SetIntervals,
+      methodDescriptor_Gateway_SetTimerange,
       callback);
 };
 
 
 /**
- * @param {!proto.Timeranges} request The
+ * @param {!proto.Timerange} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.Empty>}
  *     A native promise that resolves to the response
  */
-proto.GatewayPromiseClient.prototype.setIntervals =
+proto.GatewayPromiseClient.prototype.setTimerange =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/Gateway/SetIntervals',
+      '/Gateway/SetTimerange',
       request,
       metadata || {},
-      methodDescriptor_Gateway_SetIntervals);
+      methodDescriptor_Gateway_SetTimerange);
 };
 
 
 module.exports = proto;
-
