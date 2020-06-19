@@ -156,7 +156,7 @@ proto.Login.prototype.toObject = function(opt_includeInstance) {
 proto.Login.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    eventname: jspb.Message.getFieldWithDefault(msg, 2, "")
+    event: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -199,7 +199,7 @@ proto.Login.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEventname(value);
+      msg.setEvent(value);
       break;
     default:
       reader.skipField();
@@ -237,7 +237,7 @@ proto.Login.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getEventname();
+  f = message.getEvent();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -266,10 +266,10 @@ proto.Login.prototype.setToken = function(value) {
 
 
 /**
- * optional string eventName = 2;
+ * optional string event = 2;
  * @return {string}
  */
-proto.Login.prototype.getEventname = function() {
+proto.Login.prototype.getEvent = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -278,7 +278,7 @@ proto.Login.prototype.getEventname = function() {
  * @param {string} value
  * @return {!proto.Login} returns this
  */
-proto.Login.prototype.setEventname = function(value) {
+proto.Login.prototype.setEvent = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -703,7 +703,9 @@ proto.Timeranges.prototype.toObject = function(opt_includeInstance) {
 proto.Timeranges.toObject = function(includeInstance, msg) {
   var f, obj = {
     timerangesList: jspb.Message.toObjectList(msg.getTimerangesList(),
-    proto.Timerange.toObject, includeInstance)
+    proto.Timerange.toObject, includeInstance),
+    token: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    event: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -745,6 +747,14 @@ proto.Timeranges.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value,proto.Timerange.deserializeBinaryFromReader);
       msg.addTimeranges(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setToken(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setEvent(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -780,6 +790,20 @@ proto.Timeranges.serializeBinaryToWriter = function(message, writer) {
       1,
       f,
       proto.Timerange.serializeBinaryToWriter
+    );
+  }
+  f = message.getToken();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getEvent();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
     );
   }
 };
@@ -820,6 +844,42 @@ proto.Timeranges.prototype.addTimeranges = function(opt_value, opt_index) {
  */
 proto.Timeranges.prototype.clearTimerangesList = function() {
   return this.setTimerangesList([]);
+};
+
+
+/**
+ * optional string token = 2;
+ * @return {string}
+ */
+proto.Timeranges.prototype.getToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.Timeranges} returns this
+ */
+proto.Timeranges.prototype.setToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string event = 3;
+ * @return {string}
+ */
+proto.Timeranges.prototype.getEvent = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.Timeranges} returns this
+ */
+proto.Timeranges.prototype.setEvent = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

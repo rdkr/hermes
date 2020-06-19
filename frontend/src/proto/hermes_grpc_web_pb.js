@@ -233,16 +233,16 @@ proto.GatewayPromiseClient.prototype.getTimeranges =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.Timerange,
+ *   !proto.Timeranges,
  *   !proto.Empty>}
  */
-const methodDescriptor_Gateway_SetTimerange = new grpc.web.MethodDescriptor(
-  '/Gateway/SetTimerange',
+const methodDescriptor_Gateway_SetTimeranges = new grpc.web.MethodDescriptor(
+  '/Gateway/SetTimeranges',
   grpc.web.MethodType.UNARY,
-  proto.Timerange,
+  proto.Timeranges,
   proto.Empty,
   /**
-   * @param {!proto.Timerange} request
+   * @param {!proto.Timeranges} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -255,13 +255,13 @@ const methodDescriptor_Gateway_SetTimerange = new grpc.web.MethodDescriptor(
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.Timerange,
+ *   !proto.Timeranges,
  *   !proto.Empty>}
  */
-const methodInfo_Gateway_SetTimerange = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_Gateway_SetTimeranges = new grpc.web.AbstractClientBase.MethodInfo(
   proto.Empty,
   /**
-   * @param {!proto.Timerange} request
+   * @param {!proto.Timeranges} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -272,7 +272,7 @@ const methodInfo_Gateway_SetTimerange = new grpc.web.AbstractClientBase.MethodIn
 
 
 /**
- * @param {!proto.Timerange} request The
+ * @param {!proto.Timeranges} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -281,32 +281,112 @@ const methodInfo_Gateway_SetTimerange = new grpc.web.AbstractClientBase.MethodIn
  * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.GatewayClient.prototype.setTimerange =
+proto.GatewayClient.prototype.setTimeranges =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/Gateway/SetTimerange',
+      '/Gateway/SetTimeranges',
       request,
       metadata || {},
-      methodDescriptor_Gateway_SetTimerange,
+      methodDescriptor_Gateway_SetTimeranges,
       callback);
 };
 
 
 /**
- * @param {!proto.Timerange} request The
+ * @param {!proto.Timeranges} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.Empty>}
  *     A native promise that resolves to the response
  */
-proto.GatewayPromiseClient.prototype.setTimerange =
+proto.GatewayPromiseClient.prototype.setTimeranges =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/Gateway/SetTimerange',
+      '/Gateway/SetTimeranges',
       request,
       metadata || {},
-      methodDescriptor_Gateway_SetTimerange);
+      methodDescriptor_Gateway_SetTimeranges);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.Timeranges,
+ *   !proto.Empty>}
+ */
+const methodDescriptor_Gateway_DeleteTimeranges = new grpc.web.MethodDescriptor(
+  '/Gateway/DeleteTimeranges',
+  grpc.web.MethodType.UNARY,
+  proto.Timeranges,
+  proto.Empty,
+  /**
+   * @param {!proto.Timeranges} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.Timeranges,
+ *   !proto.Empty>}
+ */
+const methodInfo_Gateway_DeleteTimeranges = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.Empty,
+  /**
+   * @param {!proto.Timeranges} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.Timeranges} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.Empty)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.GatewayClient.prototype.deleteTimeranges =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/Gateway/DeleteTimeranges',
+      request,
+      metadata || {},
+      methodDescriptor_Gateway_DeleteTimeranges,
+      callback);
+};
+
+
+/**
+ * @param {!proto.Timeranges} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.Empty>}
+ *     A native promise that resolves to the response
+ */
+proto.GatewayPromiseClient.prototype.deleteTimeranges =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/Gateway/DeleteTimeranges',
+      request,
+      metadata || {},
+      methodDescriptor_Gateway_DeleteTimeranges);
 };
 
 

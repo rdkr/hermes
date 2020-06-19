@@ -42,16 +42,16 @@ func (s *server) resolveToken(token string) (string, string, error) {
 	return id, tz, nil
 }
 
-func (s *server) resolveEvent(event string) error {
+func (s *server) resolveEvent(event string) (int, error) {
 	var id int
 	err := s.db.QueryRow("select id from events where name = $1", event).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return errors.New("invalid event")
+			return 0, errors.New("invalid event")
 		}
 		log.Fatal(err)
 	}
-	return nil
+	return id, nil
 }
 
 func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error) {
@@ -59,11 +59,11 @@ func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error
 	if err != nil {
 		return nil, err
 	}
-	err = s.resolveEvent(in.EventName)
+	_, err = s.resolveEvent(in.Event)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("GetPlayer: %s, %s", id, in.EventName)
+	log.Printf("GetPlayer: %s, %s", id, in.Event)
 	return &pb.Player{Name: id, Tz: tz}, nil
 }
 
@@ -74,7 +74,7 @@ func (s *server) GetTimeranges(ctx context.Context, in *pb.Login) (*pb.Timerange
 		return nil, err
 	}
 
-	rows, err := s.db.Query("SELECT timerange.id, timerange.start, timerange.end, timerange.tz FROM events JOIN timerange ON (events.id = timerange.event_id) WHERE events.name = $1 AND timerange.player_id = $2", in.EventName, name)
+	rows, err := s.db.Query("SELECT timerange.id, timerange.start, timerange.end, timerange.tz FROM events JOIN timerange ON (events.id = timerange.event_id) WHERE events.name = $1 AND timerange.player_id = $2", in.Event, name)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,8 +104,49 @@ func (s *server) GetTimeranges(ctx context.Context, in *pb.Login) (*pb.Timerange
 	return &pb.Timeranges{Timeranges: timeranges}, nil
 }
 
-func (s *server) SetIntervals(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
-	log.Printf("Received: %v", in)
+func (s *server) SetTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
+	playerID, tz, err := s.resolveToken(in.Token)
+	if err != nil {
+		return nil, err
+	}
+	eventID, err := s.resolveEvent(in.Event)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt, err := s.db.Prepare("INSERT INTO timerange (player_id, \"start\", \"end\", tz, event_id) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(stmt)
+	for _, timerange := range in.Timeranges {
+		_, err := stmt.Exec(playerID, timerange.Start, timerange.End, tz, eventID)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return &pb.Empty{}, nil
+}
+
+func (s *server) DeleteTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
+	playerID, _, err := s.resolveToken(in.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt, err := s.db.Prepare("DELETE FROM timerange WHERE id = $1 AND player_id = $2")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(stmt)
+	for _, timerange := range in.Timeranges {
+		_, err := stmt.Exec(timerange.Id, playerID)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	return &pb.Empty{}, nil
 }
 

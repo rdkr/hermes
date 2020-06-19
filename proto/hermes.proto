@@ -3,7 +3,7 @@ option go_package = ".;proto";
 
 message Login {
   string token = 1;
-  string eventName = 2;
+  string event = 2;
 }
 
 message Player {
@@ -20,6 +20,8 @@ message Timerange {
 
 message Timeranges {
   repeated Timerange timeranges = 1;
+  string token = 2;
+  string event = 3;
 }
 
 message Empty {}
@@ -27,5 +29,6 @@ message Empty {}
 service Gateway {
   rpc GetPlayer(Login) returns (Player);
   rpc GetTimeranges(Login) returns (Timeranges);
-  rpc SetTimerange(Timerange) returns (Empty);
+  rpc SetTimeranges(Timeranges) returns (Empty);
+  rpc DeleteTimeranges(Timeranges) returns (Empty);
 }

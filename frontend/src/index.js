@@ -34,15 +34,12 @@ class NameForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          event:
-          &nbsp;
           <input
             type="text"
             value={this.state.value}
             onChange={this.handleChange}
           />
         </label>
-        &nbsp;
         <input type="submit" value="Submit" />
       </form>
     );
@@ -52,7 +49,12 @@ class NameForm extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { msg: "loading...", msg2: "", hidden: true };
+    this.state = {
+      msg: "loading...",
+      msg2: "",
+      hiddenOptions: true,
+      hiddenCalendar: true
+    };
   }
 
   async componentDidMount() {
@@ -67,7 +69,7 @@ class App extends React.Component {
 
     var login = new Login();
     login.setToken(token);
-    login.setEventname(event)
+    login.setEvent(event)
 
     this.state.gateway
       .getPlayer(login, {})
@@ -77,13 +79,21 @@ class App extends React.Component {
         this.setState({
           msg: `welcome, ${name}!`,
           msg2: `tz: ${tz}`,
-          hidden: false,
+          hiddenOptions: false,
+          hiddenCalendar: false,
         });
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
         if (err.code === 2) {
-          this.setState({ msg: `${err.message} :(` });
+          this.setState({
+            msg: `${err.message} :(`,
+          });
+          if (err.message == "invalid event") {
+            this.setState({
+              hiddenOptions: false
+            });
+          }
         } else {
           this.setState({ msg: `server error :(` });
         }
@@ -94,10 +104,12 @@ class App extends React.Component {
     return (
       <div>
         <h1>{this.state.msg}</h1>
-        <div className={"row"}>
-          <div className={"column"}><NameForm /></div><div className={"column"}>{this.state.msg2}</div>
+        <div style={this.state.hiddenOptions ? { visibility: "hidden" } : {}} className={"row"}>
+          <div className={"column"}>set the event in the format server-name/channel-name:</div>
+          <div className={"column"}><NameForm /></div>
+          <div className={"column"}>{this.state.msg2}</div>
         </div>
-        <div style={this.state.hidden ? { visibility: "hidden" } : {}}>
+        <div style={this.state.hiddenCalendar ? { visibility: "hidden" } : {}}>
           <StandardCalendar />
         </div>
       </div>
