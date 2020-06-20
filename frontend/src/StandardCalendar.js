@@ -131,8 +131,8 @@ export default class StandardCalendar extends React.Component {
       <WeekCalendar
         dayFormat={"ddd Do"}
         scaleUnit={30}
-        cellHeight={20}
-        numberOfDays={7}
+        cellHeight={21}
+        numberOfDays={9}
         startTime={moment({ h: 8, m: 0 })}
         endTime={moment({ h: 22, m: 0 })}
         selectedIntervals={this.state.selectedIntervals}

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import moment from "moment-timezone";
 
 import "./index.css";
-import "react-week-calendar/dist/style.css";
 import * as serviceWorker from "./serviceWorker";
 import StandardCalendar from "./StandardCalendar";
 
@@ -23,26 +22,47 @@ class NameForm extends React.Component {
   }
 
   handleChange(event) {
+    console.debug(event);
     this.setState({ value: event.target.value });
   }
+
   handleSubmit(event) {
     let currentUrlParams = new URLSearchParams(window.location.search);
     currentUrlParams.set("event", this.state.value);
-    window.location.href = window.location.pathname + "?" + unescape(currentUrlParams.toString())
+    window.location.href =
+      window.location.pathname + "?" + unescape(currentUrlParams.toString());
     event.preventDefault();
   }
 
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <label>
-          <input
-            type="text"
-            value={this.state.value}
-            onChange={this.handleChange}
-          />
-        </label>
-        <input type="submit" value="Submit" />
+        <div className={"row"}>
+          <div className={"column"}>
+            <label for="eventField">event name</label>
+            <input
+              id="eventField"
+              type="text"
+              placeholder="server-name/channel-name"
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+          </div>
+
+          <div className={"column"} style={this.props.tz === "" ? { display: "none" } : {}}>
+            <label for="timezoneField">timezone</label>
+            <input
+              id="timezoneField"
+              type="text"
+              value={this.props.tz}
+              disabled
+            />
+          </div>
+
+          <div className={"column"} style={{ "align-self": "flex-end" }}>
+            <input type="submit" value="Submit" />
+          </div>
+        </div>
       </form>
     );
   }
@@ -56,7 +76,7 @@ class App extends React.Component {
       msg2: "",
       calendar: "",
       hiddenOptions: true,
-      hiddenCalendar: true
+      hiddenCalendar: true,
     };
   }
 
@@ -67,13 +87,13 @@ class App extends React.Component {
     let event = params.get("event");
 
     await this.setState({
-      gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND)
-    })
+      gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
+    });
 
     var login = new Login();
-    login.setToken(token)
-    login.setEvent(event)
-    login.setTz(moment.tz.guess())
+    login.setToken(token);
+    login.setEvent(event);
+    login.setTz(moment.tz.guess());
 
     this.state.gateway
       .getPlayer(login, {})
@@ -83,8 +103,9 @@ class App extends React.Component {
 
         this.setState({
           msg: `welcome, ${name}!`,
-          msg2: `tz: ${tz}`,
-          calendar: <StandardCalendar tz={tz}/>,
+          msg2: `${tz}`,
+          options: <NameForm tz={tz}/>,
+          calendar: <StandardCalendar tz={tz} />,
           hiddenOptions: false,
           hiddenCalendar: false,
         });
@@ -95,9 +116,10 @@ class App extends React.Component {
           this.setState({
             msg: `${err.message} :(`,
           });
-          if (err.message == "invalid event") {
+          if (err.message === "invalid event") {
             this.setState({
-              hiddenOptions: false
+              options: <NameForm tz=""/>,
+              hiddenOptions: false,
             });
           }
         } else {
@@ -109,14 +131,21 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>{this.state.msg}</h1>
-        <div style={this.state.hiddenOptions ? { visibility: "hidden" } : {}} className={"row"}>
-          <div className={"column"}>set the event in the format server-name/channel-name:</div>
-          <div className={"column"}><NameForm /></div>
-          <div className={"column"}>{this.state.msg2}</div>
-        </div>
-        <div style={this.state.hiddenCalendar ? { visibility: "hidden" } : {}}>
-          {this.state.calendar}
+        <div className={"container"}>
+          <div className={"row"}>
+            <div className={"column"}>
+              <h1>{this.state.msg}</h1>
+            </div>
+          </div>
+
+          {this.state.options}
+
+          <div
+            className={"row"}
+            style={this.state.hiddenCalendar ? { visibility: "hidden" } : {}}
+          >
+            <div className={"column"}>{this.state.calendar}</div>
+          </div>
         </div>
       </div>
     );
