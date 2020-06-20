@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import moment from "moment-timezone";
+
 import "./index.css";
 import "react-week-calendar/dist/style.css";
 import * as serviceWorker from "./serviceWorker";
@@ -52,6 +54,7 @@ class App extends React.Component {
     this.state = {
       msg: "loading...",
       msg2: "",
+      calendar: "",
       hiddenOptions: true,
       hiddenCalendar: true
     };
@@ -68,17 +71,20 @@ class App extends React.Component {
     })
 
     var login = new Login();
-    login.setToken(token);
+    login.setToken(token)
     login.setEvent(event)
+    login.setTz(moment.tz.guess())
 
     this.state.gateway
       .getPlayer(login, {})
       .then((response) => {
-        let name = response.getName();
-        let tz = response.getTz();
+        const name = response.getName();
+        const tz = response.getTz();
+
         this.setState({
           msg: `welcome, ${name}!`,
           msg2: `tz: ${tz}`,
+          calendar: <StandardCalendar tz={tz}/>,
           hiddenOptions: false,
           hiddenCalendar: false,
         });
@@ -110,7 +116,7 @@ class App extends React.Component {
           <div className={"column"}>{this.state.msg2}</div>
         </div>
         <div style={this.state.hiddenCalendar ? { visibility: "hidden" } : {}}>
-          <StandardCalendar />
+          {this.state.calendar}
         </div>
       </div>
     );

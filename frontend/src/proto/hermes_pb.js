@@ -156,7 +156,8 @@ proto.Login.prototype.toObject = function(opt_includeInstance) {
 proto.Login.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    event: jspb.Message.getFieldWithDefault(msg, 2, "")
+    event: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    tz: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -201,6 +202,10 @@ proto.Login.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.setEvent(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setTz(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -244,6 +249,13 @@ proto.Login.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getTz();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -280,6 +292,24 @@ proto.Login.prototype.getEvent = function() {
  */
 proto.Login.prototype.setEvent = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string tz = 3;
+ * @return {string}
+ */
+proto.Login.prototype.getTz = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.Login} returns this
+ */
+proto.Login.prototype.setTz = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

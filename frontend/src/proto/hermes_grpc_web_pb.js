@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @fileoverview gRPC-Web generated client stub for
+ * @fileoverview gRPC-Web generated client stub for 
  * @enhanceable
  * @public
  */
@@ -391,3 +391,4 @@ proto.GatewayPromiseClient.prototype.deleteTimeranges =
 
 
 module.exports = proto;
+

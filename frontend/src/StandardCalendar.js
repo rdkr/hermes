@@ -83,7 +83,7 @@ export default class StandardCalendar extends React.Component {
       .then((response) => {
         const intervals = response.getTimerangesList().map((timerange) => {
           const startDatetime = moment.tz(
-            moment.unix(timerange.getStart()).utc(),
+            moment.unix(timerange.getStart()),
             timerange.getTz()
           );
           const startDayDelta = startDatetime.diff(
@@ -91,7 +91,7 @@ export default class StandardCalendar extends React.Component {
             "days"
           );
           const endDatetime = moment.tz(
-            moment.unix(timerange.getEnd()).utc(),
+            moment.unix(timerange.getEnd()),
             timerange.getTz()
           );
           const endDayDelta = endDatetime.diff(
@@ -99,17 +99,21 @@ export default class StandardCalendar extends React.Component {
             "days"
           );
 
+          let browserOffset = -1*moment.tz.zone(this.props.tz).utcOffset(moment())
+          let timerangeOffset = startDatetime.utcOffset()
+          let displayOffset = browserOffset - timerangeOffset
+
           return {
             start: moment({
               h: startDatetime.hour(),
               m: startDatetime.minute(),
-            }).add(startDayDelta, "d"),
-            end: moment({ h: endDatetime.hour(), m: endDatetime.minute() }).add(
-              endDayDelta,
-              "d"
-            ),
+            }).add(displayOffset, "minutes").add(startDayDelta, "d"),
+            end: moment({
+              h: endDatetime.hour(),
+              m: endDatetime.minute()
+            }).add(displayOffset, "minutes").add(endDayDelta, "d"),
             uid: timerange.getId(),
-            value: `${timerange.getId()}`
+            value: `${startDatetime} - ${endDatetime} (${timerange.getId()})`
           };
         });
 

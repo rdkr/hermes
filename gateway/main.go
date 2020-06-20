@@ -59,6 +59,9 @@ func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error
 	if err != nil {
 		return nil, err
 	}
+	if tz != in.Tz {
+		return nil, errors.New("tz mismatch - use discord")
+	}
 	_, err = s.resolveEvent(in.Event)
 	if err != nil {
 		return nil, err
