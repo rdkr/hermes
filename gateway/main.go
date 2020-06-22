@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	port = ":9090"
+	port = "localhost:9090"
 )
 
 // server is used to implement helloworld.GreeterServer.
@@ -27,24 +27,25 @@ type server struct {
 	pb.UnimplementedGatewayServer
 }
 
-func (s *server) resolveToken(token string) (string, string, error) {
-	var id string
+func (s *server) resolveToken(token string) (int, string, string, error) {
+	var id int
+	var name string
 	var tz string
 
-	err := s.db.QueryRow("select id, tz from player where token = $1", token).Scan(&id, &tz)
+	err := s.db.QueryRow("select player_id, player_name, player_tz from players where magic_token = $1", token).Scan(&id, &name, &tz)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", "", errors.New("invalid token")
+			return 0, "", "", errors.New("invalid token")
 		}
 		log.Fatal(err)
 	}
 
-	return id, tz, nil
+	return id, name, tz, nil
 }
 
 func (s *server) resolveEvent(event string) (int, error) {
 	var id int
-	err := s.db.QueryRow("select id from events where name = $1", event).Scan(&id)
+	err := s.db.QueryRow("select event_id from events where event_name = $1", event).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, errors.New("invalid event")
@@ -55,7 +56,7 @@ func (s *server) resolveEvent(event string) (int, error) {
 }
 
 func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error) {
-	id, tz, err := s.resolveToken(in.Token)
+	_, id, tz, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +73,12 @@ func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error
 
 func (s *server) GetTimeranges(ctx context.Context, in *pb.Login) (*pb.Timeranges, error) {
 
-	name, _, err := s.resolveToken(in.Token)
+	playerID, _, _, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := s.db.Query("SELECT timerange.id, timerange.start, timerange.end, timerange.tz FROM events JOIN timerange ON (events.id = timerange.event_id) WHERE events.name = $1 AND timerange.player_id = $2", in.Event, name)
+	rows, err := s.db.Query("SELECT timerange_id, timeranges.start, timeranges.end, tz FROM events JOIN timeranges ON (events.event_id = timeranges.event_id) WHERE events.event_name = $1 AND timeranges.player_id = $2", in.Event, playerID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -103,12 +104,12 @@ func (s *server) GetTimeranges(ctx context.Context, in *pb.Login) (*pb.Timerange
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("GetTimeranges: %s, %d", name, len(timeranges))
+	log.Printf("GetTimeranges: %d, %d", playerID, len(timeranges))
 	return &pb.Timeranges{Timeranges: timeranges}, nil
 }
 
 func (s *server) SetTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
-	playerID, tz, err := s.resolveToken(in.Token)
+	playerID, _, tz, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +118,7 @@ func (s *server) SetTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empt
 		return nil, err
 	}
 
-	stmt, err := s.db.Prepare("INSERT INTO timerange (player_id, \"start\", \"end\", tz, event_id) VALUES ($1, $2, $3, $4, $5)")
+	stmt, err := s.db.Prepare("INSERT INTO timeranges (player_id, \"start\", \"end\", tz, event_id) VALUES ($1, $2, $3, $4, $5)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -133,16 +134,16 @@ func (s *server) SetTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empt
 }
 
 func (s *server) DeleteTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
-	playerID, _, err := s.resolveToken(in.Token)
+	playerID, _, _, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	stmt, err := s.db.Prepare("DELETE FROM timerange WHERE id = $1 AND player_id = $2")
+	stmt, err := s.db.Prepare("DELETE FROM timeranges WHERE timerange_id = $1 AND player_id = $2")
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(stmt)
+
 	for _, timerange := range in.Timeranges {
 		_, err := stmt.Exec(timerange.Id, playerID)
 		if err != nil {

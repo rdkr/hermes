@@ -4,7 +4,7 @@ def format_datetimeranges(datetimeranges):
 
 def format_timeranges(timeranges):
     return [
-        f" • `{timerange.id:03}` {format_range(timerange.datetimerange())}\n"
+        f" • `{timerange.timerange_id:03}` {format_range(timerange.datetimerange())}\n"
         for timerange in timeranges
     ]
 

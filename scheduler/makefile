@@ -20,7 +20,7 @@ install:
 uninstall:
 	kubectl delete -f k8s.yaml
 
-redeploy:
+redeploy: push
 	kubectl delete deployments -n hermes hermes-scheduler
 	kubectl apply -f k8s.yaml
 

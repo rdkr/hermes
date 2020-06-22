@@ -37,54 +37,54 @@ class Scheduler(commands.Cog):
     async def clean(self):
         self.db.clean_times()
 
-    @commands.command()
-    async def free(self, ctx, *, when):
-        """Add a time range for which you are free.
+    # @commands.command()
+    # async def free(self, ctx, *, when):
+    #     """Add a time range for which you are free.
 
-        This command must be performed in the event channel you are
-        marking yourself free for.
+    #     This command must be performed in the event channel you are
+    #     marking yourself free for.
 
-        You must have set a default timezone before using this command.
-        See "$help tz" for more information about how to do this.
+    #     You must have set a default timezone before using this command.
+    #     See "$help tz" for more information about how to do this.
 
-        Parameters
-        ----------
-        when
-            Text describing a range within the next fortnight in which
-            you are free, generally of the form:
+    #     Parameters
+    #     ----------
+    #     when
+    #         Text describing a range within the next fortnight in which
+    #         you are free, generally of the form:
 
-            "<day or date> <time range>"
+    #         "<day or date> <time range>"
 
-            <day or date> can be relative, e.g. "tuesday" or "next
-            wednesday", or absolute in the US format (month first)
+    #         <day or date> can be relative, e.g. "tuesday" or "next
+    #         wednesday", or absolute in the US format (month first)
 
-            <time range> should specify two times separated by "-" and
-            can use 24h clock (requires colons), AM/PM, or words like
-            "morning", "evening". Note that midnight is at the start of
-            the day, so "morning-midnight" is not valid for example.
+    #         <time range> should specify two times separated by "-" and
+    #         can use 24h clock (requires colons), AM/PM, or words like
+    #         "morning", "evening". Note that midnight is at the start of
+    #         the day, so "morning-midnight" is not valid for example.
 
-        Examples
-        --------
-          - $free tomorrow 10am-12pm
-          - $free next wednesday 1-2pm
-          - $free friday 13:00-17:00
-          - $free 12/19 13:00-17:00
-        """
-        try:
-            tz = timezone(self.db.get_tz(ctx.message.author.name))
-            timerange = await self.method_name(tz, when)
-        except KeyError:
-            return await ctx.send(
-                f"error: set a tz first using `$tz`. see `$help tz` for more information"
-            )
-        except AssertionError:
-            return await ctx.send(
-                f"error: could not parse (see `$help free` for tips)"
-            )
+    #     Examples
+    #     --------
+    #       - $free tomorrow 10am-12pm
+    #       - $free next wednesday 1-2pm
+    #       - $free friday 13:00-17:00
+    #       - $free 12/19 13:00-17:00
+    #     """
+    #     try:
+    #         tz = timezone(self.db.get_tz(ctx.message.author.name))
+    #         timerange = await self.method_name(tz, when)
+    #     except KeyError:
+    #         return await ctx.send(
+    #             f"error: set a tz first using `$tz`. see `$help tz` for more information"
+    #         )
+    #     except AssertionError:
+    #         return await ctx.send(
+    #             f"error: could not parse (see `$help free` for tips)"
+    #         )
 
-        event_id = await self.get_event_id(ctx, None)
-        self.db.add_time(ctx.message.author.name, timerange, event_id)
-        return await ctx.send(f"added: {format_range(timerange)}")
+    #     event_id = await self.get_event_id(ctx, None)
+    #     self.db.add_time(ctx.message.author.name, timerange, event_id)
+    #     return await ctx.send(f"added: {format_range(timerange)}")
 
     async def method_name(self, tz, when):
         result = timefhuman(when)
@@ -193,28 +193,28 @@ class Scheduler(commands.Cog):
 
         await ctx.send("".join(msg))
 
-    @commands.command()
-    async def delete(self, ctx, which):
-        """Delete timeranges for which you are marked as free.
+    # @commands.command()
+    # async def delete(self, ctx, which):
+    #     """Delete timeranges for which you are marked as free.
 
-        Use "$list" first to find the id numbers for timeranges.
+    #     Use "$list" first to find the id numbers for timeranges.
 
-        Parameters
-        ----------
-        which
-            The timerange id to delete, or "all"
+    #     Parameters
+    #     ----------
+    #     which
+    #         The timerange id to delete, or "all"
 
-        Examples
-        --------
-          - $delete 66
-          - $delete all
-        """
-        if which == "all":
-            self.db.delete_times(ctx.message.author.name)
-            await ctx.send(f"$deleting: all")
-        else:
-            self.db.delete_time(ctx.message.author.name, int(which))
-            await ctx.send(f"$deleting: {int(which)}")
+    #     Examples
+    #     --------
+    #       - $delete 66
+    #       - $delete all
+    #     """
+    #     if which == "all":
+    #         self.db.delete_times(ctx.message.author.name)
+    #         await ctx.send(f"$deleting: all")
+    #     else:
+    #         self.db.delete_time(ctx.message.author.name, int(which))
+    #         await ctx.send(f"$deleting: {int(which)}")
 
     @commands.command()
     async def tz(self, ctx, tz):
@@ -231,7 +231,7 @@ class Scheduler(commands.Cog):
         --------
             - $tz Europe/London
         """
-        self.db.set_tz(ctx.message.author.name, timezone(tz).zone)
+        self.db.set_tz(ctx.message.author.id, ctx.message.author.name, timezone(tz).zone)
         await ctx.send(f"set: {tz}")
 
     @commands.command()
@@ -239,7 +239,7 @@ class Scheduler(commands.Cog):
         """Get a link to the web interface via DM.
         """
         warning = "⚠️ this link contains a secret token which links to your account, **don't share it**!"
-        link = f"https://neel.rdkr.uk/hermes/index.html?token={self.db.get_token(ctx.message.author.name)}"
+        link = f"https://neel.rdkr.uk/hermes/index.html?token={self.db.get_token(ctx.message.author.id)}"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
 
