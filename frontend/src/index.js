@@ -49,7 +49,10 @@ class NameForm extends React.Component {
             />
           </div>
 
-          <div className={"column"} style={this.props.tz === "" ? { display: "none" } : {}}>
+          <div
+            className={"column"}
+            style={this.props.tz === "" ? { display: "none" } : {}}
+          >
             <label for="timezoneField">timezone</label>
             <input
               id="timezoneField"
@@ -104,7 +107,7 @@ class App extends React.Component {
         this.setState({
           msg: `welcome, ${name}!`,
           msg2: `${tz}`,
-          options: <NameForm tz={tz}/>,
+          options: <NameForm tz={tz} />,
           calendar: <StandardCalendar tz={tz} />,
           hiddenOptions: false,
           hiddenCalendar: false,
@@ -118,7 +121,7 @@ class App extends React.Component {
           });
           if (err.message === "invalid event") {
             this.setState({
-              options: <NameForm tz=""/>,
+              options: <NameForm tz="" />,
               hiddenOptions: false,
             });
           }

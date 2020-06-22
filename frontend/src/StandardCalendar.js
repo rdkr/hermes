@@ -2,6 +2,8 @@ import React from "react";
 import moment from "moment-timezone";
 import WeekCalendar from "react-week-calendar";
 
+import CustomModal from "./CustomModal";
+
 const { Login, Timerange, Timeranges } = require("./proto/hermes_pb.js");
 const { GatewayPromiseClient } = require("./proto/hermes_grpc_web_pb.js");
 
@@ -20,7 +22,7 @@ export default class StandardCalendar extends React.Component {
     await this.setState({
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
       token: params.get("token"),
-      event: params.get("event")
+      event: params.get("event"),
     });
 
     this.reloadCalendar();
@@ -37,7 +39,7 @@ export default class StandardCalendar extends React.Component {
 
     const timeranges = new Timeranges();
     timeranges.setToken(this.state.token);
-    timeranges.setTimerangesList([timerange])
+    timeranges.setTimerangesList([timerange]);
 
     this.state.gateway
       .deleteTimeranges(timeranges, {})
@@ -73,7 +75,6 @@ export default class StandardCalendar extends React.Component {
   };
 
   reloadCalendar = () => {
-
     var login = new Login();
     login.setToken(this.state.token);
     login.setEvent(this.state.event);
@@ -99,21 +100,26 @@ export default class StandardCalendar extends React.Component {
             "days"
           );
 
-          let browserOffset = -1*moment.tz.zone(this.props.tz).utcOffset(moment())
-          let timerangeOffset = startDatetime.utcOffset()
-          let displayOffset = browserOffset - timerangeOffset
+          let browserOffset =
+            -1 * moment.tz.zone(this.props.tz).utcOffset(moment());
+          let timerangeOffset = startDatetime.utcOffset();
+          let displayOffset = browserOffset - timerangeOffset;
 
           return {
             start: moment({
               h: startDatetime.hour(),
               m: startDatetime.minute(),
-            }).add(displayOffset, "minutes").add(startDayDelta, "d"),
+            })
+              .add(displayOffset, "minutes")
+              .add(startDayDelta, "d"),
             end: moment({
               h: endDatetime.hour(),
-              m: endDatetime.minute()
-            }).add(displayOffset, "minutes").add(endDayDelta, "d"),
+              m: endDatetime.minute(),
+            })
+              .add(displayOffset, "minutes")
+              .add(endDayDelta, "d"),
             uid: timerange.getId(),
-            value: `${startDatetime} - ${endDatetime} (${timerange.getId()})`
+            value: ``,
           };
         });
 
@@ -139,6 +145,7 @@ export default class StandardCalendar extends React.Component {
         onIntervalSelect={this.handleSelect}
         onIntervalRemove={this.handleEventRemove}
         showModalCase={["edit"]}
+        modalComponent={CustomModal}
       />
     );
   }
