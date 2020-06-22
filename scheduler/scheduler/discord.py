@@ -22,7 +22,7 @@ class Scheduler(commands.Cog):
         self.bot = bot
         self.db = PlayerDB()
 
-        self.clean.start()
+        self.sync.start()
 
     @commands.Cog.listener()
     async def on_error(self, event):
@@ -33,76 +33,17 @@ class Scheduler(commands.Cog):
         print_exception(type(exception), exception, exception.__traceback__)
         await ctx.send(f"error!")
 
-    @tasks.loop(minutes=1)
-    async def clean(self):
-        self.db.clean_times()
-
-    # @commands.command()
-    # async def free(self, ctx, *, when):
-    #     """Add a time range for which you are free.
-
-    #     This command must be performed in the event channel you are
-    #     marking yourself free for.
-
-    #     You must have set a default timezone before using this command.
-    #     See "$help tz" for more information about how to do this.
-
-    #     Parameters
-    #     ----------
-    #     when
-    #         Text describing a range within the next fortnight in which
-    #         you are free, generally of the form:
-
-    #         "<day or date> <time range>"
-
-    #         <day or date> can be relative, e.g. "tuesday" or "next
-    #         wednesday", or absolute in the US format (month first)
-
-    #         <time range> should specify two times separated by "-" and
-    #         can use 24h clock (requires colons), AM/PM, or words like
-    #         "morning", "evening". Note that midnight is at the start of
-    #         the day, so "morning-midnight" is not valid for example.
-
-    #     Examples
-    #     --------
-    #       - $free tomorrow 10am-12pm
-    #       - $free next wednesday 1-2pm
-    #       - $free friday 13:00-17:00
-    #       - $free 12/19 13:00-17:00
-    #     """
-    #     try:
-    #         tz = timezone(self.db.get_tz(ctx.message.author.name))
-    #         timerange = await self.method_name(tz, when)
-    #     except KeyError:
-    #         return await ctx.send(
-    #             f"error: set a tz first using `$tz`. see `$help tz` for more information"
-    #         )
-    #     except AssertionError:
-    #         return await ctx.send(
-    #             f"error: could not parse (see `$help free` for tips)"
-    #         )
-
-    #     event_id = await self.get_event_id(ctx, None)
-    #     self.db.add_time(ctx.message.author.name, timerange, event_id)
-    #     return await ctx.send(f"added: {format_range(timerange)}")
-
-    async def method_name(self, tz, when):
-        result = timefhuman(when)
-        if not result:
-            raise Exception(f"no times found ({when})")
-        if (
-                not isinstance(result, tuple)
-                or len(result) != 2
-                or result[0] >= result[1]
-        ):
-            raise Exception(f"can't make range ({result})")
-
-        start, end = tz.localize(result[0]), tz.localize(result[1])
-        timerange = DateTimeRange(start, end)
-        week = DateTimeRange(datetime.now(tz), datetime.now(tz) + timedelta(days=7))
-        if timerange not in week:
-            raise Exception(f"range outside of next 7 days ({timerange})")
-        return timerange
+    # @tasks.loop(seconds=3)
+    # async def sync(self):
+    #     valid = []
+    #     for guild in self.bot.guilds:
+    #         for channel in guild.channels:
+    #             can_send = channel.permissions_for(guild.me).send_messages
+    #             if isinstance(channel, TextChannel) and can_send:
+    #                 for member in channel.members:
+    #                     if not member == guild.me:
+    #                         valid.append((channel.id, member.id))
+    #     self.db.sync_event_players(valid)
 
     @commands.command()
     async def when(self, ctx, people=5, duration=1.5, event=None):
@@ -193,29 +134,6 @@ class Scheduler(commands.Cog):
 
         await ctx.send("".join(msg))
 
-    # @commands.command()
-    # async def delete(self, ctx, which):
-    #     """Delete timeranges for which you are marked as free.
-
-    #     Use "$list" first to find the id numbers for timeranges.
-
-    #     Parameters
-    #     ----------
-    #     which
-    #         The timerange id to delete, or "all"
-
-    #     Examples
-    #     --------
-    #       - $delete 66
-    #       - $delete all
-    #     """
-    #     if which == "all":
-    #         self.db.delete_times(ctx.message.author.name)
-    #         await ctx.send(f"$deleting: all")
-    #     else:
-    #         self.db.delete_time(ctx.message.author.name, int(which))
-    #         await ctx.send(f"$deleting: {int(which)}")
-
     @commands.command()
     async def tz(self, ctx, tz):
         """Set your default timezone.
@@ -238,10 +156,9 @@ class Scheduler(commands.Cog):
     async def link(self, ctx):
         """Get a link to the web interface via DM.
         """
-        warning = "⚠️ this link contains a secret token which links to your account, **don't share it**!"
-        link = f"https://neel.rdkr.uk/hermes/index.html?token={self.db.get_token(ctx.message.author.id)}"
+        warning = "⚠️ this is a magic link which logs in to your account, **don't share it**!"
+        link = f"<https://neel.rdkr.uk/hermes/index.html?token={self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
-
 
     async def get_event_id(self, ctx, event):
         if not event:
