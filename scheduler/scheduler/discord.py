@@ -131,7 +131,7 @@ class Scheduler(commands.Cog):
         """Get a magic link to the web interface via DM.
         """
         warning = "⚠️ this is a magic link which logs in to your account, **don't share it**!"
-        link = f"<https://neel.rdkr.uk/hermes/index.html?token={self.db.get_magic_token(ctx.message.author.id)}>"
+        link = f"<https://neel.rdkr.uk/hermes/?token={self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
     @commands.command(hidden=True)
