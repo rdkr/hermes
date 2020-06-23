@@ -127,26 +127,8 @@ class Scheduler(commands.Cog):
         await ctx.send("".join(msg))
 
     @commands.command()
-    async def tz(self, ctx, tz):
-        """Set your default timezone.
-
-        This must be set in order to add times you are free.
-
-        Parameters
-        ----------
-        tz
-            Your timezone in tz format.
-
-        Examples
-        --------
-            - $tz Europe/London
-        """
-        self.db.set_tz(ctx.message.author.id, ctx.message.author.name, timezone(tz).zone)
-        await ctx.send(f"set: {tz}")
-
-    @commands.command()
-    async def link(self, ctx):
-        """Get a link to the web interface via DM.
+    async def login(self, ctx):
+        """Get a magic link to the web interface via DM.
         """
         warning = "⚠️ this is a magic link which logs in to your account, **don't share it**!"
         link = f"<https://neel.rdkr.uk/hermes/index.html?token={self.db.get_magic_token(ctx.message.author.id)}>"
