@@ -43,6 +43,31 @@ func (s *server) resolveToken(token string) (int, string, string, error) {
 	return id, name, tz, nil
 }
 
+func (s *server) resolvePlayerEvents(playerID int) ([]*pb.Event, error) {
+
+	rows, err := s.db.Query("select events.event_id, event_name from event_players join events on (event_players.event_id = events.event_id) where player_id = $1", playerID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var (
+		eventID   int32
+		eventName string
+		events    []*pb.Event
+	)
+
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&eventID, &eventName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		events = append(events, &pb.Event{Id: eventID, Name: eventName})
+	}
+
+	return events, nil
+}
+
 func (s *server) resolveEvent(event string) (int, error) {
 	var id int
 	err := s.db.QueryRow("select event_id from events where event_name = $1", event).Scan(&id)
@@ -56,19 +81,27 @@ func (s *server) resolveEvent(event string) (int, error) {
 }
 
 func (s *server) GetPlayer(ctx context.Context, in *pb.Login) (*pb.Player, error) {
-	_, id, tz, err := s.resolveToken(in.Token)
+	playerID, playerName, playerTz, err := s.resolveToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
-	if tz != in.Tz {
-		return nil, errors.New("tz mismatch - use discord")
+	if playerTz != in.Tz {
+		stmt, err := s.db.Prepare("update players set player_tz = $1 where player_id = $2")
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println(stmt)
+		_, err = stmt.Exec(in.Tz, playerID)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	_, err = s.resolveEvent(in.Event)
+	events, err := s.resolvePlayerEvents(playerID)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("GetPlayer: %s, %s", id, in.Event)
-	return &pb.Player{Name: id, Tz: tz}, nil
+	log.Printf("GetPlayer: %s, %s, %s", playerName, in.Tz, events)
+	return &pb.Player{Name: playerName, Tz: in.Tz, Events: events}, nil
 }
 
 func (s *server) GetTimeranges(ctx context.Context, in *pb.Login) (*pb.Timeranges, error) {

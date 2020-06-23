@@ -18,17 +18,18 @@ class NameForm extends React.Component {
 
     this.state = { value: params.get("event") };
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+
+    if (this.state.value === null) {
+      let currentUrlParams = new URLSearchParams(window.location.search);
+      currentUrlParams.set("event", this.props.events[0].getName());
+      window.location.href =
+        window.location.pathname + "?" + unescape(currentUrlParams.toString());
+    }
   }
 
   handleChange(event) {
-    console.debug(event);
-    this.setState({ value: event.target.value });
-  }
-
-  handleSubmit(event) {
     let currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.set("event", this.state.value);
+    currentUrlParams.set("event", event.target.value);
     window.location.href =
       window.location.pathname + "?" + unescape(currentUrlParams.toString());
     event.preventDefault();
@@ -38,22 +39,18 @@ class NameForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={"row"}>
+
           <div className={"column"}>
-            <label for="eventField">event name</label>
-            <input
-              id="eventField"
-              type="text"
-              placeholder="server-name/channel-name"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
+            <label htmlFor="eventField">event name</label>
+            <select id="eventField" defaultValue={this.state.value} onChange={this.handleChange}>
+              {this.props.events.map((event) => (
+                <option key={event.getName()} value={event.getName()}>{event.getName()}</option>
+              ))}
+            </select>
           </div>
 
-          <div
-            className={"column"}
-            style={this.props.tz === "" ? { display: "none" } : {}}
-          >
-            <label for="timezoneField">timezone</label>
+          <div className={"column"}>
+            <label htmlFor="timezoneField">timezone</label>
             <input
               id="timezoneField"
               type="text"
@@ -62,9 +59,6 @@ class NameForm extends React.Component {
             />
           </div>
 
-          <div className={"column"} style={{ "align-self": "flex-end" }}>
-            <input type="submit" value="Submit" />
-          </div>
         </div>
       </form>
     );
@@ -87,7 +81,7 @@ class App extends React.Component {
     let search = window.location.search;
     let params = new URLSearchParams(search);
     let token = params.get("token");
-    let event = params.get("event");
+    let eventName = params.get("event");
 
     await this.setState({
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
@@ -95,7 +89,7 @@ class App extends React.Component {
 
     var login = new Login();
     login.setToken(token);
-    login.setEvent(event);
+    login.setEvent(eventName);
     login.setTz(moment.tz.guess());
 
     this.state.gateway
@@ -103,15 +97,32 @@ class App extends React.Component {
       .then((response) => {
         const name = response.getName();
         const tz = response.getTz();
+        const events = response.getEventsList();
 
-        this.setState({
-          msg: `welcome, ${name}!`,
-          msg2: `${tz}`,
-          options: <NameForm tz={tz} />,
-          calendar: <StandardCalendar tz={tz} />,
-          hiddenOptions: false,
-          hiddenCalendar: false,
-        });
+        var found = false;
+
+        for (const event of events) {
+          if (event.getName() === eventName) {
+
+            this.setState({
+              msg: `welcome, ${name}!`,
+              msg2: `${tz}`,
+              options: <NameForm tz={tz} events={events} />,
+              calendar: <StandardCalendar tz={tz} />,
+              hiddenOptions: false,
+              hiddenCalendar: false,
+            });
+            found = true;
+            break;
+          }
+        }
+        if(!found){
+          this.setState({
+            msg: `welcome, ${name}!`,
+            options: <NameForm tz={tz} events={events} />,
+            hiddenOptions: false,
+          });
+        }
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
@@ -121,7 +132,7 @@ class App extends React.Component {
           });
           if (err.message === "invalid event") {
             this.setState({
-              options: <NameForm tz="" />,
+              options: <NameForm tz="" events={[]} />,
               hiddenOptions: false,
             });
           }

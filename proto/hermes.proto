@@ -7,9 +7,15 @@ message Login {
   string tz = 3;
 }
 
+message Event {
+  int32 id = 1;
+  string name = 2;
+}
+
 message Player {
   string name = 1;
   string tz = 2;
+  repeated Event events = 3;
 }
 
 message Timerange {
