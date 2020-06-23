@@ -31,8 +31,8 @@ class Event(Base):
     event_id = Column(Integer, primary_key=True, autoincrement=True)
     event_dc_id = Column(String, unique=True)
     event_name = Column(String)
-    min_players = Column(Integer, nullable=False)
-    min_time = Column(Float, nullable=False)
+    min_players = Column(Integer)
+    min_time = Column(Float)
 
 class Timerange(Base):
     __tablename__ = "timeranges"
@@ -84,19 +84,32 @@ class PlayerDB:
             players[self.player_id_to_player_name(player_id)].append(timerange)
         return players
 
-    def set_tz(self, player_dc_id, player_name, tz):
-        try:
-            player = self.session.query(Player).filter_by(player_dc_id=str(player_dc_id)).one()
-        except KeyError:
-            player = Player(player_dc_id=player_dc_id)
-        player.player_tz = tz
-        player.player_name = player_name
-        self.session.merge(player)
-        self.session.commit()
+    def sync_event_players(self, event_players):
 
-    # def sync_event_players(self):
+        self.session.query(EventPlayers).delete()
 
+        for item in event_players:
 
+            try:
+                event_id = self.event_dc_id_to_event_id(item[0])
+            except KeyError:
+                event = Event(event_dc_id=item[0], event_name=f'{item[1]}/{item[2]}')
+                self.session.add(event)
+                self.session.commit()
+                event_id = event.event_id
+
+            try:
+                player_id = self.player_dc_id_to_player_id(item[3])
+            except KeyError:
+                player = Player(player_dc_id=item[3], player_name=item[4], player_tz="Etc/UTC")
+                self.session.add(player)
+                self.session.commit()
+                player_id = player.player_id
+
+            self.session.merge(EventPlayers(
+                event_id=event_id,
+                player_id=player_id))
+            self.session.commit()
 
     def get_magic_token(self, player_dc_id):
         chars = ascii_letters + digits

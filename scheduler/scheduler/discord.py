@@ -22,7 +22,11 @@ class Scheduler(commands.Cog):
         self.bot = bot
         self.db = PlayerDB()
 
-        self.sync.start()
+    #     self.sync.start()
+
+    # @tasks.loop(seconds=3)
+    # async def sync(self):
+    #     self.run_sync()
 
     @commands.Cog.listener()
     async def on_error(self, event):
@@ -32,18 +36,6 @@ class Scheduler(commands.Cog):
     async def on_command_error(self, ctx, exception):
         print_exception(type(exception), exception, exception.__traceback__)
         await ctx.send(f"error!")
-
-    # @tasks.loop(seconds=3)
-    # async def sync(self):
-    #     valid = []
-    #     for guild in self.bot.guilds:
-    #         for channel in guild.channels:
-    #             can_send = channel.permissions_for(guild.me).send_messages
-    #             if isinstance(channel, TextChannel) and can_send:
-    #                 for member in channel.members:
-    #                     if not member == guild.me:
-    #                         valid.append((channel.id, member.id))
-    #     self.db.sync_event_players(valid)
 
     @commands.command()
     async def when(self, ctx, people=5, duration=1.5, event=None):
@@ -160,6 +152,13 @@ class Scheduler(commands.Cog):
         link = f"<https://neel.rdkr.uk/hermes/index.html?token={self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
+    @commands.command(hidden=True)
+    async def sync(self, ctx):
+        """Get a link to the web interface via DM.
+        """
+        self.run_sync()
+        await ctx.message.author.send(f"sync complete")
+
     async def get_event_id(self, ctx, event):
         if not event:
             return ctx.message.channel.id
@@ -169,3 +168,14 @@ class Scheduler(commands.Cog):
                     await ctx.send(f"assuming channel: {channel.guild.name}/{channel.name} ({channel.id})")
                     return channel.id
         raise KeyError
+
+    def run_sync(self):
+        valid = set()
+        for guild in self.bot.guilds:
+            for channel in guild.channels:
+                can_send = channel.permissions_for(guild.me).send_messages
+                if isinstance(channel, TextChannel) and can_send:
+                    for member in channel.members:
+                        if not member == guild.me:
+                            valid.add((channel.id, guild.name, channel.name, member.id, member.name))
+        self.db.sync_event_players(valid)
