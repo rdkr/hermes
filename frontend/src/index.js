@@ -16,23 +16,25 @@ class NameForm extends React.Component {
     let search = window.location.search;
     let params = new URLSearchParams(search);
 
-    this.state = { value: params.get("event") };
+    if (this.props.events[0] === "please choose an event..."){
+      this.state = { defaultEvent: "please choose an event..." };
+    } else {
+      this.state = { defaultEvent: params.get("event") };
+    }
     this.handleChange = this.handleChange.bind(this);
 
-    if (this.state.value === null) {
-      let currentUrlParams = new URLSearchParams(window.location.search);
-      currentUrlParams.set("event", this.props.events[0].getName());
-      window.location.href =
-        window.location.pathname + "?" + unescape(currentUrlParams.toString());
-    }
   }
 
   handleChange(event) {
-    let currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.set("event", event.target.value);
-    window.location.href =
-      window.location.pathname + "?" + unescape(currentUrlParams.toString());
     event.preventDefault();
+    let params = new URLSearchParams(window.location.search);
+    params.set("event", event.target.value);
+    if (this.state.defaultEvent === "please choose an event...") {
+      window.history.pushState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+    } else {
+      window.history.pushState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+    }
+    this.props.app.login()
   }
 
   render() {
@@ -42,9 +44,9 @@ class NameForm extends React.Component {
 
           <div className={"column"}>
             <label htmlFor="eventField">event name</label>
-            <select id="eventField" defaultValue={this.state.value} onChange={this.handleChange}>
+            <select id="eventField" defaultValue={this.state.defaultEvent} onChange={this.handleChange}>
               {this.props.events.map((event) => (
-                <option key={event.getName()} value={event.getName()}>{event.getName()}</option>
+                <option key={event.name} value={event.name} hidden={event.name === "please choose an event..." ? true : false}>{event.name}</option>
               ))}
             </select>
           </div>
@@ -70,7 +72,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       msg: "loading...",
-      msg2: "",
       calendar: "",
       hiddenOptions: true,
       hiddenCalendar: true,
@@ -80,16 +81,37 @@ class App extends React.Component {
   async componentDidMount() {
     let search = window.location.search;
     let params = new URLSearchParams(search);
-    let token = params.get("token");
-    let eventName = params.get("event");
+    let urlToken = params.get("token");
+
+    if (urlToken != null) {
+      localStorage.setItem('token', urlToken);
+      params.delete("token")
+      window.history.replaceState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+    }
+
+    let token = localStorage.getItem('token');
+    if (token === null) {
+      return this.setState({
+        msg: `log in on discord with !login`,
+      });
+    }
 
     await this.setState({
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
     });
+    await this.login()
+
+  }
+
+  async login() {
+
+    let search = window.location.search;
+    let params = new URLSearchParams(search);
+    let eventName = params.get("event")
 
     var login = new Login();
-    login.setToken(token);
-    login.setEvent(eventName);
+    login.setEvent(eventName)
+    login.setToken(localStorage.getItem('token'));
     login.setTz(moment.tz.guess());
 
     this.state.gateway
@@ -103,42 +125,33 @@ class App extends React.Component {
 
         for (const event of events) {
           if (event.getName() === eventName) {
+            let listOfEvents = events.map((event) => ({"name":event.getName()}))
 
             this.setState({
               msg: `welcome, ${name}!`,
-              msg2: `${tz}`,
-              options: <NameForm tz={tz} events={events} />,
-              calendar: <StandardCalendar tz={tz} />,
+              options: <NameForm tz={tz} events={listOfEvents} app={this}/>,
+              calendar: <StandardCalendar tz={tz} event={eventName}/>,
               hiddenOptions: false,
               hiddenCalendar: false,
             });
+
             found = true;
             break;
           }
         }
         if(!found){
+          let listOfEvents = [{"name":"please choose an event..."}]
+          listOfEvents.push(...events.map((event) => ({"name":event.getName()})))
           this.setState({
             msg: `welcome, ${name}!`,
-            options: <NameForm tz={tz} events={events} />,
+            options: <NameForm tz={tz} events={listOfEvents} app={this}/>,
             hiddenOptions: false,
           });
         }
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
-        if (err.code === 2) {
-          this.setState({
-            msg: `${err.message} :(`,
-          });
-          if (err.message === "invalid event") {
-            this.setState({
-              options: <NameForm tz="" events={[]} />,
-              hiddenOptions: false,
-            });
-          }
-        } else {
-          this.setState({ msg: `server error :(` });
-        }
+        this.setState({ msg: `server error :(` });
       });
   }
 
@@ -168,7 +181,7 @@ class App extends React.Component {
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App/>
   </React.StrictMode>,
   document.getElementById("root")
 );

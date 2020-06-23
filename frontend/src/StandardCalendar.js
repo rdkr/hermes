@@ -15,17 +15,19 @@ export default class StandardCalendar extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    let search = window.location.search;
-    let params = new URLSearchParams(search);
 
+
+  async componentDidMount() {
     await this.setState({
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
-      token: params.get("token"),
-      event: params.get("event"),
     });
-
     this.reloadCalendar();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.event !== prevProps.event) {
+      this.reloadCalendar();
+    }
   }
 
   handleEventRemove = (event) => {
@@ -38,7 +40,7 @@ export default class StandardCalendar extends React.Component {
     timerange.setId(selectedIntervals[index].uid);
 
     const timeranges = new Timeranges();
-    timeranges.setToken(this.state.token);
+    timeranges.setToken(localStorage.getItem('token'));
     timeranges.setTimerangesList([timerange]);
 
     this.state.gateway
@@ -53,8 +55,8 @@ export default class StandardCalendar extends React.Component {
 
   handleSelect = (newIntervals) => {
     const timeranges = new Timeranges();
-    timeranges.setToken(this.state.token);
-    timeranges.setEvent(this.state.event);
+    timeranges.setToken(localStorage.getItem('token'));
+    timeranges.setEvent(this.props.event);
     timeranges.setTimerangesList(
       newIntervals.map((interval) => {
         let timerange = new Timerange();
@@ -76,8 +78,8 @@ export default class StandardCalendar extends React.Component {
 
   reloadCalendar = () => {
     var login = new Login();
-    login.setToken(this.state.token);
-    login.setEvent(this.state.event);
+    login.setToken(localStorage.getItem('token'));
+    login.setEvent(this.props.event);
 
     this.state.gateway
       .getTimeranges(login, {})
