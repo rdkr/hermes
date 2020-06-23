@@ -8,7 +8,7 @@ from scheduler.discord import Scheduler
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    bot = commands.Bot(command_prefix="£")
+    bot = commands.Bot(command_prefix=os.environ.get("HERMES_PREFIX", "$"))
     bot.add_cog(Scheduler(bot))
     bot.run(os.environ["DISCORD_TOKEN"])
 

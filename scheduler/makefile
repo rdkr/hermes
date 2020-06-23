@@ -9,6 +9,7 @@ run: build
 		-e DB_USER='postgres' \
 		-e DB_HOST='host.docker.internal' \
 		-e DB_PW='${DB_PW}' \
+		-e HERMES_PREFIX='£' \
 		rdkr/hermes-scheduler python main.py
 
 push: build
