@@ -16,13 +16,12 @@ class NameForm extends React.Component {
     let search = window.location.search;
     let params = new URLSearchParams(search);
 
-    if (this.props.events[0] === "please choose an event..."){
+    if (this.props.events[0] === "please choose an event...") {
       this.state = { defaultEvent: "please choose an event..." };
     } else {
       this.state = { defaultEvent: params.get("event") };
     }
     this.handleChange = this.handleChange.bind(this);
-
   }
 
   handleChange(event) {
@@ -30,23 +29,42 @@ class NameForm extends React.Component {
     let params = new URLSearchParams(window.location.search);
     params.set("event", event.target.value);
     if (this.state.defaultEvent === "please choose an event...") {
-      window.history.pushState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+      window.history.pushState(
+        {},
+        document.title,
+        "/hermes/" + "?" + unescape(params.toString())
+      );
     } else {
-      window.history.pushState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+      window.history.pushState(
+        {},
+        document.title,
+        "/hermes/" + "?" + unescape(params.toString())
+      );
     }
-    this.props.app.login()
+    this.props.app.login();
   }
 
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={"row"}>
-
           <div className={"column"}>
             <label htmlFor="eventField">event name</label>
-            <select id="eventField" defaultValue={this.state.defaultEvent} onChange={this.handleChange}>
+            <select
+              id="eventField"
+              defaultValue={this.state.defaultEvent}
+              onChange={this.handleChange}
+            >
               {this.props.events.map((event) => (
-                <option key={event.name} value={event.name} hidden={event.name === "please choose an event..." ? true : false}>{event.name}</option>
+                <option
+                  key={event.name}
+                  value={event.name}
+                  hidden={
+                    event.name === "please choose an event..." ? true : false
+                  }
+                >
+                  {event.name}
+                </option>
               ))}
             </select>
           </div>
@@ -60,7 +78,6 @@ class NameForm extends React.Component {
               disabled
             />
           </div>
-
         </div>
       </form>
     );
@@ -84,34 +101,36 @@ class App extends React.Component {
     let urlToken = params.get("token");
 
     if (urlToken != null) {
-      localStorage.setItem('token', urlToken);
-      params.delete("token")
-      window.history.replaceState({}, document.title, "/hermes/" + "?" + unescape(params.toString()));
+      localStorage.setItem("token", urlToken);
+      params.delete("token");
+      window.history.replaceState(
+        {},
+        document.title,
+        "/hermes/" + "?" + unescape(params.toString())
+      );
     }
 
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem("token");
     if (token === null) {
       return this.setState({
-        msg: `log in on discord with !login`,
+        msg: `please log in from discord (!login)`,
       });
     }
 
     await this.setState({
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
     });
-    await this.login()
-
+    await this.login();
   }
 
   async login() {
-
     let search = window.location.search;
     let params = new URLSearchParams(search);
-    let eventName = params.get("event")
+    let eventName = params.get("event");
 
     var login = new Login();
-    login.setEvent(eventName)
-    login.setToken(localStorage.getItem('token'));
+    login.setEvent(eventName);
+    login.setToken(localStorage.getItem("token"));
     login.setTz(moment.tz.guess());
 
     this.state.gateway
@@ -125,12 +144,14 @@ class App extends React.Component {
 
         for (const event of events) {
           if (event.getName() === eventName) {
-            let listOfEvents = events.map((event) => ({"name":event.getName()}))
+            let listOfEvents = events.map((event) => ({
+              name: event.getName(),
+            }));
 
             this.setState({
               msg: `welcome, ${name}!`,
-              options: <NameForm tz={tz} events={listOfEvents} app={this}/>,
-              calendar: <StandardCalendar tz={tz} event={eventName}/>,
+              options: <NameForm tz={tz} events={listOfEvents} app={this} />,
+              calendar: <StandardCalendar tz={tz} event={eventName} />,
               hiddenOptions: false,
               hiddenCalendar: false,
             });
@@ -139,19 +160,27 @@ class App extends React.Component {
             break;
           }
         }
-        if(!found){
-          let listOfEvents = [{"name":"please choose an event..."}]
-          listOfEvents.push(...events.map((event) => ({"name":event.getName()})))
+        if (!found) {
+          let listOfEvents = [{ name: "please choose an event..." }];
+          listOfEvents.push(
+            ...events.map((event) => ({ name: event.getName() }))
+          );
           this.setState({
             msg: `welcome, ${name}!`,
-            options: <NameForm tz={tz} events={listOfEvents} app={this}/>,
+            options: <NameForm tz={tz} events={listOfEvents} app={this} />,
             hiddenOptions: false,
           });
         }
       })
       .catch((err) => {
         console.log(`error: ${err.code}, "${err.message}"`);
-        this.setState({ msg: `server error :(` });
+        if (err.code === 2 && err.message === "invalid token") {
+          return this.setState({
+            msg: `please log in from discord (!login)`,
+          });
+        } else {
+          this.setState({ msg: `server error :(` });
+        }
       });
   }
 
@@ -181,7 +210,7 @@ class App extends React.Component {
 
 ReactDOM.render(
   <React.StrictMode>
-    <App/>
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );

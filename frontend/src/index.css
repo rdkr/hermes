@@ -89,7 +89,7 @@ body {
 .weekCalendar__content {
   position: relative;
   width: auto;
-  /* overflow: auto; */
+  overflow: auto;
 }
 
 .weekCalendar__overlay {
