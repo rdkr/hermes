@@ -1,7 +1,8 @@
 import React from "react";
 import moment from "moment-timezone";
-import StandardCalendar from "./StandardCalendar";
+import { Redirect, withRouter } from "react-router-dom";
 
+import StandardCalendar from "./StandardCalendar";
 import Form from "./Form.js";
 
 const { Login } = require("../proto/hermes_pb.js");
@@ -9,8 +10,11 @@ const { GatewayPromiseClient } = require("../proto/hermes_grpc_web_pb.js");
 
 class App extends React.Component {
   constructor(props) {
+    console.debug("constructed");
     super(props);
     this.state = {
+      gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
+      redirect: null,
       msg: "loading...",
       calendar: "",
       hiddenOptions: true,
@@ -19,44 +23,36 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    let search = window.location.search;
-    let params = new URLSearchParams(search);
-    let urlToken = params.get("token");
-
-    if (urlToken != null) {
-      localStorage.setItem("token", urlToken);
-      params.delete("token");
-      window.history.replaceState(
-        {},
-        document.title,
-        "/hermes/?" + unescape(params.toString())
-      );
-    }
-
-    let token = localStorage.getItem("token");
-    if (token === null) {
-      return this.setState({
-        msg: `please log in from discord ($login)`,
-      });
-    }
-
-    await this.setState({
-      gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
-    });
     await this.login();
   }
 
-  hideCalendar() {
-    this.setState({hiddenCalendar: true})
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params !== prevProps.match.params) {
+      console.log("update");
+      this.setState({
+        redirect: null,
+      });
+      this.login();
+    }
+  }
+
+  redirect(query) {
+    this.setState({
+      hiddenCalendar: true,
+      redirect: {
+        pathname: "/" + query,
+      },
+    });
   }
 
   async login() {
-    let search = window.location.search;
-    let params = new URLSearchParams(search);
-    let eventName = params.get("event");
+    let token = localStorage.getItem("token");
+    if (token === null) {
+      this.redirect("login");
+    }
 
     var login = new Login();
-    login.setEvent(eventName);
+    login.setEvent(this.props.match.params.event);
     login.setToken(localStorage.getItem("token"));
     login.setTz(moment.tz.guess());
 
@@ -68,26 +64,36 @@ class App extends React.Component {
         const events = response.getEventsList();
 
         var found = false;
-
         for (const event of events) {
-          if (event.getName() === eventName) {
-            let listOfEvents = events.map((event) => ({
-              name: event.getName(),
-            }));
-
-            this.setState({
-              msg: `welcome, ${name}!`,
-              options: <Form tz={tz} events={listOfEvents} app={this} />,
-              calendar: <StandardCalendar tz={tz} event={eventName} />,
-              hiddenOptions: false,
-              hiddenCalendar: false,
-            });
-
+          if (event.getName() === this.props.match.params.event) {
             found = true;
             break;
           }
         }
-        if (!found) {
+
+        if (found) {
+          let listOfEvents = events.map((event) => ({
+            name: event.getName(),
+          }));
+
+          console.debug(this.props.match.params.event);
+          this.setState({
+            msg: `welcome, ${name}!`,
+            options: (
+              <Form
+                tz={tz}
+                events={listOfEvents}
+                currentEvent={this.props.match.params.event}
+                app={this}
+              />
+            ),
+            calendar: (
+              <StandardCalendar tz={tz} event={this.props.match.params.event} />
+            ),
+            hiddenOptions: false,
+            hiddenCalendar: false,
+          });
+        } else {
           let listOfEvents = [{ name: "please choose an event..." }];
           listOfEvents.push(
             ...events.map((event) => ({ name: event.getName() }))
@@ -103,7 +109,7 @@ class App extends React.Component {
         console.log(`error: ${err.code}, "${err.message}"`);
         if (err.code === 2 && err.message === "invalid token") {
           return this.setState({
-            msg: `please log in from discord ($login)`,
+            msg: `invalid token - please log in from discord ($login)`,
           });
         } else {
           this.setState({ msg: `server error :(` });
@@ -112,6 +118,9 @@ class App extends React.Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push to={this.state.redirect} />;
+    }
     return (
       <div>
         <div className={"container"}>
@@ -135,4 +144,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withRouter(App);

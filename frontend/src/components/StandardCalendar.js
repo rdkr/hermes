@@ -82,46 +82,51 @@ export default class StandardCalendar extends React.Component {
     this.state.gateway
       .getTimeranges(login, {})
       .then((response) => {
-        const intervals = response.getTimerangesList().map((timerange) => {
-          const startDatetime = moment.tz(
-            moment.unix(timerange.getStart()),
-            timerange.getTz()
-          );
-          const startDayDelta = startDatetime.diff(
-            moment.tz(moment(), timerange.getTz()).startOf("day"),
-            "days"
-          );
-          const endDatetime = moment.tz(
-            moment.unix(timerange.getEnd()),
-            timerange.getTz()
-          );
-          const endDayDelta = endDatetime.diff(
-            moment.tz(moment(), timerange.getTz()).startOf("day"),
-            "days"
-          );
+        const intervals = response
+          .getTimerangesList()
+          .filter((timerange) => {
+            return moment.unix(timerange.getEnd()) > moment.now();
+          })
+          .map((timerange) => {
+            const startDatetime = moment.tz(
+              moment.unix(timerange.getStart()),
+              timerange.getTz()
+            );
+            const startDayDelta = startDatetime.diff(
+              moment.tz(moment(), timerange.getTz()).startOf("day"),
+              "days"
+            );
+            const endDatetime = moment.tz(
+              moment.unix(timerange.getEnd()),
+              timerange.getTz()
+            );
+            const endDayDelta = endDatetime.diff(
+              moment.tz(moment(), timerange.getTz()).startOf("day"),
+              "days"
+            );
 
-          let browserOffset =
-            -1 * moment.tz.zone(this.props.tz).utcOffset(moment());
-          let timerangeOffset = startDatetime.utcOffset();
-          let displayOffset = browserOffset - timerangeOffset;
+            let browserOffset =
+              -1 * moment.tz.zone(this.props.tz).utcOffset(moment());
+            let timerangeOffset = startDatetime.utcOffset();
+            let displayOffset = browserOffset - timerangeOffset;
 
-          return {
-            start: moment({
-              h: startDatetime.hour(),
-              m: startDatetime.minute(),
-            })
-              .add(displayOffset, "minutes")
-              .add(startDayDelta, "d"),
-            end: moment({
-              h: endDatetime.hour(),
-              m: endDatetime.minute(),
-            })
-              .add(displayOffset, "minutes")
-              .add(endDayDelta, "d"),
-            uid: timerange.getId(),
-            value: ``,
-          };
-        });
+            return {
+              start: moment({
+                h: startDatetime.hour(),
+                m: startDatetime.minute(),
+              })
+                .add(displayOffset, "minutes")
+                .add(startDayDelta, "d"),
+              end: moment({
+                h: endDatetime.hour(),
+                m: endDatetime.minute(),
+              })
+                .add(displayOffset, "minutes")
+                .add(endDayDelta, "d"),
+              uid: timerange.getId(),
+              value: ``,
+            };
+          });
 
         this.setState({
           selectedIntervals: intervals,

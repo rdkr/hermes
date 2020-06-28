@@ -3,37 +3,12 @@ import React from "react";
 class Form extends React.Component {
   constructor(props) {
     super(props);
-
-    let search = window.location.search;
-    let params = new URLSearchParams(search);
-
-    if (this.props.events[0] === "please choose an event...") {
-      this.state = { defaultEvent: "please choose an event..." };
-    } else {
-      this.state = { defaultEvent: params.get("event") };
-    }
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
     event.preventDefault();
-    let params = new URLSearchParams(window.location.search);
-    params.set("event", event.target.value);
-    if (this.state.defaultEvent === "please choose an event...") {
-      window.history.pushState(
-        {},
-        document.title,
-        "/hermes/?" + unescape(params.toString())
-      );
-    } else {
-      this.props.app.hideCalendar()
-      window.history.pushState(
-        {},
-        document.title,
-        "/hermes/?" + unescape(params.toString())
-      );
-    }
-    this.props.app.login();
+    this.props.app.redirect("event/" + event.target.value)
   }
 
   render() {
@@ -44,7 +19,7 @@ class Form extends React.Component {
             <label htmlFor="eventField">event name</label>
             <select
               id="eventField"
-              defaultValue={this.state.defaultEvent}
+              value={this.props.currentEvent}
               onChange={this.handleChange}
             >
               {this.props.events.map((event) => (
