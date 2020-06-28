@@ -4,8 +4,8 @@ import WeekCalendar from "react-week-calendar";
 
 import CustomModal from "./CustomModal";
 
-const { Login, Timerange, Timeranges } = require("./proto/hermes_pb.js");
-const { GatewayPromiseClient } = require("./proto/hermes_grpc_web_pb.js");
+const { Login, Timerange, Timeranges } = require("../proto/hermes_pb.js");
+const { GatewayPromiseClient } = require("../proto/hermes_grpc_web_pb.js");
 
 export default class StandardCalendar extends React.Component {
   constructor(props) {
@@ -14,8 +14,6 @@ export default class StandardCalendar extends React.Component {
       selectedIntervals: [],
     };
   }
-
-
 
   async componentDidMount() {
     await this.setState({
@@ -40,7 +38,7 @@ export default class StandardCalendar extends React.Component {
     timerange.setId(selectedIntervals[index].uid);
 
     const timeranges = new Timeranges();
-    timeranges.setToken(localStorage.getItem('token'));
+    timeranges.setToken(localStorage.getItem("token"));
     timeranges.setTimerangesList([timerange]);
 
     this.state.gateway
@@ -55,7 +53,7 @@ export default class StandardCalendar extends React.Component {
 
   handleSelect = (newIntervals) => {
     const timeranges = new Timeranges();
-    timeranges.setToken(localStorage.getItem('token'));
+    timeranges.setToken(localStorage.getItem("token"));
     timeranges.setEvent(this.props.event);
     timeranges.setTimerangesList(
       newIntervals.map((interval) => {
@@ -78,7 +76,7 @@ export default class StandardCalendar extends React.Component {
 
   reloadCalendar = () => {
     var login = new Login();
-    login.setToken(localStorage.getItem('token'));
+    login.setToken(localStorage.getItem("token"));
     login.setEvent(this.props.event);
 
     this.state.gateway
