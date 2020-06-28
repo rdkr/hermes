@@ -29,14 +29,14 @@ class App extends React.Component {
       window.history.replaceState(
         {},
         document.title,
-        "/hermes/s?" + unescape(params.toString())
+        "/hermes/?" + unescape(params.toString())
       );
     }
 
     let token = localStorage.getItem("token");
     if (token === null) {
       return this.setState({
-        msg: `please log in from discord (!login)`,
+        msg: `please log in from discord ($login)`,
       });
     }
 
@@ -44,6 +44,10 @@ class App extends React.Component {
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
     });
     await this.login();
+  }
+
+  hideCalendar() {
+    this.setState({hiddenCalendar: true})
   }
 
   async login() {
@@ -99,7 +103,7 @@ class App extends React.Component {
         console.log(`error: ${err.code}, "${err.message}"`);
         if (err.code === 2 && err.message === "invalid token") {
           return this.setState({
-            msg: `please log in from discord (!login)`,
+            msg: `please log in from discord ($login)`,
           });
         } else {
           this.setState({ msg: `server error :(` });

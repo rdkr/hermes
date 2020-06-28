@@ -26,6 +26,7 @@ class Form extends React.Component {
         "/hermes/?" + unescape(params.toString())
       );
     } else {
+      this.props.app.hideCalendar()
       window.history.pushState(
         {},
         document.title,
