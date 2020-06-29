@@ -38,7 +38,7 @@ class Scheduler(commands.Cog):
         await ctx.send(f"error!")
 
     @commands.command()
-    async def when(self, ctx, people=5, duration=1.5, event=None):
+    async def when(self, ctx, people=4, duration=1, event=None):
         """Find times for an event.
 
         This will return timeranges in which at least <people> number of
@@ -131,12 +131,12 @@ class Scheduler(commands.Cog):
         """Get a magic link to the web interface via DM.
         """
         warning = "⚠️ this is a magic link which logs in to your account, **don't share it**!"
-        link = f"<https://neel.rdkr.uk/hermes/?token={self.db.get_magic_token(ctx.message.author.id)}>"
+        link = f"<https://neel.rdkr.uk/hermes/login?token={self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
     @commands.command(hidden=True)
     async def sync(self, ctx):
-        """Get a link to the web interface via DM.
+        """Syncronise players from Discord to database.
         """
         self.run_sync()
         await ctx.message.author.send(f"sync complete")
