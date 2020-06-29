@@ -10,7 +10,6 @@ class Login extends React.Component {
   }
 
   async componentDidMount() {
-    console.log("hello");
     let search = window.location.search;
     let params = new URLSearchParams(search);
     let urlToken = params.get("token");

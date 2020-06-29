@@ -10,7 +10,7 @@ import App from "./components/App.js";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/hermes">
       <Switch>
         <Route exact path="/login">
           <Login />

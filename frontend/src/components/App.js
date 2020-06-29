@@ -10,7 +10,6 @@ const { GatewayPromiseClient } = require("../proto/hermes_grpc_web_pb.js");
 
 class App extends React.Component {
   constructor(props) {
-    console.debug("constructed");
     super(props);
     this.state = {
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
@@ -28,7 +27,6 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params !== prevProps.match.params) {
-      console.log("update");
       this.setState({
         redirect: null,
       });
@@ -76,7 +74,6 @@ class App extends React.Component {
             name: event.getName(),
           }));
 
-          console.debug(this.props.match.params.event);
           this.setState({
             msg: `welcome, ${name}!`,
             options: (
