@@ -15,7 +15,7 @@ all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js .
 		-v '${PWD}/../frontend/src/proto:/out' \
 		grpc-js-protoc \
 			--proto_path /build /build/hermes.proto \
-			--js_out=import_style=commonjs:/out	 \
+			--js_out=import_style=commonjs,binary:/out	 \
 			--grpc-web_out=import_style=commonjs,mode=grpcwebtext:/out	
 	ls ../frontend/src/proto -1 \
 		| xargs -I % sed -i '1i/* eslint-disable */'  ../frontend/src/proto/%
