@@ -36,6 +36,7 @@ message Empty {}
 service Gateway {
   rpc GetPlayer(Login) returns (Player);
   rpc GetTimeranges(Login) returns (Timeranges);
+  rpc PutTimeranges(Timeranges) returns (Timeranges);
   rpc SetTimeranges(Timeranges) returns (Empty);
   rpc DeleteTimeranges(Timeranges) returns (Empty);
 }
