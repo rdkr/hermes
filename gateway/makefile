@@ -1,5 +1,5 @@
 proxy:
-	docker run -it -p 8080:8080 -v "$$(pwd)/envoy.yaml:/etc/envoy/envoy.yaml" \
+	docker run -it --net host -v "$$(pwd)/envoy.yaml:/etc/envoy/envoy.yaml" \
 		envoyproxy/envoy:v1.14-latest -c /etc/envoy/envoy.yaml -l debug
 
 serve:

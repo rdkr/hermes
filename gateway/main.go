@@ -166,6 +166,50 @@ func (s *server) SetTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empt
 	return &pb.Empty{}, nil
 }
 
+func (s *server) PutTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Timeranges, error) {
+	playerID, _, tz, err := s.resolveToken(in.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	eventID, err := s.resolveEvent(in.Event)
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer tx.Rollback()
+
+	res, err := tx.Exec("DELETE FROM timeranges WHERE player_id=$1 AND event_id=$2", playerID, eventID)
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+	}
+	fmt.Println(res)
+	stmt, err := tx.Prepare("INSERT INTO timeranges (player_id, \"start\", \"end\", tz, event_id) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+	}
+
+	for _, timerange := range in.Timeranges {
+		_, err := stmt.Exec(playerID, timerange.Start, timerange.End, tz, eventID)
+		if err != nil {
+			tx.Rollback()
+			log.Fatal(err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(in)
+	return in, nil
+}
+
 func (s *server) DeleteTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Empty, error) {
 	playerID, _, _, err := s.resolveToken(in.Token)
 	if err != nil {
