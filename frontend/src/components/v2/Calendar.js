@@ -10,23 +10,39 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      days: 9,
-      hours: 49
-    }
-    this.state = {
-      days: 9,
-      hours: 49,
-      cells: this.createCells(),
-      timestamps: this.createTimestamps(),
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
     };
     // moment.tz.setDefault("America/New_York");
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.hours !== state.hours || props.days !== state.days) {
+      console.log("getDerivedStateFromProps");
+
+      const timestamps = Calendar.createTimestamps(props.days, props.hours);
+      const processed = Calendar.processTimeranges(
+        timestamps,
+        state.timeranges,
+        props.days,
+        props.hours
+      );
+
+      return {
+        days: props.days,
+        hours: props.hours,
+        timestamps: timestamps,
+        cells: processed.cells,
+        timeranges: processed.timeranges,
+      };
+    }
+    return {};
   }
 
   async componentDidMount() {
     this.reloadCalendar();
   }
 
+  // todo this should be static
   createTable = () => {
     let parent = [];
 
@@ -71,11 +87,11 @@ export default class Calendar extends React.Component {
     return parent;
   };
 
-  createCells = () => {
+  static createCells = (days, hours) => {
     let parent = [];
-    for (let i = 0; i < this.props.hours; i++) {
+    for (let i = 0; i < hours; i++) {
       let children = [];
-      for (let j = 0; j < this.props.days; j++) {
+      for (let j = 0; j < days; j++) {
         children.push(false);
       }
       parent.push(children);
@@ -83,15 +99,15 @@ export default class Calendar extends React.Component {
     return parent;
   };
 
-  createTimestamps = () => {
+  static createTimestamps = (days, hours) => {
     let parent = [];
 
     // moment.tz.setDefault("America/New_York");
     moment.tz.setDefault("");
 
-    for (let i = 0; i < this.props.hours; i++) {
+    for (let i = 0; i < hours; i++) {
       let children = [];
-      for (let j = 0; j < this.props.days; j++) {
+      for (let j = 0; j < days; j++) {
         children.push(
           moment()
             .startOf("day")
@@ -102,6 +118,25 @@ export default class Calendar extends React.Component {
       parent.push(children);
     }
     return parent;
+  };
+
+  static processTimeranges = (timestamps, timeranges, days, hours) => {
+    console.log("processTimeranges", timestamps, timeranges, days, hours);
+    let cells = Calendar.createCells(days, hours);
+    if (timeranges) {
+      for (let i = 0; i < hours; i++) {
+        for (let j = 0; j < days; j++) {
+          const check = timeranges.some((timerange) => {
+            return timestamps[i][j].isSame(timerange);
+          });
+          if (check) {
+            console.log("ok");
+            cells[i][j] = true;
+          }
+        }
+      }
+    }
+    return { timeranges: timeranges, cells: cells };
   };
 
   update = (cells) => {
@@ -115,18 +150,16 @@ export default class Calendar extends React.Component {
       }
     }
 
-    // console.log("A:", timestamps)
     let timeranges = timestamps.map((timestamp) => {
       let timerange = new Timerange();
       timerange.setStart(moment(timestamp).unix());
       timerange.setEnd(moment(timestamp).add(30, "minutes").unix());
       return timerange;
     });
-    // console.log("B:", timeranges)
 
     const timerangesPb = new Timeranges();
     timerangesPb.setToken(localStorage.getItem("token"));
-    timerangesPb.setEvent("radhakr/dnd");
+    timerangesPb.setEvent(this.props.event);
     timerangesPb.setTimerangesList(timeranges);
 
     this.state.gateway
@@ -135,19 +168,14 @@ export default class Calendar extends React.Component {
         const timeranges = response.getTimerangesList().map((timerange) => {
           return moment.unix(timerange.getStart());
         });
-
-        let cells = this.createCells();
-        for (let i = 0; i < this.props.hours; i++) {
-          for (let j = 0; j < this.props.days; j++) {
-            const check = timeranges.some((timerange) => {
-              return this.state.timestamps[i][j].isSame(timerange);
-            });
-            if (check) {
-              cells[i][j] = true;
-            }
-          }
-        }
-        this.setState({ cells });
+        this.setState(
+          Calendar.processTimeranges(
+            this.state.timestamps,
+            timeranges,
+            this.state.days,
+            this.state.hours
+          )
+        );
       })
       .catch((err) => {
         console.error(`error: ${err.code}, "${err.message}"`);
@@ -157,55 +185,36 @@ export default class Calendar extends React.Component {
   reloadCalendar = () => {
     var login = new Login();
     login.setToken(localStorage.getItem("token"));
-    login.setEvent("radhakr/dnd");
+    login.setEvent(this.props.event);
 
     this.state.gateway
       .getTimeranges(login, {})
       .then((response) => {
-        const intervals = response
-          .getTimerangesList()
-          .filter((timerange) => {
-            return moment.unix(timerange.getEnd()) > moment.now();
-          })
-          .map((timerange) => {
-            const start = moment.unix(timerange.getStart());
-            const end = moment.unix(timerange.getEnd());
-
-            let cells = [];
-            for (let i = 0; i < this.props.hours; i++) {
-              let children = [];
-              for (let j = 0; j < this.props.days; j++) {
-                if (
-                  this.state.cells[i][j] === true ||
-                  this.state.timestamps[i][j].isBetween(
-                    start,
-                    end,
-                    undefined,
-                    "[)"
-                  )
-                ) {
-                  children.push(true);
-                } else {
-                  children.push(false);
-                }
-              }
-              cells.push(children);
-            }
-
-            this.setState({ cells });
-          });
+        const timeranges = response.getTimerangesList().map((timerange) => {
+          return moment.unix(timerange.getStart());
+        });
+        this.setState(
+          Calendar.processTimeranges(
+            this.state.timestamps,
+            timeranges,
+            this.state.days,
+            this.state.hours
+          )
+        );
       })
       .catch((err) => {
         console.error(`hermes error: ${err.code}, "${err.message}"`);
       });
   };
 
-  render = () => (
-    <TableDragSelect
-      value={this.state.cells}
-      onChange={(cells) => this.update(cells)}
-    >
-      {this.createTable()}
-    </TableDragSelect>
-  );
+  render = () => {
+    return (
+      <TableDragSelect
+        value={this.state.cells}
+        onChange={(cells) => this.update(cells)}
+      >
+        {this.createTable()}
+      </TableDragSelect>
+    );
+  };
 }
