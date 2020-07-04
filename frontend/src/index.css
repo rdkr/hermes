@@ -201,3 +201,78 @@ body {
   background-color: red;
   border-color: red;
 }
+
+.table-drag-select {
+  /* Stretch horizontally to fill parent */
+  width: 100%;
+  max-width: 800px;
+  /* Keep columns same width */
+  table-layout: fixed;
+  /* Disable text selection */
+  user-select: none;
+  /* Center in parent */
+  margin-left: auto;
+  margin-right: auto;
+  /* Remove space between border */
+  border-collapse: collapse;
+}
+
+/* Table cells */
+.table-drag-select td {
+  text-align: center;
+  /* Cut off long strings of text with ... */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /* Make transparent gaps between cells. Better than relying on margin
+   * because clicking an element's margin doesn't trigger events */
+  border: 0.4rem solid #222;
+  background-clip: padding-box;
+  /* Make cells reasonable size */
+  /* line-height: 1rem; */
+  /* Shows more text when text too big to fit into cell */
+  padding-left: 0rem;
+  padding-right: 0rem;
+}
+
+/* Cells that can be interacted with */
+.table-drag-select td.cell-enabled {
+  /* background-color: #DDD; */
+  /* Make the cursor a + symbol */
+  cursor: cell;
+}
+
+.table-drag-select tr:nth-child(4n),tr:nth-child(4n+1) { 
+  background-color: #555;
+  border: 0.1rem solid transparent;
+
+}
+
+.table-drag-select tr:nth-child(4n+2),tr:nth-child(4n+3) { 
+  background-color: #444;  
+}
+
+/* Cells that cannot be interacted with */
+.table-drag-select td.cell-disabled {
+  /* Put yer css here */
+  background-color: #333;
+
+}
+
+/* Cells that have been selected */
+.table-drag-select td.cell-selected {
+  background-color: rgba(0, 18, 177, 0.6);
+  background-color: rgba(132, 0, 255, 0.363);
+
+}
+
+/* Cells that are in the process of being selected */
+.table-drag-select td.cell-being-selected {
+  /* This is the blue color you see when you select text with the cursor */
+  background-color: rgba(0, 18, 177, 0.8);
+}
+
+pre {
+  margin: 0px;
+  font-size: 0.8em
+}
+

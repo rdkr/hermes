@@ -234,6 +234,86 @@ proto.GatewayPromiseClient.prototype.getTimeranges =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.Timeranges,
+ *   !proto.Timeranges>}
+ */
+const methodDescriptor_Gateway_PutTimeranges = new grpc.web.MethodDescriptor(
+  '/Gateway/PutTimeranges',
+  grpc.web.MethodType.UNARY,
+  proto.Timeranges,
+  proto.Timeranges,
+  /**
+   * @param {!proto.Timeranges} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Timeranges.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.Timeranges,
+ *   !proto.Timeranges>}
+ */
+const methodInfo_Gateway_PutTimeranges = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.Timeranges,
+  /**
+   * @param {!proto.Timeranges} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Timeranges.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.Timeranges} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.Timeranges)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.Timeranges>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.GatewayClient.prototype.putTimeranges =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/Gateway/PutTimeranges',
+      request,
+      metadata || {},
+      methodDescriptor_Gateway_PutTimeranges,
+      callback);
+};
+
+
+/**
+ * @param {!proto.Timeranges} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.Timeranges>}
+ *     A native promise that resolves to the response
+ */
+proto.GatewayPromiseClient.prototype.putTimeranges =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/Gateway/PutTimeranges',
+      request,
+      metadata || {},
+      methodDescriptor_Gateway_PutTimeranges);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.Timeranges,
  *   !proto.Empty>}
  */
 const methodDescriptor_Gateway_SetTimeranges = new grpc.web.MethodDescriptor(

@@ -3,10 +3,12 @@ import moment from "moment-timezone";
 import { Redirect, withRouter } from "react-router-dom";
 
 import StandardCalendar from "./StandardCalendar";
-import Form from "./Form.js";
 
-const { Login } = require("../proto/hermes_pb.js");
-const { GatewayPromiseClient } = require("../proto/hermes_grpc_web_pb.js");
+
+import Form from "../Form.js";
+
+const { Login } = require("../../proto/hermes_pb.js");
+const { GatewayPromiseClient } = require("../../proto/hermes_grpc_web_pb.js");
 
 class App extends React.Component {
   constructor(props) {

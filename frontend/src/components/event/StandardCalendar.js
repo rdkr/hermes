@@ -4,8 +4,8 @@ import WeekCalendar from "react-week-calendar";
 
 import CustomModal from "./CustomModal";
 
-const { Login, Timerange, Timeranges } = require("../proto/hermes_pb.js");
-const { GatewayPromiseClient } = require("../proto/hermes_grpc_web_pb.js");
+const { Login, Timerange, Timeranges } = require("../../proto/hermes_pb.js");
+const { GatewayPromiseClient } = require("../../proto/hermes_grpc_web_pb.js");
 
 export default class StandardCalendar extends React.Component {
   constructor(props) {
@@ -144,8 +144,8 @@ export default class StandardCalendar extends React.Component {
         scaleUnit={30}
         cellHeight={21}
         numberOfDays={9}
-        startTime={moment({ h: 8, m: 0 })}
-        endTime={moment({ h: 22, m: 0 })}
+        // startTime={moment({ h: 0, m: 0 })}
+        // endTime={moment({ h: 0, m: 0 })}
         selectedIntervals={this.state.selectedIntervals}
         onIntervalSelect={this.handleSelect}
         onIntervalRemove={this.handleEventRemove}

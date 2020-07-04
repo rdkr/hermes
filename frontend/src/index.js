@@ -1,18 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-
-import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 
-import Login from "./components/Login.js";
-import App from "./components/App.js";
-
 import CssBaseline from "@material-ui/core/CssBaseline";
-
-import EventPage from "./components/EventPage";
-
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import "./index.css";
+
+import Login from "./components/login/Login";
+import App from "./components/event/App";
+import EventPage from "./components/v2/EventPage";
 
 const darkTheme = createMuiTheme({
   palette: {
