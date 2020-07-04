@@ -13,12 +13,11 @@ export default class Calendar extends React.Component {
       gateway: new GatewayPromiseClient(process.env.REACT_APP_BACKEND),
     };
     // moment.tz.setDefault("America/New_York");
+    moment.tz.setDefault("");
   }
 
   static getDerivedStateFromProps(props, state) {
     if (props.hours !== state.hours || props.days !== state.days) {
-      console.log("getDerivedStateFromProps");
-
       const timestamps = Calendar.createTimestamps(props.days, props.hours);
       const processed = Calendar.processTimeranges(
         timestamps,
@@ -26,7 +25,6 @@ export default class Calendar extends React.Component {
         props.days,
         props.hours
       );
-
       return {
         days: props.days,
         hours: props.hours,
@@ -43,17 +41,14 @@ export default class Calendar extends React.Component {
   }
 
   // todo this should be static
-  createTable = () => {
+  static createTable = (timestamps) => {
     let parent = [];
 
-    // moment.tz.setDefault("America/New_York");
-    moment.tz.setDefault("");
-
-    for (let i = 0; i < this.props.hours; i++) {
+    for (let i = 0; i < timestamps.length; i++) {
       let children = [];
-      for (let j = 0; j < this.props.days; j++) {
-        const timestamp = this.state.timestamps[i][j];
-        const key = { i: i, j: j };
+      for (let j = 0; j < timestamps[i].length; j++) {
+        const timestamp = timestamps[i][j];
+        const key = timestamp.format();
 
         if (i === 0 && j === 0) {
           children.push(<td key={key} disabled></td>);
@@ -73,23 +68,25 @@ export default class Calendar extends React.Component {
           children.push(
             <td
               key={key}
+              className={"times"}
               disabled={
                 moment().subtract(1799, "seconds") > timestamp ? true : false
               }
             >
-              {/* {timestamp.format("")} */}
+              <pre>{timestamp.format("HHmm")}</pre>
             </td>
           );
         }
       }
       parent.push(<tr key={{ row: i }}>{children}</tr>);
     }
+
     return parent;
   };
 
   static createCells = (days, hours) => {
     let parent = [];
-    for (let i = 0; i < hours; i++) {
+    for (let i = 0; i < hours[1] - hours[0]; i++) {
       let children = [];
       for (let j = 0; j < days; j++) {
         children.push(false);
@@ -101,19 +98,14 @@ export default class Calendar extends React.Component {
 
   static createTimestamps = (days, hours) => {
     let parent = [];
-
-    // moment.tz.setDefault("America/New_York");
-    moment.tz.setDefault("");
-
-    for (let i = 0; i < hours; i++) {
+    for (let i = 0; i < hours[1] - hours[0]; i++) {
       let children = [];
       for (let j = 0; j < days; j++) {
-        children.push(
-          moment()
-            .startOf("day")
-            .add(j - 1, "days")
-            .add(Math.max(0, i - 1) * 30, "minutes")
-        );
+        const t = moment()
+          .startOf("day")
+          .add(j - 1, "days")
+          .add(Math.max(0, i + hours[0] - 1) * 30, "minutes");
+        children.push(t);
       }
       parent.push(children);
     }
@@ -121,16 +113,18 @@ export default class Calendar extends React.Component {
   };
 
   static processTimeranges = (timestamps, timeranges, days, hours) => {
-    console.log("processTimeranges", timestamps, timeranges, days, hours);
     let cells = Calendar.createCells(days, hours);
+    console.log(timeranges)
     if (timeranges) {
-      for (let i = 0; i < hours; i++) {
-        for (let j = 0; j < days; j++) {
+      for (let i = 0; i < cells.length; i++) {
+        for (let j = 0; j < cells[i].length; j++) {
+          // for (const tr of timeranges) {
+          //   console.log(tr.format('HHmm'), i, j, timestamps[i][j].format('HHmm'), timestamps[i][j].isSame(tr))
+          // }
           const check = timeranges.some((timerange) => {
             return timestamps[i][j].isSame(timerange);
           });
           if (check) {
-            console.log("ok");
             cells[i][j] = true;
           }
         }
@@ -142,9 +136,10 @@ export default class Calendar extends React.Component {
   update = (cells) => {
     let timestamps = [];
 
-    for (let i = 1; i < this.props.hours; i++) {
-      for (let j = 1; j < this.props.days; j++) {
+    for (let i = 1; i < cells.length; i++) {
+      for (let j = 1; j < cells[i].length; j++) {
         if (cells[i][j] === true) {
+          console.log(true)
           timestamps.push(this.state.timestamps[i][j]);
         }
       }
@@ -168,6 +163,8 @@ export default class Calendar extends React.Component {
         const timeranges = response.getTimerangesList().map((timerange) => {
           return moment.unix(timerange.getStart());
         });
+        console.log('put')
+        console.log(response.getTimerangesList())
         this.setState(
           Calendar.processTimeranges(
             this.state.timestamps,
@@ -213,7 +210,7 @@ export default class Calendar extends React.Component {
         value={this.state.cells}
         onChange={(cells) => this.update(cells)}
       >
-        {this.createTable()}
+        {Calendar.createTable(this.state.timestamps)}
       </TableDragSelect>
     );
   };

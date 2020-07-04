@@ -5,6 +5,8 @@ import * as serviceWorker from "./serviceWorker";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import Container from '@material-ui/core/Container';
+
 import "./index.css";
 
 import Login from "./components/login/Login";
@@ -17,35 +19,39 @@ const darkTheme = createMuiTheme({
   },
 });
 
-const NoMatch = () => {  return (<h1>page not found</h1>);};
+const NoMatch = () => {
+  return <h1>page not found</h1>;
+};
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/login">
-            <Login />
-          </Route>
-          <Route exact path="/">
-            <App />
-          </Route>
-          <Route exact path="/event">
-            <App />
-          </Route>
-          <Route path="/event/:event+">
-            <App />
-          </Route>
-          <Route exact path="/v2">
-          <EventPage />
-          </Route>
-          <Route path="/v2/:event+">
-            <EventPage />
-          </Route>
-          <Route component={NoMatch} />
-        </Switch>
-      </BrowserRouter>
+      <Container component="main">
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/">
+              <App />
+            </Route>
+            <Route exact path="/event">
+              <App />
+            </Route>
+            <Route path="/event/:event+">
+              <App />
+            </Route>
+            <Route exact path="/v2">
+              <EventPage />
+            </Route>
+            <Route path="/v2/:event+">
+              <EventPage />
+            </Route>
+            <Route component={NoMatch} />
+          </Switch>
+        </BrowserRouter>
+      </Container>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")

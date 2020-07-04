@@ -6,42 +6,74 @@ import Slider from "@material-ui/core/Slider";
 
 import Calendar from "./Calendar";
 
-class EventPage extends React.Component {
+function valueToTime(value) {
+  let h = Math.floor(value / 2)
+  if (h === 24) {
+    h = "00"
+  } else if (h < 10 ){
+    h = `0${h}`
+  }
+  let m = ((value / 2) % 1) * 60
+  if (m !== 30) {
+    m = "00"
+  }
+  return `${h}${m}`;
+}
 
+class EventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      days: 7,
-      hours: [0, 49],
+      days: 8,
+      daysSlide: 8,
+      hours: [20, 45],
+      hoursSlide: [20, 45],
     };
   }
 
   render() {
-
     return (
       <>
         <Typography id="range-slider" gutterBottom>
-          Temperature range
+          date range
         </Typography>
         <Slider
-        min={2}
-        max={15}
-          value={this.state.days}
-          onChange={(event, value) => {this.setState({days: value})}}
+          min={6}
+          max={15}
+          value={this.state.daysSlide}
+          onChange={(event, value) => {
+            this.setState({ daysSlide: value });
+          }}
+          onChangeCommitted={(event, value) => {
+            this.setState({ days: value });
+          }}
+          valueLabelFormat={value => value -1}
           valueLabelDisplay="auto"
           aria-labelledby="slider"
-          // getAriaValueText={valuetext}
         />
+        <Typography id="range-slider" gutterBottom>
+          time range
+        </Typography>
         <Slider
-                min={2}
-                max={49}
-          value={this.state.hours}
-          onChange={(event, value) => {this.setState({hours: value})}}
+          min={0}
+          max={48}
+          value={this.state.hoursSlide}
+          onChange={(event, value) => {
+            this.setState({ hoursSlide: value });
+          }}
+          onChangeCommitted={(event, value) => {
+            this.setState({ hours: [value[0], value[1]+1] });
+          }}
+          valueLabelFormat={valueToTime}
           valueLabelDisplay="auto"
           aria-labelledby="range-slider"
           // getAriaValueText={valuetext}
         />
-        <Calendar days={this.state.days} hours={this.state.hours[1]} event={this.props.match.params.event} />
+        <Calendar
+          days={this.state.days}
+          hours={this.state.hours}
+          event={this.props.match.params.event}
+        />
       </>
     );
   }
