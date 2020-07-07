@@ -1,10 +1,8 @@
-// https://github.com/mcjohnalds/react-table-drag-select
-
 import React from "react";
 import clone from "clone";
 import PropTypes from "prop-types";
 
-export class TableDragSelect extends React.Component {
+export default class TableDragSelect extends React.Component {
   static propTypes = {
     value: (props) => {
       const error = new Error(
@@ -60,14 +58,13 @@ export class TableDragSelect extends React.Component {
     },
   };
 
-
   static defaultProps = {
     value: [],
     maxRows: Infinity,
     maxColumns: Infinity,
-    onSelectionStart: () => { },
-    onInput: () => { },
-    onChange: () => { },
+    onSelectionStart: () => {},
+    onInput: () => {},
+    onChange: () => {},
   };
 
   state = {
@@ -97,75 +94,68 @@ export class TableDragSelect extends React.Component {
     );
   };
 
-  renderRows = () => React.Children.map(this.props.children, (tr, i) => {
-    return (
-      <tr key={i} {...tr.props}>
-        {React.Children.map(tr.props.children, (cell, j) => (
-          <Cell
-            key={j}
-            onTouchStart={this.handleTouchStartCell}
-            onTouchMove={this.handleTouchMoveCell}
-            selected={this.props.value[i][j]}
-            beingSelected={this.isCellBeingSelected(i, j)}
-            {...cell.props}
-          >
-            {cell.props.children}
-          </Cell>
-        ))}
-      </tr>
-    );
-  });
+  renderRows = () =>
+    React.Children.map(this.props.children, (tr, i) => {
+      return (
+        <tr key={i} {...tr.props}>
+          {React.Children.map(tr.props.children, (cell, j) => (
+            <Cell
+              key={j}
+              onTouchStart={this.handleTouchStartCell}
+              onTouchMove={this.handleTouchMoveCell}
+              selected={this.props.value[i][j]}
+              beingSelected={this.isCellBeingSelected(i, j)}
+              {...cell.props}
+            >
+              {cell.props.children}
+            </Cell>
+          ))}
+        </tr>
+      );
+    });
 
   handleTouchStartCell = (e) => {
     const isLeftClick = e.button === 0;
     const isTouch = e.type !== "mousedown";
     if (!this.state.selectionStarted && (isLeftClick || isTouch)) {
       e.preventDefault();
-      // todo the try is because eventToCellLocation can break when the
-      // point being touched is off the table. this is a quick fix but not nice
-      try {
-        const { row, column } = eventToCellLocation(e);
-        this.props.onSelectionStart({ row, column });
-        this.setState({
-          selectionStarted: true,
-          startRow: row,
-          startColumn: column,
-          endRow: row,
-          endColumn: column,
-          addMode: !this.props.value[row][column],
-        });
-      }
-      catch { }
+      const { row, column } = eventToCellLocation(e);
+      this.props.onSelectionStart({ row, column });
+      this.setState({
+        selectionStarted: true,
+        startRow: row,
+        startColumn: column,
+        endRow: row,
+        endColumn: column,
+        addMode: !this.props.value[row][column],
+      });
     }
   };
 
   handleTouchMoveCell = (e) => {
     if (this.state.selectionStarted) {
       e.preventDefault();
-      // todo the try is because eventToCellLocation can break when the
-      // point being touched is off the table. this is a quick fix but not nice
-      try {
-        const { row, column } = eventToCellLocation(e);
-        const { startRow, startColumn, endRow, endColumn } = this.state;
+      const { row, column } = eventToCellLocation(e);
+      const { startRow, startColumn, endRow, endColumn } = this.state;
 
-        if (endRow !== row || endColumn !== column) {
-          const nextRowCount = startRow === null && endRow === null
+      if (endRow !== row || endColumn !== column) {
+        const nextRowCount =
+          startRow === null && endRow === null
             ? 0
             : Math.abs(row - startRow) + 1;
-          const nextColumnCount = startColumn === null && endColumn === null
+        const nextColumnCount =
+          startColumn === null && endColumn === null
             ? 0
             : Math.abs(column - startColumn) + 1;
 
-          if (nextRowCount <= this.props.maxRows) {
-            this.setState({ endRow: row });
-          }
+        if (nextRowCount <= this.props.maxRows) {
+          this.setState({ endRow: row });
+        }
 
-          if (nextColumnCount <= this.props.maxColumns) {
-            this.setState({ endColumn: column });
-          }
+        if (nextColumnCount <= this.props.maxColumns) {
+          this.setState({ endColumn: column });
         }
       }
-      catch { }
     }
   };
 
@@ -209,10 +199,12 @@ export class TableDragSelect extends React.Component {
     );
   };
 }
+
 class Cell extends React.Component {
   // This optimization gave a 10% performance boost while drag-selecting
   // cells
-  shouldComponentUpdate = (nextProps) => this.props.beingSelected !== nextProps.beingSelected ||
+  shouldComponentUpdate = (nextProps) =>
+    this.props.beingSelected !== nextProps.beingSelected ||
     this.props.selected !== nextProps.selected;
 
   componentDidMount = () => {
@@ -243,8 +235,7 @@ class Cell extends React.Component {
     } = this.props;
     if (disabled) {
       className += " cell-disabled";
-    }
-    else {
+    } else {
       className += " cell-enabled";
       if (selected) {
         className += " cell-selected";
@@ -278,6 +269,7 @@ class Cell extends React.Component {
     }
   };
 }
+
 // Takes a mouse or touch event and returns the corresponding row and cell.
 // Example:
 //
@@ -291,17 +283,14 @@ const eventToCellLocation = (e) => {
   if (e.touches) {
     const touch = e.touches[0];
     target = document.elementFromPoint(touch.clientX, touch.clientY);
-  }
-  else {
+  } else {
     target = e.target;
-    while (target.tagName !== "TD") {
-      target = target.parentNode;
-    }
   }
-  const loc = {
+  while (target.tagName !== "TD") {
+    target = target.parentNode;
+  }
+  return {
     row: target.parentNode.rowIndex,
     column: target.cellIndex,
   };
-
-  return loc;
 };

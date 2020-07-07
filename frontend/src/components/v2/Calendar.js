@@ -1,7 +1,7 @@
 import React from "react";
 
 import moment from "moment-timezone";
-import { TableDragSelect } from "./TableDragSelect";
+import TableDragSelect from "./TableDragSelect";
 
 const { Login, Timerange, Timeranges } = require("../../proto/hermes_pb.js");
 const { GatewayPromiseClient } = require("../../proto/hermes_grpc_web_pb.js");
@@ -114,7 +114,6 @@ export default class Calendar extends React.Component {
 
   static processTimeranges = (timestamps, timeranges, days, hours) => {
     let cells = Calendar.createCells(days, hours);
-    console.log(timeranges)
     if (timeranges) {
       for (let i = 0; i < cells.length; i++) {
         for (let j = 0; j < cells[i].length; j++) {
@@ -139,7 +138,6 @@ export default class Calendar extends React.Component {
     for (let i = 1; i < cells.length; i++) {
       for (let j = 1; j < cells[i].length; j++) {
         if (cells[i][j] === true) {
-          console.log(true)
           timestamps.push(this.state.timestamps[i][j]);
         }
       }
@@ -163,8 +161,6 @@ export default class Calendar extends React.Component {
         const timeranges = response.getTimerangesList().map((timerange) => {
           return moment.unix(timerange.getStart());
         });
-        console.log('put')
-        console.log(response.getTimerangesList())
         this.setState(
           Calendar.processTimeranges(
             this.state.timestamps,

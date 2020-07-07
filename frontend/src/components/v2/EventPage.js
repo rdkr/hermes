@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
@@ -7,15 +7,15 @@ import Slider from "@material-ui/core/Slider";
 import Calendar from "./Calendar";
 
 function valueToTime(value) {
-  let h = Math.floor(value / 2)
+  let h = Math.floor(value / 2);
   if (h === 24) {
-    h = "00"
-  } else if (h < 10 ){
-    h = `0${h}`
+    h = "00";
+  } else if (h < 10) {
+    h = `0${h}`;
   }
-  let m = ((value / 2) % 1) * 60
+  let m = ((value / 2) % 1) * 60;
   if (m !== 30) {
-    m = "00"
+    m = "00";
   }
   return `${h}${m}`;
 }
@@ -47,7 +47,7 @@ class EventPage extends React.Component {
           onChangeCommitted={(event, value) => {
             this.setState({ days: value });
           }}
-          valueLabelFormat={value => value -1}
+          valueLabelFormat={(value) => value - 1}
           valueLabelDisplay="auto"
           aria-labelledby="slider"
         />
@@ -62,7 +62,7 @@ class EventPage extends React.Component {
             this.setState({ hoursSlide: value });
           }}
           onChangeCommitted={(event, value) => {
-            this.setState({ hours: [value[0], value[1]+1] });
+            this.setState({ hours: [value[0], value[1] + 1] });
           }}
           valueLabelFormat={valueToTime}
           valueLabelDisplay="auto"
