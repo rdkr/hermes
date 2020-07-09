@@ -25,6 +25,7 @@ class Player(Base):
     player_tz = Column(String, nullable=False)
     magic_token = Column(String, unique=True)
 
+
 class Event(Base):
     __tablename__ = "events"
 
@@ -33,6 +34,7 @@ class Event(Base):
     event_name = Column(String)
     min_players = Column(Integer)
     min_time = Column(Float)
+
 
 class Timerange(Base):
     __tablename__ = "timeranges"
@@ -53,6 +55,7 @@ class Timerange(Base):
             datetime.fromtimestamp(self.end, timezone(self.tz)),
         )
 
+
 class EventPlayers(Base):
     __tablename__ = "event_players"
 
@@ -62,6 +65,7 @@ class EventPlayers(Base):
 
     player = relationship(Player)
     event = relationship(Event)
+
 
 class PlayerDB:
     def __init__(self):
@@ -74,12 +78,14 @@ class PlayerDB:
     def get_players(self, event_id):
         now = int(datetime.utcnow().timestamp())
         players = defaultdict(list)
-        result = (self.session.query(Player.player_id, Timerange)
-                    .join(Timerange)
-                    .filter(Timerange.event_id == str(self.event_dc_id_to_event_id(event_id)))
-                    .filter(Timerange.end > now)
-                    .order_by(Timerange.start.asc())
-                    .all())
+        result = (
+            self.session.query(Player.player_id, Timerange)
+            .join(Timerange)
+            .filter(Timerange.event_id == str(self.event_dc_id_to_event_id(event_id)))
+            .filter(Timerange.end > now)
+            .order_by(Timerange.start.asc())
+            .all()
+        )
         for player_id, timerange in result:
             players[self.player_id_to_player_name(player_id)].append(timerange)
         return players
@@ -93,7 +99,7 @@ class PlayerDB:
             try:
                 event_id = self.event_dc_id_to_event_id(item[0])
             except KeyError:
-                event = Event(event_dc_id=item[0], event_name=f'{item[1]}/{item[2]}')
+                event = Event(event_dc_id=item[0], event_name=f"{item[1]}/{item[2]}")
                 self.session.add(event)
                 self.session.commit()
                 event_id = event.event_id
@@ -101,37 +107,57 @@ class PlayerDB:
             try:
                 player_id = self.player_dc_id_to_player_id(item[3])
             except KeyError:
-                player = Player(player_dc_id=item[3], player_name=item[4], player_tz="Etc/UTC")
+                player = Player(
+                    player_dc_id=item[3], player_name=item[4], player_tz="Etc/UTC"
+                )
                 self.session.add(player)
                 self.session.commit()
                 player_id = player.player_id
 
-            self.session.merge(EventPlayers(
-                event_id=event_id,
-                player_id=player_id))
+            self.session.merge(EventPlayers(event_id=event_id, player_id=player_id))
             self.session.commit()
 
     def get_magic_token(self, player_dc_id):
         chars = ascii_letters + digits
-        magic_token = ''.join(choice(chars) for _ in range(64))
-        self.session.merge(Player(player_id=self.player_dc_id_to_player_id(player_dc_id), magic_token=magic_token))
+        magic_token = "".join(choice(chars) for _ in range(64))
+        self.session.merge(
+            Player(
+                player_id=self.player_dc_id_to_player_id(player_dc_id),
+                magic_token=magic_token,
+            )
+        )
         self.session.commit()
         return magic_token
 
     def player_dc_id_to_player_id(self, player_dc_id):
         try:
-            return self.session.query(Player.player_id).filter(Player.player_dc_id == str(player_dc_id)).one().player_id
+            return (
+                self.session.query(Player.player_id)
+                .filter(Player.player_dc_id == str(player_dc_id))
+                .one()
+                .player_id
+            )
         except exc.NoResultFound:
             raise KeyError
 
     def event_dc_id_to_event_id(self, event_dc_id):
         try:
-            return self.session.query(Event.event_id).filter(Event.event_dc_id == str(event_dc_id)).one().event_id
+            return (
+                self.session.query(Event.event_id)
+                .filter(Event.event_dc_id == str(event_dc_id))
+                .one()
+                .event_id
+            )
         except exc.NoResultFound:
             raise KeyError
 
     def player_id_to_player_name(self, player_id):
         try:
-            return self.session.query(Player.player_name).filter(Player.player_id == player_id).one().player_name
+            return (
+                self.session.query(Player.player_name)
+                .filter(Player.player_id == player_id)
+                .one()
+                .player_name
+            )
         except exc.NoResultFound:
             raise KeyError

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
+from itertools import islice
 from traceback import print_exception
 
 from datetimerange import DateTimeRange
@@ -87,7 +88,7 @@ class Scheduler(commands.Cog):
 
         return await ctx.send("".join(msg))
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def list(self, ctx, who=None, event=None):
         """List when you or others are marked as free.
 
@@ -118,19 +119,21 @@ class Scheduler(commands.Cog):
         else:
             who = [who]
 
-        msg = [f"possible times:\n\n"]
         for player in who:
-            msg.append(f"_{player}_ at:\n")
-            msg.extend(format_timeranges(players[player]))
-            msg.append("\n")
-
-        await ctx.send("".join(msg))
+            for chunk in chunks(players[player], 10):
+                msg = [f"possible times:\n\n"]
+                msg.append(f"_{player}_ at:\n")
+                msg.extend(format_timeranges(chunk))
+                msg.append("\n")
+                await ctx.send("".join(msg))
 
     @commands.command()
     async def login(self, ctx):
         """Get a magic link to the web interface via DM.
         """
-        warning = "⚠️ this is a magic link which logs in to your account, **don't share it**!"
+        warning = (
+            "⚠️ this is a magic link which logs in to your account, **don't share it**!"
+        )
         link = f"<https://hermes.rdkr.uk/login?token={self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
 
@@ -146,8 +149,14 @@ class Scheduler(commands.Cog):
             return ctx.message.channel.id
         else:
             for channel in self.bot.get_all_channels():
-                if isinstance(channel, TextChannel) and channel.name == event and ctx.message.author in channel.members:
-                    await ctx.send(f"assuming channel: {channel.guild.name}/{channel.name} ({channel.id})")
+                if (
+                    isinstance(channel, TextChannel)
+                    and channel.name == event
+                    and ctx.message.author in channel.members
+                ):
+                    await ctx.send(
+                        f"assuming channel: {channel.guild.name}/{channel.name} ({channel.id})"
+                    )
                     return channel.id
         raise KeyError
 
@@ -159,5 +168,18 @@ class Scheduler(commands.Cog):
                 if isinstance(channel, TextChannel) and can_send:
                     for member in channel.members:
                         if not member == guild.me:
-                            valid.add((channel.id, guild.name, channel.name, member.id, member.name))
+                            valid.add(
+                                (
+                                    channel.id,
+                                    guild.name,
+                                    channel.name,
+                                    member.id,
+                                    member.name,
+                                )
+                            )
         self.db.sync_event_players(valid)
+
+
+def chunks(it, size):
+    it = iter(it)
+    return iter(lambda: tuple(islice(it, size)), ())
