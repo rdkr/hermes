@@ -10,13 +10,18 @@ import Container from '@material-ui/core/Container';
 import "./index.css";
 
 import Login from "./components/login/Login";
-import App from "./components/event/App";
-import EventPage from "./components/v2/EventPage";
+import App from "./components/v2/App";
+
+import purple from '@material-ui/core/colors/purple';
 
 const darkTheme = createMuiTheme({
   palette: {
     type: "dark",
+    primary: {
+      main: purple[500],
+    }
   },
+  // spacing: 60
 });
 
 const NoMatch = () => {
@@ -41,12 +46,6 @@ ReactDOM.render(
             </Route>
             <Route path="/event/:event+">
               <App />
-            </Route>
-            <Route exact path="/v2">
-              <EventPage />
-            </Route>
-            <Route path="/v2/:event+">
-              <EventPage />
             </Route>
             <Route component={NoMatch} />
           </Switch>
