@@ -22,8 +22,8 @@ config = context.config
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
-environ['DB_USER'] = "postgres"
-environ['DB_HOST'] = "localhost"
+environ["DB_USER"] = "postgres"
+environ["DB_HOST"] = "localhost"
 
 target_metadata = Base.metadata
 
@@ -62,9 +62,7 @@ def run_migrations_online():
     connectable = PlayerDB().engine
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
