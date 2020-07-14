@@ -40,7 +40,6 @@ export default class Calendar extends React.Component {
     this.reloadCalendar();
   }
 
-  // todo this should be static
   static createTable = (timestamps) => {
     let parent = [];
 

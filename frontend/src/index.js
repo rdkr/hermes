@@ -10,7 +10,7 @@ import Container from '@material-ui/core/Container';
 import "./index.css";
 
 import Login from "./components/login/Login";
-import App from "./components/v2/App";
+import App from "./components/event/App";
 
 import purple from '@material-ui/core/colors/purple';
 
