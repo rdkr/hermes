@@ -113,14 +113,14 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: hermes
+  name: gateway-hermes
   namespace: hermes
   annotations:
     kubernetes.io/ingress.class: nginx
-    external-dns.alpha.kubernetes.io/hostname: hermes-gateway.rdkr.uk
+    external-dns.alpha.kubernetes.io/hostname: gateway-hermes.rdkr.uk
 spec:
   rules:
-  - host: hermes-gateway.rdkr.uk
+  - host: gateway-hermes.rdkr.uk
     http:
       paths:
       - path: /
