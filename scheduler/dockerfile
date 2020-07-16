@@ -1,6 +1,6 @@
 FROM python
 
-RUN pip install datetime pytz datetimerange timefhuman sqlalchemy psycopg2 discord.py
+RUN pip install datetime pytz datetimerange timefhuman sqlalchemy psycopg2 discord.py grpcio protobuf
 
 WORKDIR /usr/src/app
 

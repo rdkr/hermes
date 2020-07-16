@@ -1,11 +1,11 @@
-all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js ../frontend/src/proto/hermes_pb.js
+all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js ../frontend/src/proto/hermes_pb.js ../scheduler/proto/hermes_pb2.py ../scheduler/proto/hermes_pb2_grpc.py
 
 ../gateway/proto/hermes.pb.go: hermes.proto
 	docker run \
 		-v '${PWD}:/build' \
 		-v '${PWD}/../gateway/proto:/out' \
 		grpc-go-protoc \
-			--proto_path /build hermes.proto\
+			--proto_path /build hermes.proto \
 			--go_opt=paths=source_relative \
 			--go_out=plugins=grpc:/out \
 
@@ -20,6 +20,16 @@ all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js .
 	ls ../frontend/src/proto -1 \
 		| xargs -I % sed -i '1i/* eslint-disable */'  ../frontend/src/proto/%
 
+../scheduler/proto/hermes_pb2.py ../scheduler/proto/hermes_pb2_grpc.py: hermes.proto
+	docker run \
+		-v '${PWD}:/build' \
+		-v '${PWD}/../scheduler/proto/:/out' \
+		grpc-python-protoc python -m grpc.tools.protoc \
+			--proto_path /build hermes.proto \
+			--grpc_python_out=/out \
+			--python_out=/out
+
 install:
 	docker build -t grpc-js-protoc -f js.dockerfile .
 	docker build -t grpc-go-protoc -f go.dockerfile .
+	docker build -t grpc-python-protoc -f python.dockerfile .

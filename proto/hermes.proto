@@ -40,3 +40,7 @@ service Gateway {
   rpc SetTimeranges(Timeranges) returns (Empty);
   rpc DeleteTimeranges(Timeranges) returns (Empty);
 }
+
+service Scheduler {
+  rpc NotifyUpdated(Player) returns (Empty);
+}

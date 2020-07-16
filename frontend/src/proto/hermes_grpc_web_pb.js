@@ -470,5 +470,137 @@ proto.GatewayPromiseClient.prototype.deleteTimeranges =
 };
 
 
+/**
+ * @param {string} hostname
+ * @param {?Object} credentials
+ * @param {?Object} options
+ * @constructor
+ * @struct
+ * @final
+ */
+proto.SchedulerClient =
+    function(hostname, credentials, options) {
+  if (!options) options = {};
+  options['format'] = 'text';
+
+  /**
+   * @private @const {!grpc.web.GrpcWebClientBase} The client
+   */
+  this.client_ = new grpc.web.GrpcWebClientBase(options);
+
+  /**
+   * @private @const {string} The hostname
+   */
+  this.hostname_ = hostname;
+
+};
+
+
+/**
+ * @param {string} hostname
+ * @param {?Object} credentials
+ * @param {?Object} options
+ * @constructor
+ * @struct
+ * @final
+ */
+proto.SchedulerPromiseClient =
+    function(hostname, credentials, options) {
+  if (!options) options = {};
+  options['format'] = 'text';
+
+  /**
+   * @private @const {!grpc.web.GrpcWebClientBase} The client
+   */
+  this.client_ = new grpc.web.GrpcWebClientBase(options);
+
+  /**
+   * @private @const {string} The hostname
+   */
+  this.hostname_ = hostname;
+
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.Player,
+ *   !proto.Empty>}
+ */
+const methodDescriptor_Scheduler_NotifyUpdated = new grpc.web.MethodDescriptor(
+  '/Scheduler/NotifyUpdated',
+  grpc.web.MethodType.UNARY,
+  proto.Player,
+  proto.Empty,
+  /**
+   * @param {!proto.Player} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.Player,
+ *   !proto.Empty>}
+ */
+const methodInfo_Scheduler_NotifyUpdated = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.Empty,
+  /**
+   * @param {!proto.Player} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.Player} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.Empty)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.SchedulerClient.prototype.notifyUpdated =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/Scheduler/NotifyUpdated',
+      request,
+      metadata || {},
+      methodDescriptor_Scheduler_NotifyUpdated,
+      callback);
+};
+
+
+/**
+ * @param {!proto.Player} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.Empty>}
+ *     A native promise that resolves to the response
+ */
+proto.SchedulerPromiseClient.prototype.notifyUpdated =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/Scheduler/NotifyUpdated',
+      request,
+      metadata || {},
+      methodDescriptor_Scheduler_NotifyUpdated);
+};
+
+
 module.exports = proto;
 

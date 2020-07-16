@@ -12,6 +12,5 @@ def main():
     bot.add_cog(Scheduler(bot))
     bot.run(os.environ["DISCORD_TOKEN"])
 
-
 if __name__ == "__main__":
     main()

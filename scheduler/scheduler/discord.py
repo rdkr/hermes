@@ -15,6 +15,24 @@ from scheduler.scheduler import filter_times, find_times, deduplicate_times
 
 SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc394r1-480-208_hq.gif"
 
+import grpc.experimental.aio
+import proto.hermes_pb2
+import proto.hermes_pb2_grpc
+
+from discord.ext import tasks, commands
+
+class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
+
+    def __init__(self, scheduler):
+        self.scheduler = scheduler
+
+    async def NotifyUpdated(self, request, context):
+        channel_id = 666716587083956224
+        send = self.scheduler.bot.get_channel(channel_id).send
+        event_id = 712784506624540713
+        await self.scheduler.send_when(send, 0, 1.5, event_id)
+        return proto.hermes_pb2.Empty()
+
 
 class Scheduler(commands.Cog):
     """A discord.py Cog to collect and interpret times that users are free to help schedule an event"""
@@ -22,12 +40,19 @@ class Scheduler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db = PlayerDB()
+        self.whens = {}
 
-    #     self.sync.start()
+        grpc.experimental.aio.init_grpc_aio()
+        self.server = grpc.experimental.aio.server()
+        proto.hermes_pb2_grpc.add_SchedulerServicer_to_server(SchedulerGrpc(self), self.server)
+        self.server.add_insecure_port('[::]:8080')
+        self.start_grpc.start()
 
-    # @tasks.loop(seconds=3)
-    # async def sync(self):
-    #     self.run_sync()
+        self.generate_whens.start()
+
+    @tasks.loop(count=1)
+    async def start_grpc(self):
+        await self.server.start()
 
     @commands.Cog.listener()
     async def on_error(self, event):
@@ -38,19 +63,53 @@ class Scheduler(commands.Cog):
         print_exception(type(exception), exception, exception.__traceback__)
         await ctx.send(f"error!")
 
+    @tasks.loop(seconds=10)
+    async def generate_whens(self):
+
+        for channel in self.bot.get_all_channels():
+
+            if not isinstance(channel, TextChannel):
+                continue
+            
+            try: 
+                player_timeranges = self.db.get_players(channel.id).items()
+            except KeyError:
+                continue
+            
+            whens = []
+            for n in range(5, 0, -1):
+
+                result = defaultdict(list)
+                for player, timeranges in player_timeranges:
+                    for timerange in timeranges:
+                        result[player].append(timerange.datetimerange())
+
+                result = find_times(result, n)
+                result = deduplicate_times(result)
+
+                if result:
+                    whens.append((n, result))
+
+            self.whens[channel.id] = whens
+        
+        return self.whens
+
+
     @commands.command()
-    async def when(self, ctx, people=4, duration=1, event=None):
+    async def when(self, ctx, people=None, duration=1.5, event=None):
         """Find times for an event.
 
-        This will return timeranges in which at least <people> number of
-        players are free for at least <duration> length for the given
-        event channel.
+        With no arguments, this will return the timeranges during which
+        the most people are available for at least 1.5 hours.
+
+        Arguments can be provided to cause the timeranges to be for at 
+        least a given number of people for at least a given duration.
 
         Parameters
         ----------
         people
             Optional: the number of people who need to be available
-            Default: 5
+            Default: 0 (implies maximum possible)
         duration
             Optional: the minimum duration in hours for the event
             Default: 1.5
@@ -62,31 +121,39 @@ class Scheduler(commands.Cog):
         --------
           - $when
           - $when 3
-          - $when 3 2
+          - $when 0 2
           - $when 3 2 dnd
         """
         event_id = await self.get_event_id(ctx, event)
-
+        await self.send_when(ctx.send, int(people), float(duration), event_id)
+    
+    async def send_when(self, send, people, duration, event_id):
         if people == 66:
-            await ctx.send(SIXTY_SIX)
+            await send(SIXTY_SIX)
 
-        # todo fix this mess
-        result = defaultdict(list)
-        for player, timeranges in self.db.get_players(event_id).items():
-            for timerange in timeranges:
-                result[player].append(timerange.datetimerange())
+        results = self.whens[event_id]
 
-        result = find_times(result, people)
-        result = filter_times(result, duration)
-        result = deduplicate_times(result)
+        if not people:
 
-        msg = [f"possible times for ⩾**{people}** players for ⩾**{duration}**h:\n\n"]
-        for players, times in result.items():
-            msg.append(f"_{', '.join(players)}_ at:\n")
-            msg.extend(format_datetimeranges(times))
-            msg.append("\n")
+            msg = [f"found times for **{results[0][0]}** players for ⩾**{duration}**h:\n\n"]
+            for players, times in filter_times(results[0][1], duration).items():
+                msg.append(f"_{', '.join(players)}_ at:\n")
+                msg.extend(format_datetimeranges(times))
+                msg.append("\n")
 
-        return await ctx.send("".join(msg))
+            return await send("".join(msg))
+
+        for result in results:
+
+            if result[0] == people:
+
+                msg = [f"found times for ⩾**{result[0]}** players for ⩾**{duration}**h:\n\n"]
+                for players, times in filter_times(result[1], duration).items():
+                    msg.append(f"_{', '.join(players)}_ at:\n")
+                    msg.extend(format_datetimeranges(times))
+                    msg.append("\n")
+
+                return await send("".join(msg))
 
     @commands.command(hidden=True)
     async def list(self, ctx, who=None, event=None):
