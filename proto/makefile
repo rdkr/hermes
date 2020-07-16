@@ -28,7 +28,8 @@ all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js .
 			--proto_path /build hermes.proto \
 			--grpc_python_out=/out \
 			--python_out=/out
-
+	sed -i 's/import hermes_pb2/import proto.hermes_pb2/' ../scheduler/proto/hermes_pb2_grpc.py
+	
 install:
 	docker build -t grpc-js-protoc -f js.dockerfile .
 	docker build -t grpc-go-protoc -f go.dockerfile .
