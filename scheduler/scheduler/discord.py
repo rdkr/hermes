@@ -7,7 +7,6 @@ from datetimerange import DateTimeRange
 from discord import TextChannel
 from discord.ext import commands, tasks
 from pytz import timezone
-from timefhuman import timefhuman
 
 from scheduler.formatting import format_datetimeranges, format_timeranges, format_range
 from scheduler.sql import PlayerDB

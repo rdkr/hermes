@@ -6,17 +6,17 @@ serve:
 	DB_HOST=localhost SCHEDULER_HOST=localhost go run main.go
 
 build:
-	docker build -t rdkr/hermes-gateway-server .
+	docker build -t rdkr/hermes-gateway .
 
 run: build
 	docker run -it --rm \
 		--net host \
 		-e DB_HOST='localhost' \
 		-e DB_PW='${DB_PW}' \
-		rdkr/hermes-gateway-server
+		rdkr/hermes-gateway
 
 push: build
-	docker push rdkr/hermes-gateway-server
+	docker push rdkr/hermes-gateway
 
 install:
 	kubectl apply -f k8s.yaml

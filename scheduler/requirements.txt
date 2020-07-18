@@ -1,6 +1,5 @@
 datetime
 datetimerange
-timefhuman
 pytz
 sqlalchemy
 psycopg2-binary

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: rdkr/hermes-gateway-server:latest
+        image: rdkr/hermes-gateway:latest
         imagePullPolicy: Always
         env:
           - name: SCHEDULER_HOST
