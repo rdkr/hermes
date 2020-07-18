@@ -204,7 +204,7 @@ class SchedulerStub(object):
         """
         self.NotifyUpdated = channel.unary_unary(
                 '/Scheduler/NotifyUpdated',
-                request_serializer=hermes__pb2.Player.SerializeToString,
+                request_serializer=hermes__pb2.Event.SerializeToString,
                 response_deserializer=hermes__pb2.Empty.FromString,
                 )
 
@@ -223,7 +223,7 @@ def add_SchedulerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'NotifyUpdated': grpc.unary_unary_rpc_method_handler(
                     servicer.NotifyUpdated,
-                    request_deserializer=hermes__pb2.Player.FromString,
+                    request_deserializer=hermes__pb2.Event.FromString,
                     response_serializer=hermes__pb2.Empty.SerializeToString,
             ),
     }
@@ -247,7 +247,7 @@ class Scheduler(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/NotifyUpdated',
-            hermes__pb2.Player.SerializeToString,
+            hermes__pb2.Event.SerializeToString,
             hermes__pb2.Empty.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)

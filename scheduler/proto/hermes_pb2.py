@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z\007.;proto',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0chermes.proto\"1\n\x05Login\x12\r\n\x05token\x18\x01 \x01(\t\x12\r\n\x05\x65vent\x18\x02 \x01(\t\x12\n\n\x02tz\x18\x03 \x01(\t\"!\n\x05\x45vent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\":\n\x06Player\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02tz\x18\x02 \x01(\t\x12\x16\n\x06\x65vents\x18\x03 \x03(\x0b\x32\x06.Event\"?\n\tTimerange\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05start\x18\x02 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x05\x12\n\n\x02tz\x18\x04 \x01(\t\"J\n\nTimeranges\x12\x1e\n\ntimeranges\x18\x01 \x03(\x0b\x32\n.Timerange\x12\r\n\x05token\x18\x02 \x01(\t\x12\r\n\x05\x65vent\x18\x03 \x01(\t\"\x07\n\x05\x45mpty2\xc7\x01\n\x07Gateway\x12\x1c\n\tGetPlayer\x12\x06.Login\x1a\x07.Player\x12$\n\rGetTimeranges\x12\x06.Login\x1a\x0b.Timeranges\x12)\n\rPutTimeranges\x12\x0b.Timeranges\x1a\x0b.Timeranges\x12$\n\rSetTimeranges\x12\x0b.Timeranges\x1a\x06.Empty\x12\'\n\x10\x44\x65leteTimeranges\x12\x0b.Timeranges\x1a\x06.Empty2-\n\tScheduler\x12 \n\rNotifyUpdated\x12\x07.Player\x1a\x06.EmptyB\tZ\x07.;protob\x06proto3'
+  serialized_pb=b'\n\x0chermes.proto\"1\n\x05Login\x12\r\n\x05token\x18\x01 \x01(\t\x12\r\n\x05\x65vent\x18\x02 \x01(\t\x12\n\n\x02tz\x18\x03 \x01(\t\"!\n\x05\x45vent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\":\n\x06Player\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02tz\x18\x02 \x01(\t\x12\x16\n\x06\x65vents\x18\x03 \x03(\x0b\x32\x06.Event\"?\n\tTimerange\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05start\x18\x02 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x05\x12\n\n\x02tz\x18\x04 \x01(\t\"J\n\nTimeranges\x12\x1e\n\ntimeranges\x18\x01 \x03(\x0b\x32\n.Timerange\x12\r\n\x05token\x18\x02 \x01(\t\x12\r\n\x05\x65vent\x18\x03 \x01(\t\"\x07\n\x05\x45mpty2\xc7\x01\n\x07Gateway\x12\x1c\n\tGetPlayer\x12\x06.Login\x1a\x07.Player\x12$\n\rGetTimeranges\x12\x06.Login\x1a\x0b.Timeranges\x12)\n\rPutTimeranges\x12\x0b.Timeranges\x1a\x0b.Timeranges\x12$\n\rSetTimeranges\x12\x0b.Timeranges\x1a\x06.Empty\x12\'\n\x10\x44\x65leteTimeranges\x12\x0b.Timeranges\x1a\x06.Empty2,\n\tScheduler\x12\x1f\n\rNotifyUpdated\x12\x06.Event\x1a\x06.EmptyB\tZ\x07.;protob\x06proto3'
 )
 
 
@@ -408,14 +408,14 @@ _SCHEDULER = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=514,
-  serialized_end=559,
+  serialized_end=558,
   methods=[
   _descriptor.MethodDescriptor(
     name='NotifyUpdated',
     full_name='Scheduler.NotifyUpdated',
     index=0,
     containing_service=None,
-    input_type=_PLAYER,
+    input_type=_EVENT,
     output_type=_EMPTY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,

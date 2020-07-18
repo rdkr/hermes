@@ -81,7 +81,7 @@ class PlayerDB:
         result = (
             self.session.query(Player.player_id, Timerange)
             .join(Timerange)
-            .filter(Timerange.event_id == str(self.event_dc_id_to_event_id(event_id)))
+            .filter(Timerange.event_id == event_id)
             .filter(Timerange.end > now)
             .order_by(Timerange.start.asc())
             .all()
@@ -89,6 +89,9 @@ class PlayerDB:
         for player_id, timerange in result:
             players[self.player_id_to_player_name(player_id)].append(timerange)
         return players
+
+    def get_events(self):
+        return self.session.query(Event).all()
 
     def sync_event_players(self, event_players):
 

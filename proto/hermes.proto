@@ -42,5 +42,5 @@ service Gateway {
 }
 
 service Scheduler {
-  rpc NotifyUpdated(Player) returns (Empty);
+  rpc NotifyUpdated(Event) returns (Empty);
 }

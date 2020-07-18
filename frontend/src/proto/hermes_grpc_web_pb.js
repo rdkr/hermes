@@ -525,16 +525,16 @@ proto.SchedulerPromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.Player,
+ *   !proto.Event,
  *   !proto.Empty>}
  */
 const methodDescriptor_Scheduler_NotifyUpdated = new grpc.web.MethodDescriptor(
   '/Scheduler/NotifyUpdated',
   grpc.web.MethodType.UNARY,
-  proto.Player,
+  proto.Event,
   proto.Empty,
   /**
-   * @param {!proto.Player} request
+   * @param {!proto.Event} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -547,13 +547,13 @@ const methodDescriptor_Scheduler_NotifyUpdated = new grpc.web.MethodDescriptor(
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.Player,
+ *   !proto.Event,
  *   !proto.Empty>}
  */
 const methodInfo_Scheduler_NotifyUpdated = new grpc.web.AbstractClientBase.MethodInfo(
   proto.Empty,
   /**
-   * @param {!proto.Player} request
+   * @param {!proto.Event} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -564,7 +564,7 @@ const methodInfo_Scheduler_NotifyUpdated = new grpc.web.AbstractClientBase.Metho
 
 
 /**
- * @param {!proto.Player} request The
+ * @param {!proto.Event} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -585,7 +585,7 @@ proto.SchedulerClient.prototype.notifyUpdated =
 
 
 /**
- * @param {!proto.Player} request The
+ * @param {!proto.Event} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata

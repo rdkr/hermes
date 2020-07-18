@@ -24,6 +24,7 @@ const (
 // server is used to implement helloworld.GreeterServer.
 type server struct {
 	db *sql.DB
+	sc pb.SchedulerClient
 	pb.UnimplementedGatewayServer
 }
 
@@ -183,12 +184,12 @@ func (s *server) PutTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Time
 	}
 	defer tx.Rollback()
 
-	res, err := tx.Exec("DELETE FROM timeranges WHERE player_id=$1 AND event_id=$2", playerID, eventID)
+	_, err = tx.Exec("DELETE FROM timeranges WHERE player_id=$1 AND event_id=$2", playerID, eventID)
 	if err != nil {
 		tx.Rollback()
 		log.Fatal(err)
 	}
-	fmt.Println(res)
+
 	stmt, err := tx.Prepare("INSERT INTO timeranges (player_id, \"start\", \"end\", tz, event_id) VALUES ($1, $2, $3, $4, $5)")
 	if err != nil {
 		tx.Rollback()
@@ -206,7 +207,14 @@ func (s *server) PutTimeranges(ctx context.Context, in *pb.Timeranges) (*pb.Time
 	if err := tx.Commit(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(in)
+
+	go func() {
+		_, err := s.sc.NotifyUpdated(context.Background(), &pb.Event{Id: int32(eventID)})
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
 	return in, nil
 }
 
@@ -249,6 +257,12 @@ func main() {
 	}
 	log.Println("connected to db")
 
+	conn, err := grpc.Dial(os.Getenv("SCHEDULER_HOST")+":8081", grpc.WithInsecure())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -256,7 +270,7 @@ func main() {
 	log.Println("server listening")
 
 	s := grpc.NewServer()
-	pb.RegisterGatewayServer(s, &server{db: db})
+	pb.RegisterGatewayServer(s, &server{db: db, sc: pb.NewSchedulerClient(conn)})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

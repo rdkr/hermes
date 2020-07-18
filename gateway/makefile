@@ -3,14 +3,15 @@ proxy:
 		envoyproxy/envoy:v1.14-latest -c /etc/envoy/envoy.yaml -l debug
 
 serve:
-	DB_HOST=localhost go run main.go
+	DB_HOST=localhost SCHEDULER_HOST=localhost go run main.go
 
 build:
 	docker build -t rdkr/hermes-gateway-server .
 
 run: build
 	docker run -it --rm \
-		-e DB_HOST='host.docker.internal' \
+		--net host \
+		-e DB_HOST='localhost' \
 		-e DB_PW='${DB_PW}' \
 		rdkr/hermes-gateway-server
 

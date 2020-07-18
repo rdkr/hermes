@@ -28,16 +28,6 @@ spec:
               secretKeyRef:
                 name: hermes
                 key: CSGO_DISCORD_TOKEN
-          - name: AWS_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: AWS_ACCESS_KEY_ID
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: hermes
-                key: AWS_SECRET_ACCESS_KEY
           - name: DB_USER
             value: postgres
           - name: DB_HOST
@@ -47,3 +37,18 @@ spec:
               secretKeyRef:
                 name: postgres-postgresql
                 key: postgresql-password
+        ports:
+          - containerPort: 8081
+            protocol: TCP
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: hermes-scheduler
+    namespace: hermes
+  spec:
+    selector:
+      app: hermes-scheduler
+    ports:
+      - protocol: TCP
+        port: 8081

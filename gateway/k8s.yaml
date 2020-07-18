@@ -19,6 +19,8 @@ spec:
         image: rdkr/hermes-gateway-server:latest
         imagePullPolicy: Always
         env:
+          - name: SCHEDULER_HOST
+            value: hermes-scheduler.hermes.svc.cluster.local
           - name: DB_HOST
             value: postgres-postgresql.hermes.svc.cluster.local
           - name: DB_PW
