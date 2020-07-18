@@ -237,13 +237,13 @@ class Cell extends React.Component {
       className += " cell-disabled";
     } else {
       className += " cell-enabled";
-      if (selected) {
+    }if (selected) {
         className += " cell-selected";
       }
       if (beingSelected) {
         className += " cell-being-selected";
       }
-    }
+    
     return (
       <td
         ref={(td) => (this.td = td)}

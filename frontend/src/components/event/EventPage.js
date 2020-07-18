@@ -47,86 +47,100 @@ function EventPage({ msg, tz, events, currentEvent, hideCal }) {
 
   return (
     <>
-      <Typography variant={"h4"}>{message}</Typography>
-      <FormControl onSubmit={handleEventChange}>
-        <InputLabel id="event-field-label">event</InputLabel>
-        <Select
-          labelId="event-field-label"
-          value={currentEvent}
-          onChange={handleEventChange}
+      <div style={{ float: "left" }}>
+        <Typography variant={"h4"}>{message}</Typography>
+        <div
+          style={{
+            display: events[0].name === "loading..." ? "none" : "",
+          }}
         >
-          {events.map((event) => (
-            <MenuItem
-              key={event.name}
-              value={event.name}
-              hidden={event.name === "please choose an event..." ? true : false}
-              disabled={
-                event.name === "please choose an event..." ? true : false
-              }
+          <FormControl onSubmit={handleEventChange}>
+            <InputLabel id="event-field-label">event</InputLabel>
+            <Select
+              labelId="event-field-label"
+              value={currentEvent}
+              onChange={handleEventChange}
             >
-              {event.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+              {events.map((event) => (
+                <MenuItem
+                  key={event.name}
+                  value={event.name}
+                  hidden={
+                    event.name === "please choose an event..." ? true : false
+                  }
+                  disabled={
+                    event.name === "please choose an event..." ? true : false
+                  }
+                >
+                  {event.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-      <FormControl>
-        <TextField label="timezone" type="text" value={tz} disabled />
-      </FormControl>
+          <FormControl>
+            <TextField label="timezone" type="text" value={tz} disabled />
+          </FormControl>
+        </div>
+      </div>
       <div
         style={{
-          display: hideCalendar ? "none" : "",
+          display: events[0].name.endsWith("...") ? "none" : "",
+          float: "right",
         }}
       >
+        <div>
+          <div>
+            <Typography id="range-slider" variant={"caption"}>
+              date range
+            </Typography>
+            <Slider
+              min={6}
+              max={15}
+              value={daysSlide}
+              onChange={(event, value) => {
+                setDaysSlide(value);
+              }}
+              onChangeCommitted={(event, value) => {
+                setDays(value);
+              }}
+              valueLabelFormat={(value) => value - 1}
+              valueLabelDisplay="auto"
+              aria-labelledby="slider"
+            />
+          </div>
+
+          <div>
+            <Typography id="range-slider" variant={"caption"}>
+              time ranges
+            </Typography>
+            <Slider
+              min={0}
+              max={48}
+              value={hoursSlide}
+              onChange={(event, value) => {
+                setHoursSlide(value);
+              }}
+              onChangeCommitted={(event, value) => {
+                setHours([value[0], value[1] + 1]);
+              }}
+              valueLabelFormat={valueToTime}
+              valueLabelDisplay="auto"
+              aria-labelledby="range-slider"
+            />
+          </div>
+        </div>
+      </div>
       <div>
-        <div>
-          <Typography id="range-slider" variant={"caption"}>
-            date range
-          </Typography>
-          <Slider
-            min={6}
-            max={15}
-            value={daysSlide}
-            onChange={(event, value) => {
-              setDaysSlide(value);
-            }}
-            onChangeCommitted={(event, value) => {
-              setDays(value);
-            }}
-            valueLabelFormat={(value) => value - 1}
-            valueLabelDisplay="auto"
-            aria-labelledby="slider"
-          />
+        {blurCalendar ? <LinearProgress /> : null}
+        <div
+          style={{
+            filter: blurCalendar ? "blur(5px)" : "none",
+            display: events[0].name.endsWith("...") ? "none" : "",
+          }}
+        >
+          <Calendar days={days} hours={hours} event={currentEvent} />
         </div>
-
-        <div>
-          <Typography id="range-slider" variant={"caption"}>
-            time ranges
-          </Typography>
-          <Slider
-            min={0}
-            max={48}
-            value={hoursSlide}
-            onChange={(event, value) => {
-              setHoursSlide(value);
-            }}
-            onChangeCommitted={(event, value) => {
-              setHours([value[0], value[1] + 1]);
-            }}
-            valueLabelFormat={valueToTime}
-            valueLabelDisplay="auto"
-            aria-labelledby="range-slider"
-          />
-        </div>
-      </div>
-      {blurCalendar ? <LinearProgress /> : null}
-      <div
-        style={{
-          filter: blurCalendar ? "blur(5px)" : "none",
-        }}
-      >
-        <Calendar days={days} hours={hours} event={currentEvent} />
-      </div>
       </div>
     </>
   );

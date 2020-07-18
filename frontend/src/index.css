@@ -34,12 +34,7 @@
   color: #222;
 }
 
-/* Cells that can be interacted with */
-.table-drag-select td.cell-enabled {
-  /* background-color: #DDD; */
-  /* Make the cursor a + symbol */
-  cursor: cell;
-}
+
 
 .table-drag-select tr:nth-child(4n),
 tr:nth-child(4n + 1) {
@@ -52,22 +47,24 @@ tr:nth-child(4n + 3) {
   background-color: #444;
 }
 
-/* Cells that cannot be interacted with */
-.table-drag-select td.cell-disabled {
-  /* Put yer css here */
-  background-color: #333;
-}
-
-/* Cells that have been selected */
 .table-drag-select td.cell-selected {
-  background-color: rgba(0, 18, 177, 0.6);
   background-color: rgba(132, 0, 255, 0.363);
 }
 
-/* Cells that are in the process of being selected */
 .table-drag-select td.cell-being-selected {
-  /* This is the blue color you see when you select text with the cursor */
   background-color: rgba(0, 18, 177, 0.8);
+}
+
+.table-drag-select td.cell-enabled {
+  cursor: cell;
+}
+
+.table-drag-select td.cell-disabled {
+  cursor: auto;
+}
+
+.table-drag-select td.never-enabled {
+  background-color: #333;
 }
 
 pre {

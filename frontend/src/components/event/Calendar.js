@@ -40,37 +40,39 @@ export default class Calendar extends React.Component {
     this.reloadCalendar();
   }
 
-  static createTable = (timestamps) => {
+  static createTable = (timestamps, disableEntry) => {
     let parent = [];
 
     for (let i = 0; i < timestamps.length; i++) {
       let children = [];
       for (let j = 0; j < timestamps[i].length; j++) {
         const timestamp = timestamps[i][j];
-        const key = timestamp.format();
+        const key = timestamp.unix();
 
         if (i === 0 && j === 0) {
-          children.push(<td key={key} disabled></td>);
+          children.push(
+            <td key={key} className={"never-enabled"} disabled></td>
+          );
         } else if (j === 0) {
           children.push(
-            <td key={key} disabled>
+            <td key={key} className={"never-enabled"} disabled>
               <pre>{timestamp.format("HHmm")}</pre>
             </td>
           );
         } else if (i === 0) {
           children.push(
-            <td key={key} disabled>
+            <td key={key} className={"never-enabled"} disabled>
               <pre>{timestamp.format("ddd Do")}</pre>
             </td>
           );
         } else {
+          const timePassed =
+            moment().subtract(1799, "seconds") > timestamp ? true : false;
           children.push(
             <td
               key={key}
-              className={"times"}
-              disabled={
-                moment().subtract(1799, "seconds") > timestamp ? true : false
-              }
+              className={timePassed ? " never-enabled" : ""}
+              disabled={disableEntry || timePassed ? true : false}
             >
               <pre>{timestamp.format("HHmm")}</pre>
             </td>
@@ -116,9 +118,6 @@ export default class Calendar extends React.Component {
     if (timeranges) {
       for (let i = 0; i < cells.length; i++) {
         for (let j = 0; j < cells[i].length; j++) {
-          // for (const tr of timeranges) {
-          //   console.log(tr.format('HHmm'), i, j, timestamps[i][j].format('HHmm'), timestamps[i][j].isSame(tr))
-          // }
           const check = timeranges.some((timerange) => {
             return timestamps[i][j].isSame(timerange);
           });
@@ -132,6 +131,7 @@ export default class Calendar extends React.Component {
   };
 
   update = (cells) => {
+    this.setState({ disableEntry: true });
     let timestamps = [];
 
     for (let i = 1; i < cells.length; i++) {
@@ -171,6 +171,9 @@ export default class Calendar extends React.Component {
       })
       .catch((err) => {
         console.error(`error: ${err.code}, "${err.message}"`);
+      })
+      .then(() => {
+        this.setState({ disableEntry: false });
       });
   };
 
@@ -201,12 +204,21 @@ export default class Calendar extends React.Component {
 
   render = () => {
     return (
-      <TableDragSelect
-        value={this.state.cells}
-        onChange={(cells) => this.update(cells)}
+      <div
+        style={
+          {
+            filter: this.state.disableEntry ? "blur(0.5px)" : "none",
+          }
+        }
       >
-        {Calendar.createTable(this.state.timestamps)}
-      </TableDragSelect>
+        <TableDragSelect
+          value={this.state.cells}
+          onChange={(cells) => this.update(cells)}
+          key={this.state.disableEntry}
+        >
+          {Calendar.createTable(this.state.timestamps, this.state.disableEntry)}
+        </TableDragSelect>
+      </div>
     );
   };
 }
