@@ -52,7 +52,7 @@ tr:nth-child(4n + 3) {
 }
 
 .table-drag-select td.cell-being-selected {
-  background-color: rgba(0, 18, 177, 0.8);
+  background-color: rgba(145, 145, 145, 0.8);
 }
 
 .table-drag-select td.cell-enabled {
@@ -65,6 +65,15 @@ tr:nth-child(4n + 3) {
 
 .table-drag-select td.never-enabled {
   background-color: #333;
+}
+
+div {
+  transition: filter 0.s ease-in-out;
+
+}
+div.blur {
+  filter: grayscale(1);
+  
 }
 
 pre {

@@ -2,6 +2,7 @@ import React from "react";
 
 import moment from "moment-timezone";
 import TableDragSelect from "./TableDragSelect";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const { Login, Timerange, Timeranges } = require("../../proto/hermes_pb.js");
 const { GatewayPromiseClient } = require("../../proto/hermes_grpc_web_pb.js");
@@ -204,13 +205,10 @@ export default class Calendar extends React.Component {
 
   render = () => {
     return (
-      <div
-        style={
-          {
-            filter: this.state.disableEntry ? "blur(0.5px)" : "none",
-          }
-        }
-      >
+        <div>
+        {this.state.disableEntry ? <LinearProgress /> : null}
+
+      <div className={this.state.disableEntry ? "blur" : null}>
         <TableDragSelect
           value={this.state.cells}
           onChange={(cells) => this.update(cells)}
@@ -218,7 +216,7 @@ export default class Calendar extends React.Component {
         >
           {Calendar.createTable(this.state.timestamps, this.state.disableEntry)}
         </TableDragSelect>
-      </div>
+      </div></div>
     );
   };
 }

@@ -18,7 +18,7 @@ const darkTheme = createMuiTheme({
   palette: {
     type: "dark",
     primary: {
-      main: purple[500],
+      main: purple[700],
     }
   },
   // spacing: 60
