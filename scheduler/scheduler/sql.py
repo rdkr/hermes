@@ -143,6 +143,17 @@ class PlayerDB:
         except exc.NoResultFound:
             raise KeyError
 
+    def event_id_to_event_dc_id(self, event_id):
+        try:
+            return (
+                self.session.query(Event.event_dc_id)
+                .filter(Event.event_id == int(event_id))
+                .one()
+                .event_dc_id
+            )
+        except exc.NoResultFound:
+            raise KeyError
+        
     def event_dc_id_to_event_id(self, event_dc_id):
         try:
             return (

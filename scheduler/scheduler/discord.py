@@ -29,8 +29,8 @@ class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
         previous_when = self.scheduler.whens[request.id][0]
         self.scheduler.whens[request.id] = await self.scheduler.generate_whens_for_channel(request.id)
         if not previous_when == self.scheduler.whens[request.id][0]:
-            channel_id = 666716587083956224
-            send = self.scheduler.bot.get_channel(channel_id).send
+            channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
+            send = self.scheduler.bot.get_channel(int(channel_id)).send
             await self.scheduler.send_when(send, self.scheduler.whens[request.id], 0, self.scheduler.whens_min_time[request.id])
         return proto.hermes_pb2.Empty()
 
