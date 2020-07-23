@@ -26,9 +26,10 @@ class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
         self.scheduler = scheduler
 
     async def NotifyUpdated(self, request, context):
-        previous_when = self.scheduler.whens[request.id][0]
+        # first entry or None if empty list
+        previous_when = next(iter(self.scheduler.whens[request.id]), None)
         self.scheduler.whens[request.id] = await self.scheduler.generate_whens_for_channel(request.id)
-        if not previous_when == self.scheduler.whens[request.id][0]:
+        if not previous_when == next(iter(self.scheduler.whens[request.id]), None):
             channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
             send = self.scheduler.bot.get_channel(int(channel_id)).send
             await self.scheduler.send_when(send, self.scheduler.whens[request.id], 0, self.scheduler.whens_min_time[request.id])
