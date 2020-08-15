@@ -153,7 +153,7 @@ class PlayerDB:
             )
         except exc.NoResultFound:
             raise KeyError
-        
+
     def event_dc_id_to_event_id(self, event_dc_id):
         try:
             return (

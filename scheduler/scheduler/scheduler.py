@@ -25,7 +25,7 @@ def merge_schedules(
         start = datetime.now(timezone("Europe/London")).replace(
             minute=0, second=0, microsecond=0
         )
-    candidates = DateTimeRange(start, start + timedelta(days=7))
+    candidates = DateTimeRange(start, start + timedelta(days=14))
 
     potentials = defaultdict(list)
 

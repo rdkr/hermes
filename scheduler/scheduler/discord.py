@@ -1,11 +1,13 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 from itertools import islice
+import logging
 from traceback import print_exception
 
 from datetimerange import DateTimeRange
-from discord import TextChannel
+from discord import TextChannel, Embed
 from discord.ext import commands, tasks
+from discord.errors import NotFound
 from pytz import timezone
 
 from scheduler.formatting import format_datetimeranges, format_timeranges, format_range
@@ -20,20 +22,42 @@ import proto.hermes_pb2_grpc
 
 from discord.ext import tasks, commands
 
-class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
 
+class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
     def __init__(self, scheduler):
         self.scheduler = scheduler
 
     async def NotifyUpdated(self, request, context):
-        # first entry or None if empty list
-        previous_when = next(iter(self.scheduler.whens[request.id]), None)
-        self.scheduler.whens[request.id] = await self.scheduler.generate_whens_for_channel(request.id)
-        if not previous_when == next(iter(self.scheduler.whens[request.id]), None):
-            channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
-            send = self.scheduler.bot.get_channel(int(channel_id)).send
-            await self.scheduler.send_when(send, self.scheduler.whens[request.id], 0, self.scheduler.whens_min_time[request.id])
-        return proto.hermes_pb2.Empty()
+        try:
+            # first entry or None if empty list
+            previous_when = next(iter(self.scheduler.whens[request.id]), None)
+            logging.info(f"previous: {previous_when}")
+
+            # generate new whens
+            self.scheduler.whens[
+                request.id
+            ] = await self.scheduler.generate_whens_for_channel(request.id)
+            new_when = next(iter(self.scheduler.whens[request.id]), None)
+            logging.info(f"new: {new_when}")
+
+            # compare whens and send msg if changed
+            if not str(previous_when) == str(new_when):
+                channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
+                channel = self.scheduler.bot.get_channel(int(channel_id))
+
+                whens = self.scheduler.whens[request.id]
+                when = next(iter(whens), None)
+
+                await self.scheduler.send_when(
+                    channel, when, self.scheduler.whens_min_time[request.id]
+                )
+
+            return proto.hermes_pb2.Empty()
+        except Exception as e:
+            logging.error(e)
+            import traceback
+
+            traceback.print_exc()
 
 
 class Scheduler(commands.Cog):
@@ -47,8 +71,10 @@ class Scheduler(commands.Cog):
 
         grpc.experimental.aio.init_grpc_aio()
         self.server = grpc.experimental.aio.server()
-        proto.hermes_pb2_grpc.add_SchedulerServicer_to_server(SchedulerGrpc(self), self.server)
-        self.server.add_insecure_port('[::]:8081')
+        proto.hermes_pb2_grpc.add_SchedulerServicer_to_server(
+            SchedulerGrpc(self), self.server
+        )
+        self.server.add_insecure_port("[::]:8081")
         self.start_grpc.start()
 
         self.generate_whens_loop.start()
@@ -66,24 +92,26 @@ class Scheduler(commands.Cog):
         print_exception(type(exception), exception, exception.__traceback__)
         await ctx.send(f"error!")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=60)
     async def generate_whens_loop(self):
         for event in self.db.get_events():
             self.whens_min_time[event.event_id] = event.min_time
-            self.whens[event.event_id] = await self.generate_whens_for_channel(event.event_id)
-        
+            self.whens[event.event_id] = await self.generate_whens_for_channel(
+                event.event_id
+            )
+
     async def generate_whens_for_channel(self, event_id, duration=None):
 
         if not duration:
             duration = self.whens_min_time[event_id]
 
-        try: 
+        try:
             player_timeranges = self.db.get_players(event_id).items()
         except KeyError:
             return []
-        
+
         whens = []
-        for n in range(5, 0, -1):
+        for n in range(6, 0, -1):
 
             result = defaultdict(list)
             for player, timeranges in player_timeranges:
@@ -98,7 +126,7 @@ class Scheduler(commands.Cog):
                 whens.append((n, result))
 
         return whens
-                    
+
     @commands.command()
     async def when(self, ctx, people=None, duration=None, event=None):
         """Find times for an event.
@@ -106,7 +134,7 @@ class Scheduler(commands.Cog):
         With no arguments, this will return the timeranges during which
         the most people are available for at least 1.5 hours.
 
-        Arguments can be provided to cause the timeranges to be for at 
+        Arguments can be provided to cause the timeranges to be for at
         least a given number of people for at least a given duration.
 
         Parameters
@@ -131,39 +159,80 @@ class Scheduler(commands.Cog):
         event_dc_id = await self.get_event_dc_id(ctx, event)
         event_id = self.db.event_dc_id_to_event_id(event_dc_id)
 
-        if not duration or not int(duration):
-            await self.send_when(ctx.send, self.whens[event_id], people, self.whens_min_time[event_id])
+        if (not people or not int(people)) and (not duration or not int(duration)):
+            if not people:
+                people = 0
+
+            whens = self.whens[event_id]
+            when = next(iter(whens), None)
+
+            await self.send_when(ctx.channel, when, self.whens_min_time[event_id])
+
         else:
-            await ctx.send(f"calculating times for ⩾**{people}** players for ⩾**{float(duration)}**h...")
-            await self.send_when(ctx.send, await self.generate_whens_for_channel(event_id, float(duration)), people, float(duration))
-    
-    async def send_when(self, send, whens, people, duration):
-        if people == 66:
-            await send(SIXTY_SIX)
+            if not duration:
+                duration = self.whens_min_time[event_id]
+            if int(people) < 0:
+                raise ValueError
 
-        if whens and (not people or not int(people)):
+            # if people == "66": # todo re-enable memes - seems the update broke gif embed
+            #     await ctx.send(embed=Embed(url=SIXTY_SIX))
 
-            msg = [f"found times for **{whens[0][0]}** players for ⩾**{duration}**h:\n\n"]
-            for players, times in whens[0][1].items():
-                msg.append(f"_{', '.join(players)}_ at:\n")
-                msg.extend(format_datetimeranges(times))
-                msg.append("\n")
+            keep_msg = await ctx.send(
+                f"calculating times for ⩾**{people}** players for ⩾**{float(duration)}**h..."
+            )
 
-            return await send("".join(msg))
+            whens = await self.generate_whens_for_channel(event_id, float(duration))
 
-        for when in whens:
+            when = None
+            for check_when in whens:
+                if check_when[0] == int(people):
+                    when = check_when
+                    break
 
-            if int(people) == when[0]:
+            await self.send_when(ctx.channel, when, float(duration), [keep_msg.id])
 
-                msg = [f"found times for ⩾**{when[0]}** players for ⩾**{duration}**h:\n\n"]
-                for players, times in when[1].items():
-                    msg.append(f"_{', '.join(players)}_ at:\n")
-                    msg.extend(format_datetimeranges(times))
-                    msg.append("\n")
+    async def send_when(self, channel, when, duration, keep_msgs=None):
 
-                return await send("".join(msg))
-            
-        return await send(f"no times found for ⩾**{people}** players for ⩾**{duration}**h!")
+        if when:
+            embed = Embed(
+                title="Availability",
+                description=f"for **{when[0]}** players for ⩾**{duration}**h",
+                color=0x00FF00,
+            )
+
+            for players, times in when[1].items():
+                embed.add_field(
+                    name=", ".join(sorted(list(players))),
+                    value="".join(format_datetimeranges(times)),
+                    inline=False,
+                )
+
+        else:
+            embed = Embed(
+                title="Availability",
+                description=f"none for ⩾**{duration}**h",
+                color=0xFF0000,
+            )
+
+        msg = await channel.send(embed=embed)
+
+        try:
+
+            def check_msg(message):
+
+                author_check = message.author == self.bot.user
+                last_msg_check = msg.id != message.id
+
+                if keep_msgs:
+                    keep_msg_check = message.id not in keep_msgs
+                else:
+                    keep_msg_check = True
+
+                return author_check and last_msg_check and keep_msg_check
+
+            await channel.purge(check=check_msg)
+        except NotFound as e:
+            print(e)
 
     @commands.command(hidden=True)
     async def list(self, ctx, who=None, event=None):
