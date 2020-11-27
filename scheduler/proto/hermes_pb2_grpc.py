@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import proto.hermes_pb2 as hermes__pb2
+import hermes_pb2 as hermes__pb2
 
 
 class GatewayStub(object):
@@ -118,6 +118,7 @@ class Gateway(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -126,7 +127,7 @@ class Gateway(object):
             hermes__pb2.Login.SerializeToString,
             hermes__pb2.Player.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetTimeranges(request,
@@ -134,6 +135,7 @@ class Gateway(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -142,7 +144,7 @@ class Gateway(object):
             hermes__pb2.Login.SerializeToString,
             hermes__pb2.Timeranges.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def PutTimeranges(request,
@@ -150,6 +152,7 @@ class Gateway(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -158,7 +161,7 @@ class Gateway(object):
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Timeranges.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def SetTimeranges(request,
@@ -166,6 +169,7 @@ class Gateway(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -174,7 +178,7 @@ class Gateway(object):
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Empty.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def DeleteTimeranges(request,
@@ -182,6 +186,7 @@ class Gateway(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -190,7 +195,7 @@ class Gateway(object):
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Empty.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
 
 class SchedulerStub(object):
@@ -242,6 +247,7 @@ class Scheduler(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -250,4 +256,4 @@ class Scheduler(object):
             hermes__pb2.Event.SerializeToString,
             hermes__pb2.Empty.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

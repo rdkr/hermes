@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -12,5 +13,8 @@ def main():
     bot.add_cog(Scheduler(bot))
     bot.run(os.environ["DISCORD_TOKEN"])
 
+
 if __name__ == "__main__":
-    main()
+    loop = asyncio.get_event_loop()
+    loop.set_debug(False)
+    loop.run_until_complete(main())

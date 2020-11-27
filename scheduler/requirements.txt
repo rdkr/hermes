@@ -3,6 +3,7 @@ datetimerange
 pytz
 sqlalchemy
 psycopg2-binary
+aiopg[sa]
 black
 pylint
 pydocstyle
