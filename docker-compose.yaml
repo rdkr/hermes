@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+    proxy:
+        volumes:
+            - '/home/neel/.kube/config:/root/.kube/config'
+            - '/home/neel/code/rdkr/terminal/config/doctl/config.yaml:/root/.config/doctl/config.yaml'
+        image: proxy
+        command: kubectl port-forward --address 0.0.0.0 --namespace hermes svc/postgres-postgresql 5432:5432
+        ports:
+            - "5432:5432"
+    pgadmin4:
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@admin
+            - PGADMIN_DEFAULT_PASSWORD=admin
+        image: dpage/pgadmin4
+        ports:
+            - "5433:80"
+    # v2:
+    #     volumes:
+    #         - '/home/neel/code/rdkr/hermes/schedulerv2:/usr/src/app'
+    #     image: v2
+    #     command: python main.py
+    #     ports:
+    #         - "50051:50051"

@@ -1,4 +1,4 @@
-all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js ../frontend/src/proto/hermes_pb.js ../scheduler/proto/hermes_pb2.py ../scheduler/proto/hermes_pb2_grpc.py
+all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js ../frontend/src/proto/hermes_pb.js ../scheduler/proto/hermes_pb2.py ../scheduler/proto/hermes_pb2_grpc.py ../schedulerv2/hermes_pb2.py ../schedulerv2/hermes_pb2_grpc.py
 
 ../gateway/proto/hermes.pb.go: hermes.proto
 	podman run \
@@ -29,6 +29,15 @@ all: ../gateway/proto/hermes.pb.go ../frontend/src/proto/hermes_grpc_web_pb.js .
 			--grpc_python_out=/out \
 			--python_out=/out
 	sed -i 's/import hermes_pb2/import proto.hermes_pb2/' ../scheduler/proto/hermes_pb2_grpc.py
+
+../schedulerv2/hermes_pb2.py ../schedulerv2/hermes_pb2_grpc.py: hermes.proto
+	podman run \
+		-v '${PWD}:/build' \
+		-v '${PWD}/../schedulerv2/:/out' \
+		grpc-python-protoc python -m grpc.tools.protoc \
+			--proto_path /build hermes.proto \
+			--grpc_python_out=/out \
+			--python_out=/out
 
 install:
 	podman build -t grpc-js-protoc -f js.dockerfile .

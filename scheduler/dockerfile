@@ -1,6 +1,6 @@
-FROM python:3.8-slim
+FROM python:3.9
 
-RUN pip install datetime pytz datetimerange sqlalchemy psycopg2-binary aiopg[sa] discord.py grpcio protobuf
+RUN pip install datetime pytz datetimerange discord.py grpcio protobuf
 
 WORKDIR /usr/src/app
 

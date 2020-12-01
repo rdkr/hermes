@@ -2,14 +2,20 @@ import asyncio
 import logging
 import os
 
+from discord import Intents
 from discord.ext import commands
 
 from scheduler.discord import Scheduler
 
 
 def main():
+
     logging.basicConfig(level=logging.INFO)
-    bot = commands.Bot(command_prefix=os.environ.get("HERMES_PREFIX", "$"))
+
+    intents = Intents.default()
+    intents.members = True
+
+    bot = commands.Bot(command_prefix=os.environ.get("HERMES_PREFIX", "$"), intents=intents)
     bot.add_cog(Scheduler(bot))
     bot.run(os.environ["DISCORD_TOKEN"])
 

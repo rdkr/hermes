@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import proto.hermes_pb2 as hermes__pb2
+import hermes_pb2 as hermes__pb2
 
 
 class GatewayStub(object):

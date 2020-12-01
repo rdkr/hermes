@@ -39,7 +39,7 @@ spec:
             mountPath: /etc/envoy
             name: hermes-gateway-proxy-config
         command: ["envoy"]
-        args: ["-c", "/etc/envoy/envoy.yaml", "-l", "debug"]
+        args: ["-c", "/etc/envoy/envoy.yaml"] # , "-l", "debug"
       volumes:
         - name: hermes-gateway-proxy-config
           configMap:

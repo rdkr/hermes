@@ -44,3 +44,56 @@ service Gateway {
 service Scheduler {
   rpc NotifyUpdated(Event) returns (Empty);
 }
+
+message GetMagicTokenRequest {
+  string player_dc_id = 1;
+}
+
+message GetMagicTokenResponse {
+  string magic_token = 1;
+}
+
+message EventInfo {
+  int32 event_id = 1;
+  string event_dc_id = 2;
+  string event_name = 3;
+  int32 min_players = 4;
+  float min_time = 5;
+}
+
+message GetEventsResponse {
+  repeated EventInfo events = 3;
+}
+
+message GetEventPlayersRequest {
+  int32 event_id = 1;
+}
+
+message GetEventPlayersResponse {
+  repeated GetEventPlayersResponsePlayer players = 1;
+}
+
+message GetEventPlayersResponsePlayer {
+  int32 player_id = 1;
+  repeated Timerange timeranges = 2;
+}
+
+message SyncEventPlayerRequest {
+  repeated SyncEventPlayerRequestEventPlayers event_players = 2;
+}
+
+message SyncEventPlayerRequestEventPlayers {
+  string guild_name = 2;
+  string channel_id = 3;
+  string channel_name = 4;
+  string player_id = 5;
+  string player_name = 6;
+}
+
+
+service EventDb {
+  rpc GetMagicToken(GetMagicTokenRequest) returns (GetMagicTokenResponse);
+  rpc GetEvents(Empty) returns (GetEventsResponse);
+  rpc GetEventPlayers(GetEventPlayersRequest) returns (GetEventPlayersResponse);
+  rpc SyncEventPlayers(SyncEventPlayerRequest) returns (Empty);
+}

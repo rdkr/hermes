@@ -602,5 +602,377 @@ proto.SchedulerPromiseClient.prototype.notifyUpdated =
 };
 
 
+/**
+ * @param {string} hostname
+ * @param {?Object} credentials
+ * @param {?Object} options
+ * @constructor
+ * @struct
+ * @final
+ */
+proto.EventDbClient =
+    function(hostname, credentials, options) {
+  if (!options) options = {};
+  options['format'] = 'text';
+
+  /**
+   * @private @const {!grpc.web.GrpcWebClientBase} The client
+   */
+  this.client_ = new grpc.web.GrpcWebClientBase(options);
+
+  /**
+   * @private @const {string} The hostname
+   */
+  this.hostname_ = hostname;
+
+};
+
+
+/**
+ * @param {string} hostname
+ * @param {?Object} credentials
+ * @param {?Object} options
+ * @constructor
+ * @struct
+ * @final
+ */
+proto.EventDbPromiseClient =
+    function(hostname, credentials, options) {
+  if (!options) options = {};
+  options['format'] = 'text';
+
+  /**
+   * @private @const {!grpc.web.GrpcWebClientBase} The client
+   */
+  this.client_ = new grpc.web.GrpcWebClientBase(options);
+
+  /**
+   * @private @const {string} The hostname
+   */
+  this.hostname_ = hostname;
+
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.GetMagicTokenRequest,
+ *   !proto.GetMagicTokenResponse>}
+ */
+const methodDescriptor_EventDb_GetMagicToken = new grpc.web.MethodDescriptor(
+  '/EventDb/GetMagicToken',
+  grpc.web.MethodType.UNARY,
+  proto.GetMagicTokenRequest,
+  proto.GetMagicTokenResponse,
+  /**
+   * @param {!proto.GetMagicTokenRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetMagicTokenResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.GetMagicTokenRequest,
+ *   !proto.GetMagicTokenResponse>}
+ */
+const methodInfo_EventDb_GetMagicToken = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.GetMagicTokenResponse,
+  /**
+   * @param {!proto.GetMagicTokenRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetMagicTokenResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.GetMagicTokenRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.GetMagicTokenResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.GetMagicTokenResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.EventDbClient.prototype.getMagicToken =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/EventDb/GetMagicToken',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetMagicToken,
+      callback);
+};
+
+
+/**
+ * @param {!proto.GetMagicTokenRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.GetMagicTokenResponse>}
+ *     A native promise that resolves to the response
+ */
+proto.EventDbPromiseClient.prototype.getMagicToken =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/EventDb/GetMagicToken',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetMagicToken);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.Empty,
+ *   !proto.GetEventsResponse>}
+ */
+const methodDescriptor_EventDb_GetEvents = new grpc.web.MethodDescriptor(
+  '/EventDb/GetEvents',
+  grpc.web.MethodType.UNARY,
+  proto.Empty,
+  proto.GetEventsResponse,
+  /**
+   * @param {!proto.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetEventsResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.Empty,
+ *   !proto.GetEventsResponse>}
+ */
+const methodInfo_EventDb_GetEvents = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.GetEventsResponse,
+  /**
+   * @param {!proto.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetEventsResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.GetEventsResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.GetEventsResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.EventDbClient.prototype.getEvents =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/EventDb/GetEvents',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetEvents,
+      callback);
+};
+
+
+/**
+ * @param {!proto.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.GetEventsResponse>}
+ *     A native promise that resolves to the response
+ */
+proto.EventDbPromiseClient.prototype.getEvents =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/EventDb/GetEvents',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetEvents);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.GetEventPlayersRequest,
+ *   !proto.GetEventPlayersResponse>}
+ */
+const methodDescriptor_EventDb_GetEventPlayers = new grpc.web.MethodDescriptor(
+  '/EventDb/GetEventPlayers',
+  grpc.web.MethodType.UNARY,
+  proto.GetEventPlayersRequest,
+  proto.GetEventPlayersResponse,
+  /**
+   * @param {!proto.GetEventPlayersRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetEventPlayersResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.GetEventPlayersRequest,
+ *   !proto.GetEventPlayersResponse>}
+ */
+const methodInfo_EventDb_GetEventPlayers = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.GetEventPlayersResponse,
+  /**
+   * @param {!proto.GetEventPlayersRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.GetEventPlayersResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.GetEventPlayersRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.GetEventPlayersResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.GetEventPlayersResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.EventDbClient.prototype.getEventPlayers =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/EventDb/GetEventPlayers',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetEventPlayers,
+      callback);
+};
+
+
+/**
+ * @param {!proto.GetEventPlayersRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.GetEventPlayersResponse>}
+ *     A native promise that resolves to the response
+ */
+proto.EventDbPromiseClient.prototype.getEventPlayers =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/EventDb/GetEventPlayers',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_GetEventPlayers);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.SyncEventPlayerRequest,
+ *   !proto.Empty>}
+ */
+const methodDescriptor_EventDb_SyncEventPlayers = new grpc.web.MethodDescriptor(
+  '/EventDb/SyncEventPlayers',
+  grpc.web.MethodType.UNARY,
+  proto.SyncEventPlayerRequest,
+  proto.Empty,
+  /**
+   * @param {!proto.SyncEventPlayerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.SyncEventPlayerRequest,
+ *   !proto.Empty>}
+ */
+const methodInfo_EventDb_SyncEventPlayers = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.Empty,
+  /**
+   * @param {!proto.SyncEventPlayerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.SyncEventPlayerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.Empty)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.EventDbClient.prototype.syncEventPlayers =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/EventDb/SyncEventPlayers',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_SyncEventPlayers,
+      callback);
+};
+
+
+/**
+ * @param {!proto.SyncEventPlayerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.Empty>}
+ *     A native promise that resolves to the response
+ */
+proto.EventDbPromiseClient.prototype.syncEventPlayers =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/EventDb/SyncEventPlayers',
+      request,
+      metadata || {},
+      methodDescriptor_EventDb_SyncEventPlayers);
+};
+
+
 module.exports = proto;
 

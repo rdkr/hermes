@@ -1,12 +1,14 @@
+def chunks(it, size):
+    it = iter(it)
+    return iter(lambda: tuple(islice(it, size)), ())
+
+
 def format_datetimeranges(datetimeranges):
     return [f" • {format_range(datetimerange)}\n" for datetimerange in datetimeranges]
 
 
 def format_timeranges(timeranges):
-    return [
-        f" • `{timerange.timerange_id:03}` {format_range(timerange.datetimerange())}\n"
-        for timerange in timeranges
-    ]
+    return [f" • `{timerange}`\n" for timerange in timeranges]
 
 
 def format_range(timerange):

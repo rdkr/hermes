@@ -1,0 +1,9 @@
+FROM python:3.9
+
+RUN pip install grpcio protobuf sqlalchemy psycopg2
+
+RUN pip install datetimerange
+
+WORKDIR /usr/src/app
+
+COPY . .

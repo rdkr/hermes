@@ -10,54 +10,51 @@ from discord.ext import commands, tasks
 from discord.errors import NotFound
 from pytz import timezone
 
-from scheduler.formatting import format_datetimeranges, format_timeranges, format_range
-from scheduler.sql import PlayerDB
+from scheduler.formatting import format_datetimeranges, format_timeranges, format_range, chunks
+from scheduler.db import PlayerDB
 from scheduler.scheduler import filter_times, find_times, deduplicate_times
 
 SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc394r1-480-208_hq.gif"
 
-import grpc.experimental.aio
-import proto.hermes_pb2
-import proto.hermes_pb2_grpc
 
 from discord.ext import tasks, commands
 
 
-class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
-    def __init__(self, scheduler):
-        self.scheduler = scheduler
+# class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
+#     def __init__(self, scheduler):
+#         self.scheduler = scheduler
 
-    async def NotifyUpdated(self, request, context):
-        try:
-            # first entry or None if empty list
-            previous_when = next(iter(self.scheduler.whens[request.id]), None)
-            logging.info(f"previous: {previous_when}")
+#     async def NotifyUpdated(self, request, context):
+#         try:
+#             # first entry or None if empty list
+#             previous_when = next(iter(self.scheduler.whens[request.id]), None)
+#             logging.info(f"previous: {previous_when}")
 
-            # generate new whens
-            self.scheduler.whens[
-                request.id
-            ] = await self.scheduler.generate_whens_for_channel(request.id)
-            new_when = next(iter(self.scheduler.whens[request.id]), None)
-            logging.info(f"new: {new_when}")
+#             # generate new whens
+#             self.scheduler.whens[
+#                 request.id
+#             ] = await self.scheduler.generate_whens_for_channel(request.id)
+#             new_when = next(iter(self.scheduler.whens[request.id]), None)
+#             logging.info(f"new: {new_when}")
 
-            # compare whens and send msg if changed
-            if not str(previous_when) == str(new_when):
-                channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
-                channel = self.scheduler.bot.get_channel(int(channel_id))
+#             # compare whens and send msg if changed
+#             if not str(previous_when) == str(new_when):
+#                 channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
+#                 channel = self.scheduler.bot.get_channel(int(channel_id))
 
-                whens = self.scheduler.whens[request.id]
-                when = next(iter(whens), None)
+#                 whens = self.scheduler.whens[request.id]
+#                 when = next(iter(whens), None)
 
-                await self.scheduler.send_when(
-                    channel, when, self.scheduler.whens_min_time[request.id]
-                )
+#                 await self.scheduler.send_when(
+#                     channel, when, self.scheduler.whens_min_time[request.id]
+#                 )
 
-            return proto.hermes_pb2.Empty()
-        except Exception as e:
-            logging.error(e)
-            import traceback
+#             return proto.hermes_pb2.Empty()
+#         except Exception as e:
+#             logging.error(e)
+#             import traceback
 
-            traceback.print_exc()
+#             traceback.print_exc()
 
 
 class Scheduler(commands.Cog):
@@ -66,22 +63,12 @@ class Scheduler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db = PlayerDB()
+        self.events = []
         self.whens_min_time = {}
         self.whens = {}
 
-        grpc.experimental.aio.init_grpc_aio()
-        self.server = grpc.experimental.aio.server()
-        proto.hermes_pb2_grpc.add_SchedulerServicer_to_server(
-            SchedulerGrpc(self), self.server
-        )
-        self.server.add_insecure_port("[::]:8081")
-        self.start_grpc.start()
-
         self.generate_whens_loop.start()
-
-    @tasks.loop(count=1)
-    async def start_grpc(self):
-        await self.server.start()
+        self.sync_loop.start()
 
     @commands.Cog.listener()
     async def on_error(self, event):
@@ -92,9 +79,28 @@ class Scheduler(commands.Cog):
         print_exception(type(exception), exception, exception.__traceback__)
         await ctx.send(f"error!")
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=30)
+    async def sync_loop(self):
+        valid = []
+        for guild in self.bot.guilds:
+            for channel in guild.channels:
+                can_send = channel.permissions_for(guild.me).send_messages
+                if isinstance(channel, TextChannel) and can_send:
+                    for member in channel.members:
+                        if not member == guild.me:
+                            valid.append(dict(
+                                guild_name=guild.name,
+                                channel_id=str(channel.id),
+                                channel_name=channel.name,
+                                player_id=str(member.id),
+                                player_name=member.name,
+                            ))
+        await self.db.sync_event_players(valid)
+
+    @tasks.loop(seconds=20)
     async def generate_whens_loop(self):
-        for event in self.db.get_events():
+        self.events = await self.db.get_events()
+        for event in self.events:
             self.whens_min_time[event.event_id] = event.min_time
             self.whens[event.event_id] = await self.generate_whens_for_channel(
                 event.event_id
@@ -105,25 +111,16 @@ class Scheduler(commands.Cog):
         if not duration:
             duration = self.whens_min_time[event_id]
 
-        try:
-            player_timeranges = self.db.get_players(event_id).items()
-        except KeyError:
-            return []
+        player_timeranges = await self.db.get_players(event_id)
 
         whens = []
-        for n in range(6, 0, -1):
+        for n in range(len(player_timeranges), 0, -1):
 
-            result = defaultdict(list)
-            for player, timeranges in player_timeranges:
-                for timerange in timeranges:
-                    result[player].append(timerange.datetimerange())
-
-            result = find_times(result, n)
+            result = find_times(player_timeranges, n)
             result = deduplicate_times(result)
             result = filter_times(result, duration)
 
-            if result:
-                whens.append((n, result))
+            whens.append((n, result))
 
         return whens
 
@@ -157,7 +154,7 @@ class Scheduler(commands.Cog):
           - $when 3 2 dnd
         """
         event_dc_id = await self.get_event_dc_id(ctx, event)
-        event_id = self.db.event_dc_id_to_event_id(event_dc_id)
+        event_id = await self.event_dc_id_to_event_id(event_dc_id)
 
         if (not people or not int(people)) and (not duration or not int(duration)):
             if not people:
@@ -240,9 +237,6 @@ class Scheduler(commands.Cog):
 
         Parameters
         ----------
-        who
-            Optional: the Discord name of the user to list, or "all"
-            Default: you
         event
             Optional: the name of the event channel to list for
             Default: current channel
@@ -250,22 +244,12 @@ class Scheduler(commands.Cog):
         Examples
         --------
           - $list
-          - $list Jon
-          - $list all
-          - $list Jon dnd
-          - $list all dnd
+          - $list dnd
         """
         event_dc_id = await self.get_event_dc_id(ctx, event)
-        players = self.db.get_players(self.db.event_dc_id_to_event_id(event_dc_id))
+        players = await self.db.get_players(await self.event_dc_id_to_event_id(event_dc_id))
 
-        if not who:
-            who = [ctx.message.author.name]
-        elif who == "all":
-            who = players.keys()
-        else:
-            who = [who]
-
-        for player in who:
+        for player in players.keys():
             for chunk in chunks(players[player], 10):
                 msg = [f"possible times:\n\n"]
                 msg.append(f"_{player}_ at:\n")
@@ -280,19 +264,12 @@ class Scheduler(commands.Cog):
         warning = (
             "⚠️ this is a magic link which logs in to your account, **don't share it**!"
         )
-        link = f"<https://hermes.rdkr.uk/login?token={self.db.get_magic_token(ctx.message.author.id)}>"
+        link = f"<https://hermes.rdkr.uk/login?token={await self.db.get_magic_token(ctx.message.author.id)}>"
         await ctx.message.author.send(f"{warning}\n\n{link}")
-
-    @commands.command(hidden=True)
-    async def sync(self, ctx):
-        """Syncronise players from Discord to database.
-        """
-        self.run_sync()
-        await ctx.message.author.send(f"sync complete")
 
     async def get_event_dc_id(self, ctx, event):
         if not event:
-            return ctx.message.channel.id
+            return str(ctx.message.channel.id)
         else:
             for channel in self.bot.get_all_channels():
                 if (
@@ -303,29 +280,11 @@ class Scheduler(commands.Cog):
                     await ctx.send(
                         f"assuming channel: {channel.guild.name}/{channel.name} ({channel.id})"
                     )
-                    return channel.id
+                    return str(channel.id)
         raise KeyError
 
-    def run_sync(self):
-        valid = set()
-        for guild in self.bot.guilds:
-            for channel in guild.channels:
-                can_send = channel.permissions_for(guild.me).send_messages
-                if isinstance(channel, TextChannel) and can_send:
-                    for member in channel.members:
-                        if not member == guild.me:
-                            valid.add(
-                                (
-                                    channel.id,
-                                    guild.name,
-                                    channel.name,
-                                    member.id,
-                                    member.name,
-                                )
-                            )
-        self.db.sync_event_players(valid)
-
-
-def chunks(it, size):
-    it = iter(it)
-    return iter(lambda: tuple(islice(it, size)), ())
+    async def event_dc_id_to_event_id(self, event_dc_id):
+        for event in self.events:
+            if event.event_dc_id == event_dc_id:
+                return event.event_id
+        return KeyError

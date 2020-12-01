@@ -377,6 +377,501 @@ func (*Empty) Descriptor() ([]byte, []int) {
 	return file_hermes_proto_rawDescGZIP(), []int{5}
 }
 
+type GetMagicTokenRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerDcId string `protobuf:"bytes,1,opt,name=player_dc_id,json=playerDcId,proto3" json:"player_dc_id,omitempty"`
+}
+
+func (x *GetMagicTokenRequest) Reset() {
+	*x = GetMagicTokenRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMagicTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMagicTokenRequest) ProtoMessage() {}
+
+func (x *GetMagicTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMagicTokenRequest.ProtoReflect.Descriptor instead.
+func (*GetMagicTokenRequest) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetMagicTokenRequest) GetPlayerDcId() string {
+	if x != nil {
+		return x.PlayerDcId
+	}
+	return ""
+}
+
+type GetMagicTokenResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	MagicToken string `protobuf:"bytes,1,opt,name=magic_token,json=magicToken,proto3" json:"magic_token,omitempty"`
+}
+
+func (x *GetMagicTokenResponse) Reset() {
+	*x = GetMagicTokenResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMagicTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMagicTokenResponse) ProtoMessage() {}
+
+func (x *GetMagicTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMagicTokenResponse.ProtoReflect.Descriptor instead.
+func (*GetMagicTokenResponse) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetMagicTokenResponse) GetMagicToken() string {
+	if x != nil {
+		return x.MagicToken
+	}
+	return ""
+}
+
+type EventInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	EventId    int32   `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	EventDcId  string  `protobuf:"bytes,2,opt,name=event_dc_id,json=eventDcId,proto3" json:"event_dc_id,omitempty"`
+	EventName  string  `protobuf:"bytes,3,opt,name=event_name,json=eventName,proto3" json:"event_name,omitempty"`
+	MinPlayers int32   `protobuf:"varint,4,opt,name=min_players,json=minPlayers,proto3" json:"min_players,omitempty"`
+	MinTime    float32 `protobuf:"fixed32,5,opt,name=min_time,json=minTime,proto3" json:"min_time,omitempty"`
+}
+
+func (x *EventInfo) Reset() {
+	*x = EventInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventInfo) ProtoMessage() {}
+
+func (x *EventInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EventInfo.ProtoReflect.Descriptor instead.
+func (*EventInfo) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *EventInfo) GetEventId() int32 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+func (x *EventInfo) GetEventDcId() string {
+	if x != nil {
+		return x.EventDcId
+	}
+	return ""
+}
+
+func (x *EventInfo) GetEventName() string {
+	if x != nil {
+		return x.EventName
+	}
+	return ""
+}
+
+func (x *EventInfo) GetMinPlayers() int32 {
+	if x != nil {
+		return x.MinPlayers
+	}
+	return 0
+}
+
+func (x *EventInfo) GetMinTime() float32 {
+	if x != nil {
+		return x.MinTime
+	}
+	return 0
+}
+
+type GetEventsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Events []*EventInfo `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
+}
+
+func (x *GetEventsResponse) Reset() {
+	*x = GetEventsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetEventsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventsResponse) ProtoMessage() {}
+
+func (x *GetEventsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventsResponse.ProtoReflect.Descriptor instead.
+func (*GetEventsResponse) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetEventsResponse) GetEvents() []*EventInfo {
+	if x != nil {
+		return x.Events
+	}
+	return nil
+}
+
+type GetEventPlayersRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	EventId int32 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+}
+
+func (x *GetEventPlayersRequest) Reset() {
+	*x = GetEventPlayersRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetEventPlayersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventPlayersRequest) ProtoMessage() {}
+
+func (x *GetEventPlayersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventPlayersRequest.ProtoReflect.Descriptor instead.
+func (*GetEventPlayersRequest) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetEventPlayersRequest) GetEventId() int32 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+type GetEventPlayersResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Players []*GetEventPlayersResponsePlayer `protobuf:"bytes,1,rep,name=players,proto3" json:"players,omitempty"`
+}
+
+func (x *GetEventPlayersResponse) Reset() {
+	*x = GetEventPlayersResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetEventPlayersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventPlayersResponse) ProtoMessage() {}
+
+func (x *GetEventPlayersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventPlayersResponse.ProtoReflect.Descriptor instead.
+func (*GetEventPlayersResponse) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetEventPlayersResponse) GetPlayers() []*GetEventPlayersResponsePlayer {
+	if x != nil {
+		return x.Players
+	}
+	return nil
+}
+
+type GetEventPlayersResponsePlayer struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerId   int32        `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Timeranges []*Timerange `protobuf:"bytes,2,rep,name=timeranges,proto3" json:"timeranges,omitempty"`
+}
+
+func (x *GetEventPlayersResponsePlayer) Reset() {
+	*x = GetEventPlayersResponsePlayer{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetEventPlayersResponsePlayer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventPlayersResponsePlayer) ProtoMessage() {}
+
+func (x *GetEventPlayersResponsePlayer) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventPlayersResponsePlayer.ProtoReflect.Descriptor instead.
+func (*GetEventPlayersResponsePlayer) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetEventPlayersResponsePlayer) GetPlayerId() int32 {
+	if x != nil {
+		return x.PlayerId
+	}
+	return 0
+}
+
+func (x *GetEventPlayersResponsePlayer) GetTimeranges() []*Timerange {
+	if x != nil {
+		return x.Timeranges
+	}
+	return nil
+}
+
+type SyncEventPlayerRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	EventPlayers []*SyncEventPlayerRequestEventPlayers `protobuf:"bytes,2,rep,name=event_players,json=eventPlayers,proto3" json:"event_players,omitempty"`
+}
+
+func (x *SyncEventPlayerRequest) Reset() {
+	*x = SyncEventPlayerRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SyncEventPlayerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncEventPlayerRequest) ProtoMessage() {}
+
+func (x *SyncEventPlayerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncEventPlayerRequest.ProtoReflect.Descriptor instead.
+func (*SyncEventPlayerRequest) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *SyncEventPlayerRequest) GetEventPlayers() []*SyncEventPlayerRequestEventPlayers {
+	if x != nil {
+		return x.EventPlayers
+	}
+	return nil
+}
+
+type SyncEventPlayerRequestEventPlayers struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	GuildName   string `protobuf:"bytes,2,opt,name=guild_name,json=guildName,proto3" json:"guild_name,omitempty"`
+	ChannelId   string `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	ChannelName string `protobuf:"bytes,4,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`
+	PlayerId    string `protobuf:"bytes,5,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerName  string `protobuf:"bytes,6,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) Reset() {
+	*x = SyncEventPlayerRequestEventPlayers{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hermes_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncEventPlayerRequestEventPlayers) ProtoMessage() {}
+
+func (x *SyncEventPlayerRequestEventPlayers) ProtoReflect() protoreflect.Message {
+	mi := &file_hermes_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncEventPlayerRequestEventPlayers.ProtoReflect.Descriptor instead.
+func (*SyncEventPlayerRequestEventPlayers) Descriptor() ([]byte, []int) {
+	return file_hermes_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) GetGuildName() string {
+	if x != nil {
+		return x.GuildName
+	}
+	return ""
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) GetChannelId() string {
+	if x != nil {
+		return x.ChannelId
+	}
+	return ""
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) GetChannelName() string {
+	if x != nil {
+		return x.ChannelName
+	}
+	return ""
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) GetPlayerId() string {
+	if x != nil {
+		return x.PlayerId
+	}
+	return ""
+}
+
+func (x *SyncEventPlayerRequestEventPlayers) GetPlayerName() string {
+	if x != nil {
+		return x.PlayerName
+	}
+	return ""
+}
+
 var File_hermes_proto protoreflect.FileDescriptor
 
 var file_hermes_proto_rawDesc = []byte{
@@ -405,23 +900,93 @@ var file_hermes_proto_rawDesc = []byte{
 	0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f,
 	0x6b, 0x65, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x05, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x22, 0x07, 0x0a, 0x05, 0x45, 0x6d, 0x70,
-	0x74, 0x79, 0x32, 0xc7, 0x01, 0x0a, 0x07, 0x47, 0x61, 0x74, 0x65, 0x77, 0x61, 0x79, 0x12, 0x1c,
-	0x0a, 0x09, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x06, 0x2e, 0x4c, 0x6f,
-	0x67, 0x69, 0x6e, 0x1a, 0x07, 0x2e, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x24, 0x0a, 0x0d,
-	0x47, 0x65, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x06, 0x2e,
-	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x1a, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67,
-	0x65, 0x73, 0x12, 0x29, 0x0a, 0x0d, 0x50, 0x75, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e,
-	0x67, 0x65, 0x73, 0x12, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73,
-	0x1a, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x24, 0x0a,
-	0x0d, 0x53, 0x65, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x0b,
-	0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x1a, 0x06, 0x2e, 0x45, 0x6d,
-	0x70, 0x74, 0x79, 0x12, 0x27, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x69, 0x6d,
-	0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61,
-	0x6e, 0x67, 0x65, 0x73, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0x2c, 0x0a, 0x09,
-	0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x72, 0x12, 0x1f, 0x0a, 0x0d, 0x4e, 0x6f, 0x74,
-	0x69, 0x66, 0x79, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x12, 0x06, 0x2e, 0x45, 0x76, 0x65,
-	0x6e, 0x74, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x79, 0x22, 0x38, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x67, 0x69, 0x63, 0x54, 0x6f,
+	0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x20, 0x0a, 0x0c, 0x70, 0x6c,
+	0x61, 0x79, 0x65, 0x72, 0x5f, 0x64, 0x63, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0a, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x44, 0x63, 0x49, 0x64, 0x22, 0x38, 0x0a, 0x15,
+	0x47, 0x65, 0x74, 0x4d, 0x61, 0x67, 0x69, 0x63, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x6d, 0x61, 0x67, 0x69, 0x63, 0x5f, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6d, 0x61, 0x67, 0x69,
+	0x63, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0xa1, 0x01, 0x0a, 0x09, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x49, 0x6e, 0x66, 0x6f, 0x12, 0x19, 0x0a, 0x08, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12,
+	0x1e, 0x0a, 0x0b, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x64, 0x63, 0x5f, 0x69, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x44, 0x63, 0x49, 0x64, 0x12,
+	0x1d, 0x0a, 0x0a, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1f,
+	0x0a, 0x0b, 0x6d, 0x69, 0x6e, 0x5f, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x0a, 0x6d, 0x69, 0x6e, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x12,
+	0x19, 0x0a, 0x08, 0x6d, 0x69, 0x6e, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x02, 0x52, 0x07, 0x6d, 0x69, 0x6e, 0x54, 0x69, 0x6d, 0x65, 0x22, 0x37, 0x0a, 0x11, 0x47, 0x65,
+	0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x22, 0x0a, 0x06, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x0a, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x06, 0x65, 0x76, 0x65,
+	0x6e, 0x74, 0x73, 0x22, 0x33, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50,
+	0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a,
+	0x08, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x07, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x22, 0x53, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x38, 0x0a, 0x07, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50,
+	0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x50, 0x6c,
+	0x61, 0x79, 0x65, 0x72, 0x52, 0x07, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x22, 0x68, 0x0a,
+	0x1d, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x1b,
+	0x0a, 0x09, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x08, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x64, 0x12, 0x2a, 0x0a, 0x0a, 0x74,
+	0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x0a, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x52, 0x0a, 0x74, 0x69, 0x6d,
+	0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x22, 0x62, 0x0a, 0x16, 0x53, 0x79, 0x6e, 0x63, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x48, 0x0a, 0x0d, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x70, 0x6c, 0x61, 0x79, 0x65,
+	0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x52, 0x0c, 0x65,
+	0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x22, 0xc3, 0x01, 0x0a, 0x22,
+	0x53, 0x79, 0x6e, 0x63, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65,
+	0x72, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x67, 0x75, 0x69, 0x6c, 0x64, 0x5f, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x67, 0x75, 0x69, 0x6c, 0x64, 0x4e, 0x61, 0x6d,
+	0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x5f, 0x69, 0x64, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x64,
+	0x12, 0x21, 0x0a, 0x0c, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x5f, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x4e,
+	0x61, 0x6d, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x69, 0x64,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x64,
+	0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x4e, 0x61, 0x6d,
+	0x65, 0x32, 0xc7, 0x01, 0x0a, 0x07, 0x47, 0x61, 0x74, 0x65, 0x77, 0x61, 0x79, 0x12, 0x1c, 0x0a,
+	0x09, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x06, 0x2e, 0x4c, 0x6f, 0x67,
+	0x69, 0x6e, 0x1a, 0x07, 0x2e, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x24, 0x0a, 0x0d, 0x47,
+	0x65, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x06, 0x2e, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x1a, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65,
+	0x73, 0x12, 0x29, 0x0a, 0x0d, 0x50, 0x75, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67,
+	0x65, 0x73, 0x12, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x1a,
+	0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x24, 0x0a, 0x0d,
+	0x53, 0x65, 0x74, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x0b, 0x2e,
+	0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70,
+	0x74, 0x79, 0x12, 0x27, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x69, 0x6d, 0x65,
+	0x72, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x12, 0x0b, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x72, 0x61, 0x6e,
+	0x67, 0x65, 0x73, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0x2c, 0x0a, 0x09, 0x53,
+	0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x72, 0x12, 0x1f, 0x0a, 0x0d, 0x4e, 0x6f, 0x74, 0x69,
+	0x66, 0x79, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x12, 0x06, 0x2e, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0xed, 0x01, 0x0a, 0x07, 0x45, 0x76,
+	0x65, 0x6e, 0x74, 0x44, 0x62, 0x12, 0x3e, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x67, 0x69,
+	0x63, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x15, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x67, 0x69,
+	0x63, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x47, 0x65, 0x74, 0x4d, 0x61, 0x67, 0x69, 0x63, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x73, 0x12, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x12, 0x2e, 0x47, 0x65, 0x74,
+	0x45, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x44,
+	0x0a, 0x0f, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72,
+	0x73, 0x12, 0x17, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79,
+	0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x47, 0x65, 0x74,
+	0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33, 0x0a, 0x10, 0x53, 0x79, 0x6e, 0x63, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x73, 0x12, 0x17, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x06, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -436,35 +1001,56 @@ func file_hermes_proto_rawDescGZIP() []byte {
 	return file_hermes_proto_rawDescData
 }
 
-var file_hermes_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_hermes_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_hermes_proto_goTypes = []interface{}{
-	(*Login)(nil),      // 0: Login
-	(*Event)(nil),      // 1: Event
-	(*Player)(nil),     // 2: Player
-	(*Timerange)(nil),  // 3: Timerange
-	(*Timeranges)(nil), // 4: Timeranges
-	(*Empty)(nil),      // 5: Empty
+	(*Login)(nil),                              // 0: Login
+	(*Event)(nil),                              // 1: Event
+	(*Player)(nil),                             // 2: Player
+	(*Timerange)(nil),                          // 3: Timerange
+	(*Timeranges)(nil),                         // 4: Timeranges
+	(*Empty)(nil),                              // 5: Empty
+	(*GetMagicTokenRequest)(nil),               // 6: GetMagicTokenRequest
+	(*GetMagicTokenResponse)(nil),              // 7: GetMagicTokenResponse
+	(*EventInfo)(nil),                          // 8: EventInfo
+	(*GetEventsResponse)(nil),                  // 9: GetEventsResponse
+	(*GetEventPlayersRequest)(nil),             // 10: GetEventPlayersRequest
+	(*GetEventPlayersResponse)(nil),            // 11: GetEventPlayersResponse
+	(*GetEventPlayersResponsePlayer)(nil),      // 12: GetEventPlayersResponsePlayer
+	(*SyncEventPlayerRequest)(nil),             // 13: SyncEventPlayerRequest
+	(*SyncEventPlayerRequestEventPlayers)(nil), // 14: SyncEventPlayerRequestEventPlayers
 }
 var file_hermes_proto_depIdxs = []int32{
-	1, // 0: Player.events:type_name -> Event
-	3, // 1: Timeranges.timeranges:type_name -> Timerange
-	0, // 2: Gateway.GetPlayer:input_type -> Login
-	0, // 3: Gateway.GetTimeranges:input_type -> Login
-	4, // 4: Gateway.PutTimeranges:input_type -> Timeranges
-	4, // 5: Gateway.SetTimeranges:input_type -> Timeranges
-	4, // 6: Gateway.DeleteTimeranges:input_type -> Timeranges
-	1, // 7: Scheduler.NotifyUpdated:input_type -> Event
-	2, // 8: Gateway.GetPlayer:output_type -> Player
-	4, // 9: Gateway.GetTimeranges:output_type -> Timeranges
-	4, // 10: Gateway.PutTimeranges:output_type -> Timeranges
-	5, // 11: Gateway.SetTimeranges:output_type -> Empty
-	5, // 12: Gateway.DeleteTimeranges:output_type -> Empty
-	5, // 13: Scheduler.NotifyUpdated:output_type -> Empty
-	8, // [8:14] is the sub-list for method output_type
-	2, // [2:8] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1,  // 0: Player.events:type_name -> Event
+	3,  // 1: Timeranges.timeranges:type_name -> Timerange
+	8,  // 2: GetEventsResponse.events:type_name -> EventInfo
+	12, // 3: GetEventPlayersResponse.players:type_name -> GetEventPlayersResponsePlayer
+	3,  // 4: GetEventPlayersResponsePlayer.timeranges:type_name -> Timerange
+	14, // 5: SyncEventPlayerRequest.event_players:type_name -> SyncEventPlayerRequestEventPlayers
+	0,  // 6: Gateway.GetPlayer:input_type -> Login
+	0,  // 7: Gateway.GetTimeranges:input_type -> Login
+	4,  // 8: Gateway.PutTimeranges:input_type -> Timeranges
+	4,  // 9: Gateway.SetTimeranges:input_type -> Timeranges
+	4,  // 10: Gateway.DeleteTimeranges:input_type -> Timeranges
+	1,  // 11: Scheduler.NotifyUpdated:input_type -> Event
+	6,  // 12: EventDb.GetMagicToken:input_type -> GetMagicTokenRequest
+	5,  // 13: EventDb.GetEvents:input_type -> Empty
+	10, // 14: EventDb.GetEventPlayers:input_type -> GetEventPlayersRequest
+	13, // 15: EventDb.SyncEventPlayers:input_type -> SyncEventPlayerRequest
+	2,  // 16: Gateway.GetPlayer:output_type -> Player
+	4,  // 17: Gateway.GetTimeranges:output_type -> Timeranges
+	4,  // 18: Gateway.PutTimeranges:output_type -> Timeranges
+	5,  // 19: Gateway.SetTimeranges:output_type -> Empty
+	5,  // 20: Gateway.DeleteTimeranges:output_type -> Empty
+	5,  // 21: Scheduler.NotifyUpdated:output_type -> Empty
+	7,  // 22: EventDb.GetMagicToken:output_type -> GetMagicTokenResponse
+	9,  // 23: EventDb.GetEvents:output_type -> GetEventsResponse
+	11, // 24: EventDb.GetEventPlayers:output_type -> GetEventPlayersResponse
+	5,  // 25: EventDb.SyncEventPlayers:output_type -> Empty
+	16, // [16:26] is the sub-list for method output_type
+	6,  // [6:16] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_hermes_proto_init() }
@@ -545,6 +1131,114 @@ func file_hermes_proto_init() {
 				return nil
 			}
 		}
+		file_hermes_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMagicTokenRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMagicTokenResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetEventsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetEventPlayersRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetEventPlayersResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetEventPlayersResponsePlayer); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SyncEventPlayerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hermes_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SyncEventPlayerRequestEventPlayers); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -552,9 +1246,9 @@ func file_hermes_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_hermes_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   15,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   3,
 		},
 		GoTypes:           file_hermes_proto_goTypes,
 		DependencyIndexes: file_hermes_proto_depIdxs,
@@ -856,6 +1550,186 @@ var _Scheduler_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NotifyUpdated",
 			Handler:    _Scheduler_NotifyUpdated_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "hermes.proto",
+}
+
+// EventDbClient is the client API for EventDb service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type EventDbClient interface {
+	GetMagicToken(ctx context.Context, in *GetMagicTokenRequest, opts ...grpc.CallOption) (*GetMagicTokenResponse, error)
+	GetEvents(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetEventsResponse, error)
+	GetEventPlayers(ctx context.Context, in *GetEventPlayersRequest, opts ...grpc.CallOption) (*GetEventPlayersResponse, error)
+	SyncEventPlayers(ctx context.Context, in *SyncEventPlayerRequest, opts ...grpc.CallOption) (*Empty, error)
+}
+
+type eventDbClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEventDbClient(cc grpc.ClientConnInterface) EventDbClient {
+	return &eventDbClient{cc}
+}
+
+func (c *eventDbClient) GetMagicToken(ctx context.Context, in *GetMagicTokenRequest, opts ...grpc.CallOption) (*GetMagicTokenResponse, error) {
+	out := new(GetMagicTokenResponse)
+	err := c.cc.Invoke(ctx, "/EventDb/GetMagicToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventDbClient) GetEvents(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetEventsResponse, error) {
+	out := new(GetEventsResponse)
+	err := c.cc.Invoke(ctx, "/EventDb/GetEvents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventDbClient) GetEventPlayers(ctx context.Context, in *GetEventPlayersRequest, opts ...grpc.CallOption) (*GetEventPlayersResponse, error) {
+	out := new(GetEventPlayersResponse)
+	err := c.cc.Invoke(ctx, "/EventDb/GetEventPlayers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventDbClient) SyncEventPlayers(ctx context.Context, in *SyncEventPlayerRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/EventDb/SyncEventPlayers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// EventDbServer is the server API for EventDb service.
+type EventDbServer interface {
+	GetMagicToken(context.Context, *GetMagicTokenRequest) (*GetMagicTokenResponse, error)
+	GetEvents(context.Context, *Empty) (*GetEventsResponse, error)
+	GetEventPlayers(context.Context, *GetEventPlayersRequest) (*GetEventPlayersResponse, error)
+	SyncEventPlayers(context.Context, *SyncEventPlayerRequest) (*Empty, error)
+}
+
+// UnimplementedEventDbServer can be embedded to have forward compatible implementations.
+type UnimplementedEventDbServer struct {
+}
+
+func (*UnimplementedEventDbServer) GetMagicToken(context.Context, *GetMagicTokenRequest) (*GetMagicTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMagicToken not implemented")
+}
+func (*UnimplementedEventDbServer) GetEvents(context.Context, *Empty) (*GetEventsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEvents not implemented")
+}
+func (*UnimplementedEventDbServer) GetEventPlayers(context.Context, *GetEventPlayersRequest) (*GetEventPlayersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEventPlayers not implemented")
+}
+func (*UnimplementedEventDbServer) SyncEventPlayers(context.Context, *SyncEventPlayerRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncEventPlayers not implemented")
+}
+
+func RegisterEventDbServer(s *grpc.Server, srv EventDbServer) {
+	s.RegisterService(&_EventDb_serviceDesc, srv)
+}
+
+func _EventDb_GetMagicToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMagicTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventDbServer).GetMagicToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/EventDb/GetMagicToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventDbServer).GetMagicToken(ctx, req.(*GetMagicTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventDb_GetEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventDbServer).GetEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/EventDb/GetEvents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventDbServer).GetEvents(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventDb_GetEventPlayers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEventPlayersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventDbServer).GetEventPlayers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/EventDb/GetEventPlayers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventDbServer).GetEventPlayers(ctx, req.(*GetEventPlayersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventDb_SyncEventPlayers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncEventPlayerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventDbServer).SyncEventPlayers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/EventDb/SyncEventPlayers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventDbServer).SyncEventPlayers(ctx, req.(*SyncEventPlayerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _EventDb_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "EventDb",
+	HandlerType: (*EventDbServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetMagicToken",
+			Handler:    _EventDb_GetMagicToken_Handler,
+		},
+		{
+			MethodName: "GetEvents",
+			Handler:    _EventDb_GetEvents_Handler,
+		},
+		{
+			MethodName: "GetEventPlayers",
+			Handler:    _EventDb_GetEventPlayers_Handler,
+		},
+		{
+			MethodName: "SyncEventPlayers",
+			Handler:    _EventDb_SyncEventPlayers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,13 +1,16 @@
 build:
-	podman build -f dockerfile -t rdkr/hermes-scheduler .
+	podman build -t rdkr/hermes-schedulerv2 -f containerfile .
 
-run: build
-	podman run --pod hermes -it --rm \
-		--net host \
-		-e DISCORD_TOKEN="${DISCORD_TOKEN}" \
-		-e HERMES_PREFIX='£' \
-		-e EVENT_DB_ENDPOINT='localhost:50051' \
-		rdkr/hermes-scheduler python main.py
+run:
+	podman run \
+		--pod hermes \
+		--rm -it \
+		-v $$(pwd):/usr/src/app \
+		-e DB_PW='${DB_PW}' \
+		-e DB_USER='postgres' \
+		-e DB_HOST='localhost' \
+		rdkr/hermes-schedulerv2 \
+		python main.py
 
 push: build
 	docker push rdkr/hermes-scheduler
