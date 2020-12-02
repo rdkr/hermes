@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z\007.;proto',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0chermes.proto\"1\n\x05Login\x12\r\n\x05token\x18\x01 \x01(\t\x12\r\n\x05\x65vent\x18\x02 \x01(\t\x12\n\n\x02tz\x18\x03 \x01(\t\"!\n\x05\x45vent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\":\n\x06Player\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02tz\x18\x02 \x01(\t\x12\x16\n\x06\x65vents\x18\x03 \x03(\x0b\x32\x06.Event\"?\n\tTimerange\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05start\x18\x02 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x05\x12\n\n\x02tz\x18\x04 \x01(\t\"J\n\nTimeranges\x12\x1e\n\ntimeranges\x18\x01 \x03(\x0b\x32\n.Timerange\x12\r\n\x05token\x18\x02 \x01(\t\x12\r\n\x05\x65vent\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\",\n\x14GetMagicTokenRequest\x12\x14\n\x0cplayer_dc_id\x18\x01 \x01(\t\",\n\x15GetMagicTokenResponse\x12\x13\n\x0bmagic_token\x18\x01 \x01(\t\"m\n\tEventInfo\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\x12\x13\n\x0b\x65vent_dc_id\x18\x02 \x01(\t\x12\x12\n\nevent_name\x18\x03 \x01(\t\x12\x13\n\x0bmin_players\x18\x04 \x01(\x05\x12\x10\n\x08min_time\x18\x05 \x01(\x02\"/\n\x11GetEventsResponse\x12\x1a\n\x06\x65vents\x18\x03 \x03(\x0b\x32\n.EventInfo\"*\n\x16GetEventPlayersRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\"J\n\x17GetEventPlayersResponse\x12/\n\x07players\x18\x01 \x03(\x0b\x32\x1e.GetEventPlayersResponsePlayer\"R\n\x1dGetEventPlayersResponsePlayer\x12\x11\n\tplayer_id\x18\x01 \x01(\x05\x12\x1e\n\ntimeranges\x18\x02 \x03(\x0b\x32\n.Timerange\"T\n\x16SyncEventPlayerRequest\x12:\n\revent_players\x18\x02 \x03(\x0b\x32#.SyncEventPlayerRequestEventPlayers\"\x8a\x01\n\"SyncEventPlayerRequestEventPlayers\x12\x12\n\nguild_name\x18\x02 \x01(\t\x12\x12\n\nchannel_id\x18\x03 \x01(\t\x12\x14\n\x0c\x63hannel_name\x18\x04 \x01(\t\x12\x11\n\tplayer_id\x18\x05 \x01(\t\x12\x13\n\x0bplayer_name\x18\x06 \x01(\t2\xc7\x01\n\x07Gateway\x12\x1c\n\tGetPlayer\x12\x06.Login\x1a\x07.Player\x12$\n\rGetTimeranges\x12\x06.Login\x1a\x0b.Timeranges\x12)\n\rPutTimeranges\x12\x0b.Timeranges\x1a\x0b.Timeranges\x12$\n\rSetTimeranges\x12\x0b.Timeranges\x1a\x06.Empty\x12\'\n\x10\x44\x65leteTimeranges\x12\x0b.Timeranges\x1a\x06.Empty2,\n\tScheduler\x12\x1f\n\rNotifyUpdated\x12\x06.Event\x1a\x06.Empty2\xed\x01\n\x07\x45ventDb\x12>\n\rGetMagicToken\x12\x15.GetMagicTokenRequest\x1a\x16.GetMagicTokenResponse\x12\'\n\tGetEvents\x12\x06.Empty\x1a\x12.GetEventsResponse\x12\x44\n\x0fGetEventPlayers\x12\x17.GetEventPlayersRequest\x1a\x18.GetEventPlayersResponse\x12\x33\n\x10SyncEventPlayers\x12\x17.SyncEventPlayerRequest\x1a\x06.EmptyB\tZ\x07.;protob\x06proto3'
+  serialized_pb=b'\n\x0chermes.proto\"1\n\x05Login\x12\r\n\x05token\x18\x01 \x01(\t\x12\r\n\x05\x65vent\x18\x02 \x01(\t\x12\n\n\x02tz\x18\x03 \x01(\t\"!\n\x05\x45vent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\":\n\x06Player\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02tz\x18\x02 \x01(\t\x12\x16\n\x06\x65vents\x18\x03 \x03(\x0b\x32\x06.Event\"?\n\tTimerange\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05start\x18\x02 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x03 \x01(\x05\x12\n\n\x02tz\x18\x04 \x01(\t\"J\n\nTimeranges\x12\x1e\n\ntimeranges\x18\x01 \x03(\x0b\x32\n.Timerange\x12\r\n\x05token\x18\x02 \x01(\t\x12\r\n\x05\x65vent\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\",\n\x14GetMagicTokenRequest\x12\x14\n\x0cplayer_dc_id\x18\x01 \x01(\t\",\n\x15GetMagicTokenResponse\x12\x13\n\x0bmagic_token\x18\x01 \x01(\t\"m\n\tEventInfo\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\x12\x13\n\x0b\x65vent_dc_id\x18\x02 \x01(\t\x12\x12\n\nevent_name\x18\x03 \x01(\t\x12\x13\n\x0bmin_players\x18\x04 \x01(\x05\x12\x10\n\x08min_time\x18\x05 \x01(\x02\"/\n\x11GetEventsResponse\x12\x1a\n\x06\x65vents\x18\x03 \x03(\x0b\x32\n.EventInfo\"*\n\x16GetEventPlayersRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\"J\n\x17GetEventPlayersResponse\x12/\n\x07players\x18\x01 \x03(\x0b\x32\x1e.GetEventPlayersResponsePlayer\"U\n\x1dGetEventPlayersResponsePlayer\x12\x14\n\x0cplayer_dc_id\x18\x01 \x01(\t\x12\x1e\n\ntimeranges\x18\x02 \x03(\x0b\x32\n.Timerange\"T\n\x16SyncEventPlayerRequest\x12:\n\revent_players\x18\x02 \x03(\x0b\x32#.SyncEventPlayerRequestEventPlayers\"\x8a\x01\n\"SyncEventPlayerRequestEventPlayers\x12\x12\n\nguild_name\x18\x02 \x01(\t\x12\x12\n\nchannel_id\x18\x03 \x01(\t\x12\x14\n\x0c\x63hannel_name\x18\x04 \x01(\t\x12\x11\n\tplayer_id\x18\x05 \x01(\t\x12\x13\n\x0bplayer_name\x18\x06 \x01(\t2\xc7\x01\n\x07Gateway\x12\x1c\n\tGetPlayer\x12\x06.Login\x1a\x07.Player\x12$\n\rGetTimeranges\x12\x06.Login\x1a\x0b.Timeranges\x12)\n\rPutTimeranges\x12\x0b.Timeranges\x1a\x0b.Timeranges\x12$\n\rSetTimeranges\x12\x0b.Timeranges\x1a\x06.Empty\x12\'\n\x10\x44\x65leteTimeranges\x12\x0b.Timeranges\x1a\x06.Empty2,\n\tScheduler\x12\x1f\n\rNotifyUpdated\x12\x06.Event\x1a\x06.Empty2\xed\x01\n\x07\x45ventDb\x12>\n\rGetMagicToken\x12\x15.GetMagicTokenRequest\x1a\x16.GetMagicTokenResponse\x12\'\n\tGetEvents\x12\x06.Empty\x1a\x12.GetEventsResponse\x12\x44\n\x0fGetEventPlayers\x12\x17.GetEventPlayersRequest\x1a\x18.GetEventPlayersResponse\x12\x33\n\x10SyncEventPlayers\x12\x17.SyncEventPlayerRequest\x1a\x06.EmptyB\tZ\x07.;protob\x06proto3'
 )
 
 
@@ -509,9 +509,9 @@ _GETEVENTPLAYERSRESPONSEPLAYER = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='player_id', full_name='GetEventPlayersResponsePlayer.player_id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='player_dc_id', full_name='GetEventPlayersResponsePlayer.player_dc_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -535,7 +535,7 @@ _GETEVENTPLAYERSRESPONSEPLAYER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=684,
-  serialized_end=766,
+  serialized_end=769,
 )
 
 
@@ -566,8 +566,8 @@ _SYNCEVENTPLAYERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=768,
-  serialized_end=852,
+  serialized_start=771,
+  serialized_end=855,
 )
 
 
@@ -626,8 +626,8 @@ _SYNCEVENTPLAYERREQUESTEVENTPLAYERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=855,
-  serialized_end=993,
+  serialized_start=858,
+  serialized_end=996,
 )
 
 _PLAYER.fields_by_name['events'].message_type = _EVENT
@@ -768,8 +768,8 @@ _GATEWAY = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=996,
-  serialized_end=1195,
+  serialized_start=999,
+  serialized_end=1198,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetPlayer',
@@ -834,8 +834,8 @@ _SCHEDULER = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1197,
-  serialized_end=1241,
+  serialized_start=1200,
+  serialized_end=1244,
   methods=[
   _descriptor.MethodDescriptor(
     name='NotifyUpdated',
@@ -860,8 +860,8 @@ _EVENTDB = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1244,
-  serialized_end=1481,
+  serialized_start=1247,
+  serialized_end=1484,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetMagicToken',

@@ -2414,7 +2414,7 @@ proto.GetEventPlayersResponsePlayer.prototype.toObject = function(opt_includeIns
  */
 proto.GetEventPlayersResponsePlayer.toObject = function(includeInstance, msg) {
   var f, obj = {
-    playerId: msg.getPlayerId(),
+    playerDcId: msg.getPlayerDcId(),
     timerangesList: jspb.Message.toObjectList(msg.getTimerangesList(),
     proto.Timerange.toObject, includeInstance)
   };
@@ -2454,8 +2454,8 @@ proto.GetEventPlayersResponsePlayer.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setPlayerId(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPlayerDcId(value);
       break;
     case 2:
       var value = new proto.Timerange;
@@ -2501,9 +2501,9 @@ proto.GetEventPlayersResponsePlayer.prototype.serializeBinary = function() {
  */
 proto.GetEventPlayersResponsePlayer.prototype.serializeBinaryToWriter = function (writer) {
   var f = undefined;
-  f = this.getPlayerId();
-  if (f !== 0) {
-    writer.writeInt32(
+  f = this.getPlayerDcId();
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -2529,16 +2529,16 @@ proto.GetEventPlayersResponsePlayer.prototype.cloneMessage = function() {
 
 
 /**
- * optional int32 player_id = 1;
- * @return {number}
+ * optional string player_dc_id = 1;
+ * @return {string}
  */
-proto.GetEventPlayersResponsePlayer.prototype.getPlayerId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 1, 0));
+proto.GetEventPlayersResponsePlayer.prototype.getPlayerDcId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
 };
 
 
-/** @param {number} value  */
-proto.GetEventPlayersResponsePlayer.prototype.setPlayerId = function(value) {
+/** @param {string} value  */
+proto.GetEventPlayersResponsePlayer.prototype.setPlayerDcId = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 

@@ -20,7 +20,7 @@ class PlayerDB:
             result = defaultdict(list)
             for player in response.players:
                 for timerange in player.timeranges:
-                    result[str(player.player_id)].append(
+                    result[str(player.player_dc_id)].append(
                         DateTimeRange(
                             datetime.fromtimestamp(timerange.start, timezone(timerange.tz)),
                             datetime.fromtimestamp(timerange.end, timezone(timerange.tz)),

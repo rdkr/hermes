@@ -74,7 +74,7 @@ message GetEventPlayersResponse {
 }
 
 message GetEventPlayersResponsePlayer {
-  int32 player_id = 1;
+  string player_dc_id = 1;
   repeated Timerange timeranges = 2;
 }
 

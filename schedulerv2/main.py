@@ -106,7 +106,7 @@ class EventDb(hermes_pb2_grpc.EventDb):
         players = defaultdict(list)
 
         result = (
-            self.session.query(Player.player_id, Timerange)
+            self.session.query(Player.player_dc_id, Timerange)
             .join(Timerange)
             .filter(Timerange.event_id == request.event_id)
             .filter(Timerange.end > now)
@@ -114,8 +114,8 @@ class EventDb(hermes_pb2_grpc.EventDb):
             .all()
         )
 
-        for player_id, timerange in result:
-            players[player_id].append(timerange)
+        for player_dc_id, timerange in result:
+            players[player_dc_id].append(timerange)
 
         player_response = []
         for player, timeranges in players.items():
@@ -130,7 +130,7 @@ class EventDb(hermes_pb2_grpc.EventDb):
                 ))
 
             player_response.append(hermes_pb2.GetEventPlayersResponsePlayer(
-                player_id=player_id,
+                player_dc_id=player_dc_id,
                 timeranges=timeranges_response,
             ))
 

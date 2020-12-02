@@ -1,4 +1,5 @@
 from collections import defaultdict
+import copy
 from datetime import datetime, timedelta
 from itertools import islice
 import logging
@@ -20,53 +21,20 @@ SIXTY_SIX = "https://pa1.narvii.com/7235/5ceb289c2b7953a679dafaf9fc7f4f6ab0afc39
 from discord.ext import tasks, commands
 
 
-# class SchedulerGrpc(proto.hermes_pb2_grpc.SchedulerServicer):
-#     def __init__(self, scheduler):
-#         self.scheduler = scheduler
-
-#     async def NotifyUpdated(self, request, context):
-#         try:
-#             # first entry or None if empty list
-#             previous_when = next(iter(self.scheduler.whens[request.id]), None)
-#             logging.info(f"previous: {previous_when}")
-
-#             # generate new whens
-#             self.scheduler.whens[
-#                 request.id
-#             ] = await self.scheduler.generate_whens_for_channel(request.id)
-#             new_when = next(iter(self.scheduler.whens[request.id]), None)
-#             logging.info(f"new: {new_when}")
-
-#             # compare whens and send msg if changed
-#             if not str(previous_when) == str(new_when):
-#                 channel_id = self.scheduler.db.event_id_to_event_dc_id(request.id)
-#                 channel = self.scheduler.bot.get_channel(int(channel_id))
-
-#                 whens = self.scheduler.whens[request.id]
-#                 when = next(iter(whens), None)
-
-#                 await self.scheduler.send_when(
-#                     channel, when, self.scheduler.whens_min_time[request.id]
-#                 )
-
-#             return proto.hermes_pb2.Empty()
-#         except Exception as e:
-#             logging.error(e)
-#             import traceback
-
-#             traceback.print_exc()
-
-
 class Scheduler(commands.Cog):
     """A discord.py Cog to collect and interpret times that users are free to help schedule an event"""
 
     def __init__(self, bot):
         self.bot = bot
         self.db = PlayerDB()
-        self.events = []
-        self.whens_min_time = {}
+
+        self.players = {}
+        self.events = {}
         self.whens = {}
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.sync()
         self.generate_whens_loop.start()
         self.sync_loop.start()
 
@@ -81,6 +49,9 @@ class Scheduler(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def sync_loop(self):
+        await self.sync()
+
+    async def sync(self):
         valid = []
         for guild in self.bot.guilds:
             for channel in guild.channels:
@@ -95,21 +66,43 @@ class Scheduler(commands.Cog):
                                 player_id=str(member.id),
                                 player_name=member.name,
                             ))
+                            self.players[str(member.id)] = member.name
         await self.db.sync_event_players(valid)
 
-    @tasks.loop(seconds=20)
+    @tasks.loop(seconds=5)
     async def generate_whens_loop(self):
-        self.events = await self.db.get_events()
-        for event in self.events:
-            self.whens_min_time[event.event_id] = event.min_time
-            self.whens[event.event_id] = await self.generate_whens_for_channel(
+        events = await self.db.get_events()
+        self.events = {event.event_id: event for event in events}
+
+        for event in self.events.values():
+
+            new_whens = await self.generate_whens_for_channel(
                 event.event_id
             )
+
+            try:
+
+                # this will give the first entry or [] if empty list
+                previous_when = next(iter(self.whens[event.event_id]), [])
+
+                if not str(self.whens[event.event_id]) == str(new_whens):
+
+                    # deepcopy as dict is mutable # todo - not use dict
+                    when = copy.deepcopy(next(iter(new_whens), []))
+
+                    channel = self.bot.get_channel(int(event.event_dc_id))
+                    await self.send_when(channel, when, event.min_time)
+
+            except KeyError:
+                pass # expected at first start
+
+            self.whens[event.event_id] = new_whens
+
 
     async def generate_whens_for_channel(self, event_id, duration=None):
 
         if not duration:
-            duration = self.whens_min_time[event_id]
+            duration = self.events[event_id].min_time
 
         player_timeranges = await self.db.get_players(event_id)
 
@@ -161,22 +154,27 @@ class Scheduler(commands.Cog):
                 people = 0
 
             whens = self.whens[event_id]
-            when = next(iter(whens), None)
+            # deepcopy as dict is mutable # todo - not use dict
+            when = copy.deepcopy(next(iter(whens), []))
 
-            await self.send_when(ctx.channel, when, self.whens_min_time[event_id])
+            await self.send_when(ctx.channel, when, self.events[event_id].min_time)
 
         else:
             if not duration:
-                duration = self.whens_min_time[event_id]
+                duration = self.events[event_id].min_time
             if int(people) < 0:
                 raise ValueError
 
-            # if people == "66": # todo re-enable memes - seems the update broke gif embed
-            #     await ctx.send(embed=Embed(url=SIXTY_SIX))
+            keep_msgs = []
 
-            keep_msg = await ctx.send(
+            keep_msgs.append((await ctx.send(
                 f"calculating times for ⩾**{people}** players for ⩾**{float(duration)}**h..."
-            )
+            )).id)
+
+            if people == "66":  # todo re-enable memes - seems the update broke gif embed
+                embed = Embed()
+                embed.set_image(url=SIXTY_SIX)
+                keep_msgs.append((await ctx.send(embed=embed)).id)
 
             whens = await self.generate_whens_for_channel(event_id, float(duration))
 
@@ -186,7 +184,7 @@ class Scheduler(commands.Cog):
                     when = check_when
                     break
 
-            await self.send_when(ctx.channel, when, float(duration), [keep_msg.id])
+            await self.send_when(ctx.channel, when, float(duration), keep_msgs)
 
     async def send_when(self, channel, when, duration, keep_msgs=None):
 
@@ -197,9 +195,9 @@ class Scheduler(commands.Cog):
                 color=0x00FF00,
             )
 
-            for players, times in when[1].items():
+            for player_ids, times in when[1].items():
                 embed.add_field(
-                    name=", ".join(sorted(list(players))),
+                    name=", ".join(sorted([self.players[player_id] for player_id in player_ids])),
                     value="".join(format_datetimeranges(times)),
                     inline=False,
                 )
@@ -284,7 +282,7 @@ class Scheduler(commands.Cog):
         raise KeyError
 
     async def event_dc_id_to_event_id(self, event_dc_id):
-        for event in self.events:
+        for event in self.events.values():
             if event.event_dc_id == event_dc_id:
                 return event.event_id
         return KeyError
