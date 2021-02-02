@@ -10,7 +10,7 @@ run: build
 		rdkr/hermes-scheduler python main.py
 
 push: build
-	docker push rdkr/hermes-scheduler
+	podman push rdkr/hermes-scheduler
 
 install:
 	kubectl apply -f k8s.yaml

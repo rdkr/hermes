@@ -118,7 +118,7 @@ class EventDb(hermes_pb2_grpc.EventDb):
             players[player_dc_id].append(timerange)
 
         player_response = []
-        for player, timeranges in players.items():
+        for player_dc_id, timeranges in players.items():
 
             timeranges_response = []
             for timerange in timeranges:
@@ -138,11 +138,13 @@ class EventDb(hermes_pb2_grpc.EventDb):
 
     def SyncEventPlayers(self, request, context):
 
-        session = self.sessionmaker()
+        channel_ids_to_event_id = {}
 
+        session = self.sessionmaker(autoflush=False)
         session.query(EventPlayers).delete()
 
         for x in request.event_players:
+            logging.info("{x}")
 
             try:
                 player = (session.query(Player)
@@ -160,19 +162,28 @@ class EventDb(hermes_pb2_grpc.EventDb):
             session.merge(player)
             player_id = player.player_id
 
-            try:
-                event = (session.query(Event)
-                    .filter(Event.event_dc_id == x.channel_id)
-                    .one()
-                )
-                event.event_name = event_name=f"{x.guild_name} / {x.channel_name}"
-            except exc.NoResultFound:
-                event = Event(
-                    event_dc_id=x.channel_id, event_name=f"{x.guild_name} / {x.channel_name}"
-                )
+            logging.info(f"sssssss {x.channel_id}")
 
-            session.merge(event)
-            event_id = event.event_id
+            if x.channel_id not in channel_ids_to_event_id.keys():
+
+                logging.info(f"sssssss {x.channel_id}")
+
+                try:
+                    event = (session.query(Event)
+                        .filter(Event.event_dc_id == x.channel_id)
+                        .one()
+                    )
+                    event.event_name = event_name = f"{x.guild_name} / {x.channel_name}"
+                except exc.NoResultFound:
+                    event = Event(
+                        event_dc_id=x.channel_id, event_name=f"{x.guild_name} / {x.channel_name}"
+                    )
+                    logging.info(f'zzzz made {event}')
+
+                session.merge(event)
+                event_id = event.event_id
+
+                channel_ids_to_event_id[x.channel_id] = event_id
 
             session.add(EventPlayers(event_id=event_id, player_id=player_id))
 
@@ -185,7 +196,7 @@ def serve():
     from os import environ  # todo move
 
     engine = create_engine(
-        f"postgresql://postgres:{environ['DB_PW']}@localhost/postgres", echo=True,
+        f"postgresql://{environ['DB_USER']}:{environ['DB_PW']}@{environ['DB_HOST']}/postgres", echo=True,
     )
     engine.connect()
     logging.info('db conneced')
@@ -204,5 +215,5 @@ def serve():
         server.stop(5)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     serve()

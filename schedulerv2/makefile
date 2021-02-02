@@ -1,5 +1,5 @@
 build:
-	podman build -t rdkr/hermes-schedulerv2 -f containerfile .
+	podman build -t rdkr/hermes-scheduler-v2 -f containerfile .
 
 run:
 	podman run \
@@ -9,11 +9,11 @@ run:
 		-e DB_PW='${DB_PW}' \
 		-e DB_USER='postgres' \
 		-e DB_HOST='localhost' \
-		rdkr/hermes-schedulerv2 \
+		rdkr/hermes-scheduler-v2 \
 		python main.py
 
 push: build
-	docker push rdkr/hermes-scheduler
+	podman push rdkr/hermes-scheduler-v2
 
 install:
 	kubectl apply -f k8s.yaml

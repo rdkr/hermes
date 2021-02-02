@@ -28,18 +28,12 @@ spec:
               secretKeyRef:
                 name: hermes
                 key: CSGO_DISCORD_TOKEN
-          - name: DB_USER
-            value: postgres
-          - name: DB_HOST
-            value: postgres-postgresql.hermes.svc.cluster.local
-          - name: DB_PW
-            valueFrom:
-              secretKeyRef:
-                name: postgres-postgresql
-                key: postgresql-password
+          - name: EVENT_DB_ENDPOINT
+            value: hermes-scheduler-v2.hermes.svc.cluster.local:50051
         ports:
           - containerPort: 8081
             protocol: TCP
+
 ---
   apiVersion: v1
   kind: Service
@@ -52,3 +46,54 @@ spec:
     ports:
       - protocol: TCP
         port: 8081
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes-scheduler-v2
+  namespace: hermes
+spec:
+  selector:
+    matchLabels:
+      app: hermes-scheduler-v2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hermes-scheduler-v2
+    spec:
+      containers:
+      - name: hermes-scheduler-v2
+        image: rdkr/hermes-scheduler-v2:latest
+        imagePullPolicy: Always
+        command:
+          - python
+        args:
+          - main.py
+        env:
+          - name: DB_USER
+            value: postgres
+          - name: DB_HOST
+            value: postgres-postgresql.hermes.svc.cluster.local
+          - name: DB_PW
+            valueFrom:
+              secretKeyRef:
+                name: postgres-postgresql
+                key: postgresql-password
+        ports:
+          - containerPort: 50051
+            protocol: TCP
+
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: hermes-scheduler-v2
+    namespace: hermes
+  spec:
+    selector:
+      app: hermes-scheduler-v2
+    ports:
+      - protocol: TCP
+        port: 50051
