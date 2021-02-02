@@ -15,7 +15,9 @@ def main():
     intents = Intents.default()
     intents.members = True
 
-    bot = commands.Bot(command_prefix=os.environ.get("HERMES_PREFIX", "$"), intents=intents)
+    bot = commands.Bot(
+        command_prefix=os.environ.get("HERMES_PREFIX", "$"), intents=intents
+    )
     bot.add_cog(Scheduler(bot))
     bot.run(os.environ["DISCORD_TOKEN"])
 

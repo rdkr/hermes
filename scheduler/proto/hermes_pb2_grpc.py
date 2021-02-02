@@ -15,30 +15,30 @@ class GatewayStub(object):
             channel: A grpc.Channel.
         """
         self.GetPlayer = channel.unary_unary(
-                '/Gateway/GetPlayer',
-                request_serializer=hermes__pb2.Login.SerializeToString,
-                response_deserializer=hermes__pb2.Player.FromString,
-                )
+            "/Gateway/GetPlayer",
+            request_serializer=hermes__pb2.Login.SerializeToString,
+            response_deserializer=hermes__pb2.Player.FromString,
+        )
         self.GetTimeranges = channel.unary_unary(
-                '/Gateway/GetTimeranges',
-                request_serializer=hermes__pb2.Login.SerializeToString,
-                response_deserializer=hermes__pb2.Timeranges.FromString,
-                )
+            "/Gateway/GetTimeranges",
+            request_serializer=hermes__pb2.Login.SerializeToString,
+            response_deserializer=hermes__pb2.Timeranges.FromString,
+        )
         self.PutTimeranges = channel.unary_unary(
-                '/Gateway/PutTimeranges',
-                request_serializer=hermes__pb2.Timeranges.SerializeToString,
-                response_deserializer=hermes__pb2.Timeranges.FromString,
-                )
+            "/Gateway/PutTimeranges",
+            request_serializer=hermes__pb2.Timeranges.SerializeToString,
+            response_deserializer=hermes__pb2.Timeranges.FromString,
+        )
         self.SetTimeranges = channel.unary_unary(
-                '/Gateway/SetTimeranges',
-                request_serializer=hermes__pb2.Timeranges.SerializeToString,
-                response_deserializer=hermes__pb2.Empty.FromString,
-                )
+            "/Gateway/SetTimeranges",
+            request_serializer=hermes__pb2.Timeranges.SerializeToString,
+            response_deserializer=hermes__pb2.Empty.FromString,
+        )
         self.DeleteTimeranges = channel.unary_unary(
-                '/Gateway/DeleteTimeranges',
-                request_serializer=hermes__pb2.Timeranges.SerializeToString,
-                response_deserializer=hermes__pb2.Empty.FromString,
-                )
+            "/Gateway/DeleteTimeranges",
+            request_serializer=hermes__pb2.Timeranges.SerializeToString,
+            response_deserializer=hermes__pb2.Empty.FromString,
+        )
 
 
 class GatewayServicer(object):
@@ -47,155 +47,216 @@ class GatewayServicer(object):
     def GetPlayer(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def GetTimeranges(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def PutTimeranges(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def SetTimeranges(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def DeleteTimeranges(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_GatewayServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetPlayer': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetPlayer,
-                    request_deserializer=hermes__pb2.Login.FromString,
-                    response_serializer=hermes__pb2.Player.SerializeToString,
-            ),
-            'GetTimeranges': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetTimeranges,
-                    request_deserializer=hermes__pb2.Login.FromString,
-                    response_serializer=hermes__pb2.Timeranges.SerializeToString,
-            ),
-            'PutTimeranges': grpc.unary_unary_rpc_method_handler(
-                    servicer.PutTimeranges,
-                    request_deserializer=hermes__pb2.Timeranges.FromString,
-                    response_serializer=hermes__pb2.Timeranges.SerializeToString,
-            ),
-            'SetTimeranges': grpc.unary_unary_rpc_method_handler(
-                    servicer.SetTimeranges,
-                    request_deserializer=hermes__pb2.Timeranges.FromString,
-                    response_serializer=hermes__pb2.Empty.SerializeToString,
-            ),
-            'DeleteTimeranges': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteTimeranges,
-                    request_deserializer=hermes__pb2.Timeranges.FromString,
-                    response_serializer=hermes__pb2.Empty.SerializeToString,
-            ),
+        "GetPlayer": grpc.unary_unary_rpc_method_handler(
+            servicer.GetPlayer,
+            request_deserializer=hermes__pb2.Login.FromString,
+            response_serializer=hermes__pb2.Player.SerializeToString,
+        ),
+        "GetTimeranges": grpc.unary_unary_rpc_method_handler(
+            servicer.GetTimeranges,
+            request_deserializer=hermes__pb2.Login.FromString,
+            response_serializer=hermes__pb2.Timeranges.SerializeToString,
+        ),
+        "PutTimeranges": grpc.unary_unary_rpc_method_handler(
+            servicer.PutTimeranges,
+            request_deserializer=hermes__pb2.Timeranges.FromString,
+            response_serializer=hermes__pb2.Timeranges.SerializeToString,
+        ),
+        "SetTimeranges": grpc.unary_unary_rpc_method_handler(
+            servicer.SetTimeranges,
+            request_deserializer=hermes__pb2.Timeranges.FromString,
+            response_serializer=hermes__pb2.Empty.SerializeToString,
+        ),
+        "DeleteTimeranges": grpc.unary_unary_rpc_method_handler(
+            servicer.DeleteTimeranges,
+            request_deserializer=hermes__pb2.Timeranges.FromString,
+            response_serializer=hermes__pb2.Empty.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Gateway', rpc_method_handlers)
+        "Gateway", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Gateway(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetPlayer(request,
+    def GetPlayer(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Gateway/GetPlayer',
+            "/Gateway/GetPlayer",
             hermes__pb2.Login.SerializeToString,
             hermes__pb2.Player.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetTimeranges(request,
+    def GetTimeranges(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Gateway/GetTimeranges',
+            "/Gateway/GetTimeranges",
             hermes__pb2.Login.SerializeToString,
             hermes__pb2.Timeranges.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def PutTimeranges(request,
+    def PutTimeranges(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Gateway/PutTimeranges',
+            "/Gateway/PutTimeranges",
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Timeranges.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def SetTimeranges(request,
+    def SetTimeranges(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Gateway/SetTimeranges',
+            "/Gateway/SetTimeranges",
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def DeleteTimeranges(request,
+    def DeleteTimeranges(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Gateway/DeleteTimeranges',
+            "/Gateway/DeleteTimeranges",
             hermes__pb2.Timeranges.SerializeToString,
             hermes__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
 
 class SchedulerStub(object):
@@ -208,10 +269,10 @@ class SchedulerStub(object):
             channel: A grpc.Channel.
         """
         self.NotifyUpdated = channel.unary_unary(
-                '/Scheduler/NotifyUpdated',
-                request_serializer=hermes__pb2.Event.SerializeToString,
-                response_deserializer=hermes__pb2.Empty.FromString,
-                )
+            "/Scheduler/NotifyUpdated",
+            request_serializer=hermes__pb2.Event.SerializeToString,
+            response_deserializer=hermes__pb2.Empty.FromString,
+        )
 
 
 class SchedulerServicer(object):
@@ -220,43 +281,56 @@ class SchedulerServicer(object):
     def NotifyUpdated(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_SchedulerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'NotifyUpdated': grpc.unary_unary_rpc_method_handler(
-                    servicer.NotifyUpdated,
-                    request_deserializer=hermes__pb2.Event.FromString,
-                    response_serializer=hermes__pb2.Empty.SerializeToString,
-            ),
+        "NotifyUpdated": grpc.unary_unary_rpc_method_handler(
+            servicer.NotifyUpdated,
+            request_deserializer=hermes__pb2.Event.FromString,
+            response_serializer=hermes__pb2.Empty.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Scheduler', rpc_method_handlers)
+        "Scheduler", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Scheduler(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def NotifyUpdated(request,
+    def NotifyUpdated(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Scheduler/NotifyUpdated',
+            "/Scheduler/NotifyUpdated",
             hermes__pb2.Event.SerializeToString,
             hermes__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
 
 class EventDbStub(object):
@@ -269,25 +343,25 @@ class EventDbStub(object):
             channel: A grpc.Channel.
         """
         self.GetMagicToken = channel.unary_unary(
-                '/EventDb/GetMagicToken',
-                request_serializer=hermes__pb2.GetMagicTokenRequest.SerializeToString,
-                response_deserializer=hermes__pb2.GetMagicTokenResponse.FromString,
-                )
+            "/EventDb/GetMagicToken",
+            request_serializer=hermes__pb2.GetMagicTokenRequest.SerializeToString,
+            response_deserializer=hermes__pb2.GetMagicTokenResponse.FromString,
+        )
         self.GetEvents = channel.unary_unary(
-                '/EventDb/GetEvents',
-                request_serializer=hermes__pb2.Empty.SerializeToString,
-                response_deserializer=hermes__pb2.GetEventsResponse.FromString,
-                )
+            "/EventDb/GetEvents",
+            request_serializer=hermes__pb2.Empty.SerializeToString,
+            response_deserializer=hermes__pb2.GetEventsResponse.FromString,
+        )
         self.GetEventPlayers = channel.unary_unary(
-                '/EventDb/GetEventPlayers',
-                request_serializer=hermes__pb2.GetEventPlayersRequest.SerializeToString,
-                response_deserializer=hermes__pb2.GetEventPlayersResponse.FromString,
-                )
+            "/EventDb/GetEventPlayers",
+            request_serializer=hermes__pb2.GetEventPlayersRequest.SerializeToString,
+            response_deserializer=hermes__pb2.GetEventPlayersResponse.FromString,
+        )
         self.SyncEventPlayers = channel.unary_unary(
-                '/EventDb/SyncEventPlayers',
-                request_serializer=hermes__pb2.SyncEventPlayerRequest.SerializeToString,
-                response_deserializer=hermes__pb2.Empty.FromString,
-                )
+            "/EventDb/SyncEventPlayers",
+            request_serializer=hermes__pb2.SyncEventPlayerRequest.SerializeToString,
+            response_deserializer=hermes__pb2.Empty.FromString,
+        )
 
 
 class EventDbServicer(object):
@@ -296,124 +370,173 @@ class EventDbServicer(object):
     def GetMagicToken(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def GetEvents(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def GetEventPlayers(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def SyncEventPlayers(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_EventDbServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetMagicToken': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetMagicToken,
-                    request_deserializer=hermes__pb2.GetMagicTokenRequest.FromString,
-                    response_serializer=hermes__pb2.GetMagicTokenResponse.SerializeToString,
-            ),
-            'GetEvents': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetEvents,
-                    request_deserializer=hermes__pb2.Empty.FromString,
-                    response_serializer=hermes__pb2.GetEventsResponse.SerializeToString,
-            ),
-            'GetEventPlayers': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetEventPlayers,
-                    request_deserializer=hermes__pb2.GetEventPlayersRequest.FromString,
-                    response_serializer=hermes__pb2.GetEventPlayersResponse.SerializeToString,
-            ),
-            'SyncEventPlayers': grpc.unary_unary_rpc_method_handler(
-                    servicer.SyncEventPlayers,
-                    request_deserializer=hermes__pb2.SyncEventPlayerRequest.FromString,
-                    response_serializer=hermes__pb2.Empty.SerializeToString,
-            ),
+        "GetMagicToken": grpc.unary_unary_rpc_method_handler(
+            servicer.GetMagicToken,
+            request_deserializer=hermes__pb2.GetMagicTokenRequest.FromString,
+            response_serializer=hermes__pb2.GetMagicTokenResponse.SerializeToString,
+        ),
+        "GetEvents": grpc.unary_unary_rpc_method_handler(
+            servicer.GetEvents,
+            request_deserializer=hermes__pb2.Empty.FromString,
+            response_serializer=hermes__pb2.GetEventsResponse.SerializeToString,
+        ),
+        "GetEventPlayers": grpc.unary_unary_rpc_method_handler(
+            servicer.GetEventPlayers,
+            request_deserializer=hermes__pb2.GetEventPlayersRequest.FromString,
+            response_serializer=hermes__pb2.GetEventPlayersResponse.SerializeToString,
+        ),
+        "SyncEventPlayers": grpc.unary_unary_rpc_method_handler(
+            servicer.SyncEventPlayers,
+            request_deserializer=hermes__pb2.SyncEventPlayerRequest.FromString,
+            response_serializer=hermes__pb2.Empty.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'EventDb', rpc_method_handlers)
+        "EventDb", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class EventDb(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetMagicToken(request,
+    def GetMagicToken(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EventDb/GetMagicToken',
+            "/EventDb/GetMagicToken",
             hermes__pb2.GetMagicTokenRequest.SerializeToString,
             hermes__pb2.GetMagicTokenResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetEvents(request,
+    def GetEvents(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EventDb/GetEvents',
+            "/EventDb/GetEvents",
             hermes__pb2.Empty.SerializeToString,
             hermes__pb2.GetEventsResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetEventPlayers(request,
+    def GetEventPlayers(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EventDb/GetEventPlayers',
+            "/EventDb/GetEventPlayers",
             hermes__pb2.GetEventPlayersRequest.SerializeToString,
             hermes__pb2.GetEventPlayersResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def SyncEventPlayers(request,
+    def SyncEventPlayers(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EventDb/SyncEventPlayers',
+            "/EventDb/SyncEventPlayers",
             hermes__pb2.SyncEventPlayerRequest.SerializeToString,
             hermes__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

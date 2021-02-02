@@ -7,9 +7,15 @@ from scheduler.scheduler import filter_times, find_times
 
 SCENARIO_0 = (
     {
-        "neel": [DateTimeRange("2020-05-22T10:00:00", "2020-05-22T15:00:00"),],
-        "jon": [DateTimeRange("2020-05-22T10:00:00", "2020-05-22T14:00:00"),],
-        "liam": [DateTimeRange("2020-05-22T13:00:00", "2020-05-22T16:00:00"),],
+        "neel": [
+            DateTimeRange("2020-05-22T10:00:00", "2020-05-22T15:00:00"),
+        ],
+        "jon": [
+            DateTimeRange("2020-05-22T10:00:00", "2020-05-22T14:00:00"),
+        ],
+        "liam": [
+            DateTimeRange("2020-05-22T13:00:00", "2020-05-22T16:00:00"),
+        ],
     },
     {
         frozenset({"jon", "neel"}): [

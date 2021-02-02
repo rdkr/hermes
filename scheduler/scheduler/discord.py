@@ -11,7 +11,12 @@ from discord.ext import commands, tasks
 from discord.errors import NotFound
 from pytz import timezone
 
-from scheduler.formatting import format_datetimeranges, format_timeranges, format_range, chunks
+from scheduler.formatting import (
+    format_datetimeranges,
+    format_timeranges,
+    format_range,
+    chunks,
+)
 from scheduler.db import PlayerDB
 from scheduler.scheduler import filter_times, find_times, deduplicate_times
 
@@ -59,13 +64,15 @@ class Scheduler(commands.Cog):
                 if isinstance(channel, TextChannel) and can_send:
                     for member in channel.members:
                         if not member == guild.me:
-                            valid.append(dict(
-                                guild_name=guild.name,
-                                channel_id=str(channel.id),
-                                channel_name=channel.name,
-                                player_id=str(member.id),
-                                player_name=member.name,
-                            ))
+                            valid.append(
+                                dict(
+                                    guild_name=guild.name,
+                                    channel_id=str(channel.id),
+                                    channel_name=channel.name,
+                                    player_id=str(member.id),
+                                    player_name=member.name,
+                                )
+                            )
                             self.players[str(member.id)] = member.name
         await self.db.sync_event_players(valid)
 
@@ -76,9 +83,7 @@ class Scheduler(commands.Cog):
 
         for event in self.events.values():
 
-            new_whens = await self.generate_whens_for_channel(
-                event.event_id
-            )
+            new_whens = await self.generate_whens_for_channel(event.event_id)
 
             try:
 
@@ -94,10 +99,9 @@ class Scheduler(commands.Cog):
                     await self.send_when(channel, when, event.min_time)
 
             except KeyError:
-                pass # expected at first start
+                pass  # expected at first start
 
             self.whens[event.event_id] = new_whens
-
 
     async def generate_whens_for_channel(self, event_id, duration=None):
 
@@ -167,11 +171,17 @@ class Scheduler(commands.Cog):
 
             keep_msgs = []
 
-            keep_msgs.append((await ctx.send(
-                f"calculating times for ⩾**{people}** players for ⩾**{float(duration)}**h..."
-            )).id)
+            keep_msgs.append(
+                (
+                    await ctx.send(
+                        f"calculating times for ⩾**{people}** players for ⩾**{float(duration)}**h..."
+                    )
+                ).id
+            )
 
-            if people == "66":  # todo re-enable memes - seems the update broke gif embed
+            if (
+                people == "66"
+            ):  # todo re-enable memes - seems the update broke gif embed
                 embed = Embed()
                 embed.set_image(url=SIXTY_SIX)
                 keep_msgs.append((await ctx.send(embed=embed)).id)
@@ -197,7 +207,9 @@ class Scheduler(commands.Cog):
 
             for player_ids, times in when[1].items():
                 embed.add_field(
-                    name=", ".join(sorted([self.players[player_id] for player_id in player_ids])),
+                    name=", ".join(
+                        sorted([self.players[player_id] for player_id in player_ids])
+                    ),
                     value="".join(format_datetimeranges(times)),
                     inline=False,
                 )
@@ -245,7 +257,9 @@ class Scheduler(commands.Cog):
           - $list dnd
         """
         event_dc_id = await self.get_event_dc_id(ctx, event)
-        players = await self.db.get_players(await self.event_dc_id_to_event_id(event_dc_id))
+        players = await self.db.get_players(
+            await self.event_dc_id_to_event_id(event_dc_id)
+        )
 
         for player in players.keys():
             for chunk in chunks(players[player], 10):
@@ -257,8 +271,7 @@ class Scheduler(commands.Cog):
 
     @commands.command()
     async def login(self, ctx):
-        """Get a magic link to the web interface via DM.
-        """
+        """Get a magic link to the web interface via DM."""
         warning = (
             "⚠️ this is a magic link which logs in to your account, **don't share it**!"
         )

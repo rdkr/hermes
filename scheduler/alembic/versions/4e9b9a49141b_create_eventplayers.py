@@ -23,8 +23,14 @@ def upgrade():
         sa.Column("event_player_id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("player_id", sa.Integer(), nullable=False),
         sa.Column("event_id", sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(["event_id"], ["events.event_id"],),
-        sa.ForeignKeyConstraint(["player_id"], ["players.player_id"],),
+        sa.ForeignKeyConstraint(
+            ["event_id"],
+            ["events.event_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["player_id"],
+            ["players.player_id"],
+        ),
         sa.PrimaryKeyConstraint("event_player_id"),
     )
     # ### end Alembic commands ###
